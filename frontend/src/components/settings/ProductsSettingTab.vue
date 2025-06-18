@@ -5,7 +5,7 @@
   import Tab from 'primevue/tab';
   import TabPanels from 'primevue/tabpanels';
   import TabPanel from 'primevue/tabpanel';
-  import CategoriesTable from '@/components/categories/CategoriesTable.vue';
+  import CategoriesList from '@/components/categories/CategoriesList.vue';
   import StatusesTable from '@/components/statuses/StatusesTable.vue';
 
   const tabListKey = ref<string>('0');
@@ -40,7 +40,7 @@
         <TabPanel value="1">
           <Suspense>
             <template #default>
-              <CategoriesTable v-if="tabListKey === '1'" />
+              <CategoriesList v-if="tabListKey === '1'" />
             </template>
             <template #fallback>
               <div class="flex h-full w-full items-center justify-center">

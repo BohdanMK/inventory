@@ -14,5 +14,19 @@
     "stockActivityAdd": "Додати активність",
     "stockActivityShow": "Переглянути активність",
     "settings": "Налаштування"
+  },
+  "sidebar": {
+    "dashboard": "Панель управління",
+    "goodsReceipt": "Накладні",
+    "stockActivity": "Активність складу",
+    "stock": "Склад",
+    "products": "Продукти",
+    "groups": "Групи",
+    "settings": "Налаштування",
+    "logOut": "Вийти",
+    "darkMode": "Темний режим",
+    "lightMode": "Світлий режим",
+    "totalTickets": "Всього квитків, призначених користувачу",
+    "userSuccessfullyLogout": "Користувач успішно вийшов"
   }
 }

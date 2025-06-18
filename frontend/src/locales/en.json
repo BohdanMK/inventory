@@ -14,5 +14,33 @@
     "stockActivityAdd": "Add Activity",
     "stockActivityShow": "View Activity",
     "settings": "Settings"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "goodsReceipt": "Goods Receipt",
+    "stockActivity": "Stock Activity",
+    "stock": "Stock",
+    "products": "Products",
+    "groups": "Groups",
+    "settings": "Settings",
+    "logOut": "Log Out",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "totalTickets": "Total tickets assigned to user",
+    "userSuccessfullyLogout": "User successfully logout"
+  },
+  "button": {
+    "new": "New",
+    "refresh": "Refresh"
+  },
+  "popup": {
+    "create_category": "Create category"
+  },
+  "notification": {
+    "success": "Success",
+    "error": "Error"
+  },
+  "error": {
+    "creating_falled": "Creating falled"
   }
 }
