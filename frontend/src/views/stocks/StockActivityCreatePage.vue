@@ -9,10 +9,7 @@
   import Skeleton from 'primevue/skeleton';
   import { stockActionData } from '@/staticData/stockActionData.ts';
   import type { DataFile } from '@/interfaces/index';
-  import type {
-    IProductTemplate,
-    IProductInStockAction,
-  } from '@/types/product/product';
+  import type { IProductTemplate, IProductInStockAction } from '@/types/product/product';
   import { useStocksStore } from '@/stores/stocksStore';
   import { useProfileStore } from '@/stores/userProfileStore';
   import { useWarehouseStore } from '@/stores/warehouseStore';
@@ -27,6 +24,7 @@
   import ProductList from '@/components/stock/ProductList.vue';
   import Textarea from 'primevue/textarea';
   import FilesUploadItem from '@/components/files/FilesUploadItem.vue';
+  import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 
   ///state
   const toast = useToast();
@@ -42,9 +40,7 @@
   const selectedProduct = ref<IProductTemplate>({} as IProductTemplate);
   const productList = ref<IProductTemplate[]>([]);
 
-  const initialValues = ref({
-
-  });
+  const initialValues = ref({});
 
   const resolver = zodResolver(
     z.object({
@@ -59,17 +55,11 @@
   });
 
   // actions
-  const onSubmit = async ({
-    valid,
-    values,
-  }: {
-    valid: boolean;
-    values: any;
-  }) => {
+  const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     console.log('Valid:', valid);
     console.log('Form values:', values);
     if (!valid) return;
-    console.log(values)
+
     const payload = {
       ...values,
       fileName: dataFile.value.fileName,
@@ -78,12 +68,10 @@
       typeAction: values.typeAction.code,
       warehouse: localWarehouse.value?.code || null,
       comment: values.comment,
-      user: profile.userProfile?._id
+      user: profile.userProfile?._id,
     };
-    console.log(payload);
 
-    const { success, message } =
-      await stocksStore.stockskActions(payload);
+    const { success, message } = await stocksStore.stockskActions(payload);
 
     if (success) {
       toast.add({
@@ -99,8 +87,6 @@
     }
   };
 
-
-
   const addProductInList = () => {
     if (!selectedProductStatus.value) {
       const product = selectedProduct.value as Partial<IProductInStockAction>;
@@ -110,7 +96,7 @@
         count: product.count ?? 0,
         price: product.price ?? 0,
         countNew: 0,
-        priceNew: 0
+        priceNew: 0,
       };
       stocksStore.addProductInList(data);
       selectedProduct.value = {} as IProductTemplate;
@@ -120,10 +106,9 @@
 
   const fetchProducts = async () => {
     try {
-      const { success, message, data } =
-        await stocksStore.getProductsInStockList({
-          name: productName.value,
-        });
+      const { success, message, data } = await stocksStore.getProductsInStockList({
+        name: productName.value,
+      });
 
       if (!success) {
         console.error('Failed to fetch profile:', message);
@@ -160,8 +145,8 @@
   const updateFile = async (data: DataFile) => {
     console.log(data);
     dataFile.value.fileName = data.fileName;
-    dataFile.value.filePath = data.filePath
-  }
+    dataFile.value.filePath = data.filePath;
+  };
 
   // getters
 
@@ -170,19 +155,19 @@
   });
 
   const transformProductsData = computed(() => {
-      if(stocksStore.productListForCreateAction) {
-        return stocksStore.productListForCreateAction.map(item => ({
-          product: item._id,
-          count: Number(item.countNew),
-          price: Number(item.priceNew),
-        }))
-      } else {
-        return []
-      }
-  })
+    if (stocksStore.productListForCreateAction) {
+      return stocksStore.productListForCreateAction.map(item => ({
+        product: item._id,
+        count: Number(item.countNew),
+        price: Number(item.priceNew),
+      }));
+    } else {
+      return [];
+    }
+  });
 
   onMounted(() => {
-    stocksStore.productListForCreateAction = []
+    stocksStore.productListForCreateAction = [];
     getWarehouseList();
   });
 </script>
@@ -192,78 +177,74 @@
     <Toast />
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="getWarehouseList" />
     <div v-else class="card">
+      <BreadcrumbItem/>
       <div v-if="!asyncState.loadingStatus.value">
-          <Toolbar class="mb-6 ">
-            <template #start>
-              <h3 class="text-xl font-medium">Create goods receipt</h3>
-            </template>
-            <template #end>
-              <Button
-                label="Back"
-                outlined
-                icon="pi pi-arrow-left"
-                class="mr-2"
-                @click="moveBack()"
-              />
-              <Button
-                v-if="localWarehouse"
-                type="submit"
-                label="Create"
-                icon="pi pi-plus"
-                class="mr-2"
-                @click="formRef?.submit()"
-              />
-            </template>
-          </Toolbar>
-          <Toolbar class="mb-0 border-0 px-0 items-start">
-            <template #start>
-              <Select
-                  v-model="localWarehouse"
-                  :options="warehouseStore.warehouseListForSelect"
-                  optionLabel="name"
-                  placeholder="Select warehouse"
-                  class="w-full min-w-[230px]"
-                  :disabled="stocksStore.productListForCreateAction.length > 0"
-                />
-            </template>
-            <template #end>
-            </template>
-          </Toolbar>
-          <Form
+        <Toolbar class="mb-6">
+          <template #start>
+            <h3 class="text-xl font-medium">Create goods receipt</h3>
+          </template>
+          <template #end>
+            <Button label="Back" outlined icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
+            <Button
               v-if="localWarehouse"
-              v-slot="$form"
-              :resolver="resolver"
-              :initialValues="initialValues"
-              class="mt-0 mb-5 flex w-full flex-col gap-4"
-              @submit="onSubmit"
-              ref="formRef"
-          >
-          <Toolbar class="mb-0 border-0 px-0 items-start">
+              type="submit"
+              label="Create"
+              icon="pi pi-plus"
+              class="mr-2"
+              @click="formRef?.submit()"
+            />
+          </template>
+        </Toolbar>
+        <Toolbar class="mb-0 items-start border-0 px-0">
+          <template #start>
+            <Select
+              v-model="localWarehouse"
+              :options="warehouseStore.warehouseListForSelect"
+              optionLabel="name"
+              placeholder="Select warehouse"
+              class="w-full min-w-[230px]"
+              :disabled="stocksStore.productListForCreateAction.length > 0"
+            />
+          </template>
+          <template #end> </template>
+        </Toolbar>
+        <Form
+          v-if="localWarehouse"
+          v-slot="$form"
+          ref="formRef"
+          :resolver="resolver"
+          :initialValues="initialValues"
+          class="mt-0 mb-5 flex w-full flex-col gap-4"
+          @submit="onSubmit"
+        >
+          <Toolbar class="mb-0 items-start border-0 px-0">
             <template #start>
               <div class="flex gap-1">
                 <AutoComplete
-                  class="min-w-[400px]"
                   v-model="productName"
+                  class="min-w-[400px]"
                   :suggestions="productList"
                   optionLabel="name"
                   placeholder="Product name"
                   dropdown
                   fluid
                   @complete="debouncedFetchProducts"
-                  @item-select="e => {
-                    selectedProduct = e.value;
-                    productName = e.value.name;
-                  }"
+                  @item-select="
+                    e => {
+                      selectedProduct = e.value;
+                      productName = e.value.name;
+                    }
+                  "
                 >
                   <template #option="slotProps">
                     <div class="flex gap-3">
                       <div>
                         <img
-                            :src="setFullImgPath(slotProps.option.imagePath)"
-                            :alt="slotProps.option.image"
-                            class="rounded"
-                            style="width:64px"
-                          />
+                          :src="setFullImgPath(slotProps.option.imagePath)"
+                          :alt="slotProps.option.image"
+                          class="rounded"
+                          style="width: 64px"
+                        />
                       </div>
                       <div class="flex flex-col">
                         <span class="font-medium">{{ slotProps.option.name }}</span>
@@ -275,12 +256,7 @@
                     </div>
                   </template>
                 </AutoComplete>
-                <Button
-                  :disabled="selectedProductStatus"
-                  icon="pi pi-plus"
-                  class="mr-2"
-                  @click="addProductInList()"
-                />
+                <Button :disabled="selectedProductStatus" icon="pi pi-plus" class="mr-2" @click="addProductInList()" />
               </div>
             </template>
             <template #end>
@@ -292,31 +268,22 @@
                   placeholder="Select action"
                   class="w-full min-w-[230px]"
                 />
-
               </div>
             </template>
           </Toolbar>
-          <div class="flex  justify-between mb-0 border-0 px-0">
-            <Textarea
-              name="comment"
-              placeholder="Goods receipt info"
-              class="w-full max-w-[400px]"
-              rows="3"
-              cols="30"
-            />
+          <div class="mb-0 flex justify-between border-0 px-0">
+            <Textarea name="comment" placeholder="Goods receipt info" class="w-full max-w-[400px]" rows="3" cols="30" />
             <div>
               <FilesUploadItem
                 :saveBtn="true"
-                @updateData="updateFile"
                 acceptType=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar"
-                justFile
+                :justFile="true"
+                @updateData="updateFile"
               />
             </div>
           </div>
         </Form>
-        <ProductList
-          v-if="localWarehouse"
-        />
+        <ProductList v-if="localWarehouse" />
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>

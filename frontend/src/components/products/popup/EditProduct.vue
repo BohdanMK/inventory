@@ -1,10 +1,9 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted, watch } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { z } from 'zod';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { Form } from '@primevue/forms';
   import { useToast } from 'primevue/usetoast';
-  import Toast from 'primevue/toast';
   import { useCategoryStore } from '@/stores/categoryStore';
   import setFullImgPath from '@/helpers/fullPathImg';
   import { useStatusStore } from '@/stores/statusStore';
@@ -106,7 +105,7 @@
   const updateProductTemplate = async (productData: IProductTemplate) => {
     localLoadingCreate.value = true;
     try {
-      const { success, message, data } = await productTemplateStore.editProductTemplate(productData);
+      const { success, message } = await productTemplateStore.editProductTemplate(productData);
 
       if (success) {
         toast.add({ severity: 'success', detail: message, life: 3000 });

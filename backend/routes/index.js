@@ -1,8 +1,6 @@
 // routes/index.js
 const express = require('express');
 
-const avatarRoutes = require('./avatar');
-const authSA = require('./authSA');
 const authUser = require('./authUser');
 const profileRoutes = require('./profile');
 const usersRoutes = require('./users');
@@ -19,10 +17,7 @@ const stockRoutes = require('./stockRoutes')
 const router = express.Router();
 
 // Підключаємо всі підроути
-router.use('/avatar', avatarRoutes);
-router.use('/registerSA', authSA);
 router.use('/registerUser', authUser);
-router.use('/authSA', authSA);
 router.use('/authUser', authUser);
 router.use('/profile', profileRoutes);
 router.use('/users', usersRoutes);

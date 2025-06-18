@@ -51,3 +51,10 @@
   display: none!important
 }
 
+
+.p-datatable-empty-message {
+  padding: 30px 0;
+  font-size: 20px;
+  text-align: center;
+  font-weight: 700;
+}

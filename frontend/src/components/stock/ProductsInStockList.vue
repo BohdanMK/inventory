@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, provide } from 'vue';
   import { FilterMatchMode } from '@primevue/core/api';
   import { useToast } from 'primevue/usetoast';
   import { useStocksStore } from '@/stores/stocksStore';
@@ -9,7 +9,6 @@
   import type { IProductInStock } from '@/types/product/product';
   import type { StoсksActionsType } from '@/constants/constants';
   import type { IActionData } from '@/types/index';
-  import type { UsersQuery } from '@/types';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
   import Skeleton from 'primevue/skeleton';
   import DataTable from 'primevue/datatable';
@@ -20,9 +19,8 @@
   import ActionsItem from '@/components/stock/popup/ActionsItem.vue';
   import CancelItem from '@/components/stock/popup/CancelItem.vue';
   import Paginator from 'primevue/paginator';
-  import ProductsInStockFilter from '@/components/stock/ProductsInStockFilter.vue'
-
-  const dt = ref();
+  import ProductsInStockFilter from '@/components/stock/ProductsInStockFilter.vue';
+  import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
   const selectedProducts = ref();
   const filters = ref({
@@ -42,15 +40,14 @@
 
   // actions
 
-
-  const getProductList = async (params?: UsersQuery): Promise<void> => {
+  const getProductList = async (): Promise<void> => {
     try {
       asyncState.startLoading();
-      const { success, message, data } = await stoksStore.getProductsInStockList(params);
+      const { success, message, data } = await stoksStore.getProductsInStockList({ ...stoksStore.getfiltersProducts });
       if (success) {
         stoksStore.productList = data.data;
         asyncState.successLoading();
-        stoksStore.setProductsPagination(data)
+        stoksStore.setProductsPagination(data);
       } else {
         asyncState.failedLoading(message || 'error loading');
       }
@@ -60,19 +57,19 @@
   };
 
   const toggleReplaceModalStatus = (data: IProductInStock): void => {
-    setProductData(data)
+    setProductData(data);
     replacePopUpVisible.value = !replacePopUpVisible.value;
   };
 
   const toggleActionModalStatus = (data: IProductInStock, typeAction: StoсksActionsType): void => {
     setProductData(data);
-    typeActionValue.value = typeAction
+    typeActionValue.value = typeAction;
     actionPopUpVisible.value = !actionPopUpVisible.value;
   };
 
   const toggleCancelModalStatus = (data: IProductInStock, typeAction: StoсksActionsType): void => {
     setProductData(data);
-    typeActionValue.value = typeAction
+    typeActionValue.value = typeAction;
     cancelPopUpVisible.value = !cancelPopUpVisible.value;
   };
 
@@ -80,10 +77,10 @@
     productData.value = { ...data };
   };
 
-  const saveProductAction = async(dataItem: IActionData) => {
-    console.log(dataItem)
+  const saveProductAction = async (dataItem: IActionData) => {
+    console.log(dataItem);
     try {
-      const { success, message, data } = await stoksStore.stockskActions(dataItem);
+      const { success, message } = await stoksStore.stockskActions(dataItem);
       if (success) {
         toast.add({ severity: 'success', detail: message, life: 3000 });
         getProductList();
@@ -95,58 +92,57 @@
           life: 3000,
         });
       }
-    } catch (err) {
-
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
 
   const onPageChange = (event: any) => {
     stoksStore.currentPageProducts = event.page + 1;
     stoksStore.perPageProducts = event.rows;
-    getProductList({ ...stoksStore.filtersProducts });
+    console.log(stoksStore.getfiltersProducts);
+    getProductList();
   };
 
   //getters
 
   //watch and hooks
 
+  provide('localLoading', asyncState.loadingStatus);
+
   onMounted(() => {
     getProductList();
   });
 </script>
 
-<style scoped></style>
-
-
 <template>
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="getProductList" />
-    <div class="card" v-else>
+    <div v-else class="card">
       <ActionsItem
         v-model:dialogVisible="actionPopUpVisible"
         title="Action"
         :typeAction="typeActionValue"
-        @saveAction="saveProductAction"
         :dataItem="productData"
+        @saveAction="saveProductAction"
       />
       <CancelItem
         v-model:dialogVisible="cancelPopUpVisible"
         title="Action"
         :typeAction="typeActionValue"
-        @saveAction="saveProductAction"
         :dataItem="productData"
+        @saveAction="saveProductAction"
       />
       <ReplaceItem
-        title="Replace product"
         v-model:dialogVisible="replacePopUpVisible"
-        @updateData="getProductList()"
+        title="Replace product"
         :dataItem="productData"
+        @updateData="getProductList()"
       />
       <Toolbar class="mb-6">
         <template #start>
-          <ProductsInStockFilter
-            @updateData="getProductList()"
-          />
+          <TotalResultItem :total="stoksStore.totalProducts" />
+          <ProductsInStockFilter :loadingStatus="asyncState.loadingStatus.value" @updateData="getProductList()" />
         </template>
         <template #end>
           <router-link to="/stock-activity/add">
@@ -167,12 +163,6 @@
           :rowsPerPageOptions="[5, 10, 25]"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
         >
-          <template #header>
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h4 class="m-0 text-2xl font-bold">Total products</h4>
-            </div>
-          </template>
-
           <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
           <Column header="Image">
             <template #body="slotProps">
@@ -208,66 +198,68 @@
             <template #body="slotProps">
               <div class="flex">
                 <Button
-                  @click="toggleActionModalStatus(slotProps.data, 'SHIPMENT')"
                   icon="pi pi-arrow-up"
+                  v-tooltip.top="'Single-item Shipment'"
                   outlined
                   rounded
                   severity="info"
                   class="mr-2"
-                  v-tooltip.top="'Single-item Shipment'"
+                  @click="toggleActionModalStatus(slotProps.data, 'SHIPMENT')"
                 />
                 <Button
-                  @click="toggleReplaceModalStatus(slotProps.data)"
                   icon="pi pi-arrow-right-arrow-left"
+                  v-tooltip.top="'Replace'"
                   outlined
                   rounded
                   severity="warn"
                   class="mr-2"
-                  v-tooltip.top="'Replace'"
+                  @click="toggleReplaceModalStatus(slotProps.data)"
                 />
                 <Button
-                  @click="toggleActionModalStatus(slotProps.data, 'WRITEOFF')"
+                  v-tooltip.top="'Write off goods'"
                   icon="pi pi-delete-left"
                   outlined
                   rounded
                   class="mr-2"
-                  v-tooltip.top="'Write off goods'"
+                  @click="toggleActionModalStatus(slotProps.data, 'WRITEOFF')"
                 />
                 <Button
-                  @click="toggleActionModalStatus(slotProps.data, 'RETURN')"
                   icon="pi pi-trash"
+                  v-tooltip.top="'Return goods'"
                   outlined
                   rounded
                   class="mr-2"
                   severity="secondary"
-                  v-tooltip.top="'Return goods'"
+                  @click="toggleActionModalStatus(slotProps.data, 'RETURN')"
                 >
                   <font-awesome-icon icon="arrow-rotate-left" />
                 </Button>
                 <Button
-                  @click="toggleCancelModalStatus(slotProps.data, 'CANCEL')"
+                  v-tooltip.top="'Cancel'"
                   icon="pi pi-trash"
                   outlined
                   rounded
                   severity="danger"
-                  v-tooltip.top="'Cancel'"
+                  @click="toggleCancelModalStatus(slotProps.data, 'CANCEL')"
                 >
                   <font-awesome-icon icon="fa-solid fa-xmark" />
                 </Button>
               </div>
             </template>
           </Column>
+          <template #empty>
+            <div class="p-datatable-empty-message">No data available.</div>
+          </template>
         </DataTable>
-      <Paginator
+        <Paginator
           :rows="stoksStore.perPageProducts"
           :first="(stoksStore.currentPageProducts - 1) * stoksStore.perPageProducts"
           :totalRecords="stoksStore.totalProducts"
           :rowsPerPageOptions="[10, 20, 30]"
           @page="onPageChange"
-      />
+        />
       </div>
       <Skeleton v-else height="20rem" />
     </div>
   </div>
 </template>
-

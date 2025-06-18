@@ -9,6 +9,10 @@
       "@/*": ["src/*"]
     },
 
+    /* JSON + ESM support */
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -16,5 +20,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/staticData/staticService.js"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/staticData/staticService.js"
+  ]
 }

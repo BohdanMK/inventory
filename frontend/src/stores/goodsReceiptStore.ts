@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import axiosInstance from '@/api/axiosInstance';
 import { defineStore } from 'pinia';
 import type { IProductInStock } from '@/types/product/product';
@@ -6,7 +6,7 @@ import { staticEndpoints } from '@/api/endpoints';
 import type { ApiResponse, ApiResponsePaginated } from '@/types/axiosResponce';
 import type { IPaginatorData } from '@/types/index';
 import type { GoodsReceipt } from '@/types/goodsReceipt/goodsReceipt';
-import type { UsersQuery } from '@/types';
+import type { UsersQuery, IFilters } from '@/types';
 import { defaultPaginatedData } from '@/helpers/defaultResponses';
 
 export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
@@ -14,17 +14,27 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
   const productList = ref<IProductInStock[]>([]);
   const goodsReceipt = ref<GoodsReceipt>({} as GoodsReceipt);
   const goodsReceiptList = ref<GoodsReceipt[]>([]);
+  const filtersGoodsReceipt = <Pick<IFilters, 'name' | 'warehouse'>>reactive({
+    name: null,
+    warehouse: null,
+  });
 
   const currentPageReceipts = ref(1);
   const totalReceipts = ref(0);
   const perPageReceipts = ref(10);
 
   // actions
+  const resetFiltersGoodsReceipt = () => {
+    for (const key in filtersGoodsReceipt) {
+      filtersGoodsReceipt[key as keyof typeof filtersGoodsReceipt] = null;
+    }
+  };
+
   const setReceiptsPagination = (data: IPaginatorData<GoodsReceipt[]>) => {
     currentPageReceipts.value = data.page;
     totalReceipts.value = data.total;
     perPageReceipts.value = data.perPage;
-  }
+  };
 
   const addProductInList = (dataItem: IProductInStock) => {
     productList.value.unshift(dataItem);
@@ -96,7 +106,6 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
 
   const getGoodsReceiptList = async (params?: UsersQuery): Promise<ApiResponsePaginated<GoodsReceipt[]>> => {
     const url = staticEndpoints.goodsReceipts.getAll;
-
     try {
       const response: ApiResponsePaginated<GoodsReceipt[]> = await axiosInstance.get(url, {
         params,
@@ -126,12 +135,18 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
 
   // getters
 
-  const filtersReceipts = computed((): UsersQuery => {
+  const getfiltersReceipts = computed((): UsersQuery => {
     return {
       page: currentPageReceipts.value,
-      perPage: perPageReceipts.value
-    }
-  })
+      perPage: perPageReceipts.value,
+      name: filtersGoodsReceipt.name || null,
+      warehouse: filtersGoodsReceipt.warehouse || null,
+    };
+  });
+
+  const isFiltersGoodsReceiptEmpty = computed(() => {
+    return Object.values(filtersGoodsReceipt).every(value => value === null || value === '' || value === undefined);
+  });
 
   return {
     productList,
@@ -142,10 +157,13 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
     getGoodsReceiptList,
     goodsReceipt,
     getGoodsReceipt,
-    filtersReceipts,
+    getfiltersReceipts,
     setReceiptsPagination,
     currentPageReceipts,
     totalReceipts,
-    perPageReceipts
+    perPageReceipts,
+    filtersGoodsReceipt,
+    resetFiltersGoodsReceipt,
+    isFiltersGoodsReceiptEmpty,
   };
 });

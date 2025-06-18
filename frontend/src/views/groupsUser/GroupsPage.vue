@@ -5,10 +5,8 @@
   import Tab from 'primevue/tab';
   import TabPanels from 'primevue/tabpanels';
   import TabPanel from 'primevue/tabpanel';
-  import ProgressSpinner from 'primevue/progressspinner';
-  const UserList = defineAsyncComponent(
-    () => import('@/components/groups/UsersList.vue')
-  );
+  const UserList = defineAsyncComponent(() => import('@/components/groups/UsersList.vue'));
+  import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 
   // state
   const tabListKey = ref<string>('0');
@@ -22,6 +20,7 @@
 
 <template>
   <div>
+    <BreadcrumbItem/>
     <Tabs v-model:value="tabListKey">
       <TabList>
         <Tab value="0">
@@ -37,12 +36,7 @@
         <TabPanel value="0">
           <Suspense>
             <template #default>
-              <UserList
-                v-if="tabListKey === '0'"
-                :key="tabListKey"
-                role="user"
-                @forceReload="reloadUserList()"
-              />
+              <UserList v-if="tabListKey === '0'" :key="tabListKey" role="user" @forceReload="reloadUserList()" />
             </template>
             <template #fallback>
               <div class="flex h-full w-full items-center justify-center">

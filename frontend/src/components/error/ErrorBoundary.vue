@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-[40vh] flex-col items-center justify-center gap-4 text-center">
     <p>⚠️ {{ message }}</p>
-    <Button @click="$emit('reload')" label="Refresh" icon="pi pi-refresh" />
+    <Button label="Refresh" icon="pi pi-refresh" @click="$emit('reload')" />
   </div>
 </template>
 

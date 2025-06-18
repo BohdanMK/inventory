@@ -4,13 +4,12 @@
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
-  import { set, z } from 'zod';
+  import { z } from 'zod';
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
   import Password from 'primevue/password';
   import { Form } from '@primevue/forms';
   import Button from 'primevue/button';
-  import Select from 'primevue/select';
   import { useAuthStore } from '@/stores/authStore';
 
   // props+emits
@@ -53,8 +52,8 @@
   const onFormSubmit = async ({ valid, values }) => {
     if (!valid) return;
     profileStore.loadingCreating = true;
-    const { success, message, data } = await authStore.register(values.email, values.password, isSuperAdmin.value);
-    console.log(message);
+    const { success, message } = await authStore.register(values.email, values.password, isSuperAdmin.value);
+
     if (success) {
       toast.add({ severity: 'success', detail: message, life: 3000 });
 

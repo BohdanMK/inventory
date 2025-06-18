@@ -1,12 +1,13 @@
 <template>
   <div>
-    <ProductsInStockList/>
+    <BreadcrumbItem/>
+    <ProductsInStockList />
   </div>
 </template>
 
 <script setup lang="ts">
-  import ProductsInStockList from '@/components/stock/ProductsInStockList.vue'
-
+  import ProductsInStockList from '@/components/stock/ProductsInStockList.vue';
+  import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 </script>
 
 <style scoped></style>

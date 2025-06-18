@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import Button from 'primevue/button';
+  import Button from 'primevue/button';
 
-interface Props {
-  file?: string;
-  filePath?: string;
-}
+  interface Props {
+    file?: string;
+    filePath?: string;
+  }
 
-const props = withDefaults(defineProps<Props>(), {
-  file: undefined,
-  filePath: undefined,
-});
+  const props = withDefaults(defineProps<Props>(), {
+    file: undefined,
+    filePath: undefined,
+  });
 
-const downloadFile = () => {
-  if (!props.filePath) return;
+  const downloadFile = () => {
+    if (!props.filePath) return;
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || ''; // приклад: http://localhost:3000
-  const fullUrl = `${baseURL}/${props.filePath}`;
+    const baseURL = import.meta.env.VITE_API_BASE_URL || ''; // приклад: http://localhost:3000
+    const fullUrl = `${baseURL}/${props.filePath}`;
 
-  const link = document.createElement('a');
-  link.href = fullUrl;
-  link.setAttribute('download', props.file || 'file');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.setAttribute('download', props.file || 'file');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 </script>
 
 <template>
@@ -35,11 +35,11 @@ const downloadFile = () => {
       </span>
     </div>
     <Button
+      v-tooltip.top="'Download file'"
       class="h-fit"
       icon="pi pi-download"
       severity="warn"
       aria-label="Download"
-      v-tooltip.top="'Download file'"
       @click="downloadFile"
     />
   </div>

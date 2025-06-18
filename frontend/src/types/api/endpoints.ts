@@ -1,11 +1,8 @@
 export interface IEndpoint {
   auth: {
     loginUser: string;
-    loginAdmin: string;
     registerUser: string;
-    registerAdmin: string;
     userProfile: string;
-    adminProfile: string;
   };
   user: {
     getProfile: string;
@@ -52,12 +49,12 @@ export interface IEndpoint {
     getAll: string;
     getById: (id: string | number) => string;
     replaceProduct: (id: string | number) => string;
-    return: string,
-    shipment: string,
-    writeoff: string,
-    cancel: string,
-    actionList: string
-  }
+    return: string;
+    shipment: string;
+    writeoff: string;
+    cancel: string;
+    actionList: string;
+  };
   uploads: {
     avatar: string;
     file: string;

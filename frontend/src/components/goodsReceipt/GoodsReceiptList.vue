@@ -6,15 +6,13 @@
   import setFullImgPath from '@/helpers/fullPathImg';
   import { formatDataWithTime } from '@/composables/formatDate.ts';
   import { useAsyncState } from '@/composables/useAsyncState';
-  import type { UsersQuery } from '@/types';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
   import Skeleton from 'primevue/skeleton';
   import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';
-  import InputText from 'primevue/inputtext';
-  import IconField from 'primevue/iconfield';
-  import InputIcon from 'primevue/inputicon';
   import Paginator from 'primevue/paginator';
+  import GoodsReceiptFilter from '@/components/goodsReceipt/GoodsReceiptFilter.vue';
+  import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
   // state
   const expandedRows = ref({});
@@ -23,10 +21,12 @@
 
   // actions
 
-  const getGoodsList = async (params?: UsersQuery): Promise<void> => {
+  const getGoodsList = async (): Promise<void> => {
     try {
       asyncState.startLoading();
-      const { success, message, data } = await goodsReceiptStore.getGoodsReceiptList(params);
+      const { success, message, data } = await goodsReceiptStore.getGoodsReceiptList({
+        ...goodsReceiptStore.getfiltersReceipts,
+      });
 
       if (success) {
         goodsReceiptStore.goodsReceiptList = data.data;
@@ -35,17 +35,15 @@
       } else {
         asyncState.failedLoading(message || 'error loading');
       }
-
     } catch (e) {
       asyncState.failedLoading(e instanceof Error ? e.message : 'error loading');
     }
-
   };
 
   const onPageChange = (event: any) => {
     goodsReceiptStore.currentPageReceipts = event.page + 1;
     goodsReceiptStore.perPageReceipts = event.rows;
-    getGoodsList({ ...goodsReceiptStore.filtersReceipts });
+    getGoodsList();
   };
 
   //getters
@@ -58,15 +56,11 @@
 <template>
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="getGoodsList" />
-    <div class="card"  v-else>
+    <div v-else class="card">
       <Toolbar class="mb-6">
         <template #start>
-          <IconField>
-            <InputIcon>
-              <i class="pi pi-search" />
-            </InputIcon>
-            <InputText placeholder="Search..." />
-          </IconField>
+          <TotalResultItem :total="goodsReceiptStore.totalReceipts" />
+          <GoodsReceiptFilter :loadingStatus="asyncState.loadingStatus.value" @updateData="getGoodsList()" />
         </template>
         <template #end>
           <router-link to="/goods-receipt/add">
@@ -75,9 +69,7 @@
           <Button icon="pi pi-refresh" rounded raised @click="getGoodsList()" />
         </template>
       </Toolbar>
-      <div
-        v-if="!asyncState.loadingStatus.value"
-      >
+      <div v-if="!asyncState.loadingStatus.value">
         <DataTable
           v-if="!asyncState.loadingStatus.value"
           v-model:expandedRows="expandedRows"
@@ -128,6 +120,9 @@
                 <Column field="count" header="Кількість" />
               </DataTable>
             </div>
+          </template>
+          <template #empty>
+            <div class="p-datatable-empty-message">No data available.</div>
           </template>
         </DataTable>
         <Paginator

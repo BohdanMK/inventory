@@ -113,6 +113,9 @@
           </div>
         </div>
       </template>
+      <template #empty>
+        <div class="p-datatable-empty-message">No data available.</div>
+      </template>
     </DataView>
   </div>
 </template>

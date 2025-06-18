@@ -1,14 +1,10 @@
-// import type { IEndpoint } from '@/interfaces/index'
 import type { IEndpoint } from '@/types/api/endpoints';
 
 export const staticEndpoints: IEndpoint = {
   auth: {
     loginUser: '/api/authUser/login-user',
-    loginAdmin: '/api/authSA/login-super-admin',
     registerUser: '/api/registerUser/register-user',
-    registerAdmin: '/api/registerSA/register-super-admin',
     userProfile: '/api/authUser/profile',
-    adminProfile: '/api/authSA/profile',
   },
   user: {
     getProfile: '/api/profile/user',
@@ -59,7 +55,7 @@ export const staticEndpoints: IEndpoint = {
     writeoff: '/api/stock-actions/writeoff',
     cancel: '/api/stock-actions/cancel',
     actionList: '/api/stock-actions',
-    getById: id => `/api/stock-actions/${id}`
+    getById: id => `/api/stock-actions/${id}`,
   },
   uploads: {
     avatar: '/api/avatar',

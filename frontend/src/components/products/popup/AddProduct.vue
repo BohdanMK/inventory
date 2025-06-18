@@ -26,7 +26,7 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    dialogVisible: false
+    dialogVisible: false,
   });
 
   const emit = defineEmits<{

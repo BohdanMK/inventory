@@ -1,0 +1,18 @@
+{
+  "hello": "Hello",
+  "welcome": "Welcome!",
+  "breadcrumbs": {
+    "home": "Home",
+    "groups": "Groups",
+    "goodsReceiptList": "Goods Receipt List",
+    "goodsReceiptPage": "Goods Receipt Page",
+    "goodsReceiptAdd": "Add Goods Receipt",
+    "productsTemplates": "Template List",
+    "productsTemplatePage": "Template Page",
+    "stockList": "Stock List",
+    "stockActivityList": "Activity List",
+    "stockActivityAdd": "Add Activity",
+    "stockActivityShow": "View Activity",
+    "settings": "Settings"
+  }
+}

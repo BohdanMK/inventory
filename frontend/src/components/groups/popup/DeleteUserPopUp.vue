@@ -27,7 +27,7 @@
   };
 
   const deleteUser = async () => {
-    const { success, message, data } = await profileStore.deleteUser(props.id);
+    const { success, message } = await profileStore.deleteUser(props.id);
 
     if (success) {
       toast.add({ severity: 'success', detail: message, life: 3000 });

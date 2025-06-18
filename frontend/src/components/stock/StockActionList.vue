@@ -1,45 +1,37 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useStocksStore } from '@/stores/stocksStore.ts';
-  import { useToast } from 'primevue/usetoast';
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import setFullImgPath from '@/helpers/fullPathImg';
   import { formatDataWithTime } from '@/composables/formatDate.ts';
   import { useAsyncState } from '@/composables/useAsyncState';
-  import type { UsersQuery } from '@/types';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
   import Skeleton from 'primevue/skeleton';
   import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';
-  import InputText from 'primevue/inputtext';
-  import IconField from 'primevue/iconfield';
-  import InputIcon from 'primevue/inputicon';
   import Paginator from 'primevue/paginator';
+  import StockActionFilter from '@/components/stock/StockActionFilter.vue';
+  import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
   // state
   const expandedRows = ref({});
-  const toast = useToast();
+
   const stoksStore = useStocksStore();
   const localLoadingList = ref<boolean>(false);
   const asyncState = useAsyncState();
 
-  const page = ref(1);
-  const perPage = ref(10);
-  const total = ref(140);
-
   // actions
 
-  const getStoksActionList = async (params?: UsersQuery): Promise<void> => {
+  const getStoksActionList = async (): Promise<void> => {
     try {
-
       asyncState.startLoading();
-      const { success, message, data } = await stoksStore.getStockActionList(params);
+      const { success, message, data } = await stoksStore.getStockActionList({ ...stoksStore.getFiltersActions });
 
       if (success) {
         stoksStore.stockActionList = data.data;
         asyncState.successLoading();
-        stoksStore.setActionsPagination(data)
+        stoksStore.setActionsPagination(data);
       } else {
         asyncState.failedLoading(message || 'error loading');
       }
@@ -50,12 +42,10 @@
   };
 
   const onPageChange = (event: any) => {
-    stoksStore.currentPageActions = event.page + 1; 
+    stoksStore.currentPageActions = event.page + 1;
     stoksStore.perPageActions = event.rows;
-    getStoksActionList({ ...stoksStore.filtersActions });
+    getStoksActionList();
   };
-
-
 
   onMounted(() => {
     getStoksActionList();
@@ -68,12 +58,8 @@
     <div v-else class="card">
       <Toolbar class="mb-6">
         <template #start>
-          <IconField>
-            <InputIcon>
-              <i class="pi pi-search" />
-            </InputIcon>
-            <InputText placeholder="Search..." />
-          </IconField>
+          <TotalResultItem :total="stoksStore.totalActions" />
+          <StockActionFilter :loadingStatus="asyncState.loadingStatus.value" @updateData="getStoksActionList()" />
         </template>
         <template #end>
           <router-link to="/stock-activity/add">
@@ -82,8 +68,7 @@
           <Button icon="pi pi-refresh" rounded raised @click="getStoksActionList()" />
         </template>
       </Toolbar>
-      <div
-        v-if="!asyncState.loadingStatus.value">
+      <div v-if="!asyncState.loadingStatus.value">
         <DataTable
           v-model:expandedRows="expandedRows"
           :value="stoksStore.stockActionList"
@@ -116,8 +101,6 @@
               </router-link>
             </template>
           </Column>
-          <!-- Шаблон розгорнутого рядка -->
-          <!-- Шаблон розгорнутого рядка -->
           <template #expansion="slotProps">
             <div class="p-3">
               <h4>Список товарів</h4>
@@ -135,13 +118,14 @@
                 <Column field="category" header="Категорія" />
                 <Column field="status" header="Статус" />
                 <Column field="price" header="Ціна за одиницю">
-                  <template #body="productSlot">
-                    {{ productSlot.data.price }} ₴
-                  </template>
+                  <template #body="productSlot"> {{ productSlot.data.price }} ₴ </template>
                 </Column>
                 <Column field="count" header="Кількість" />
               </DataTable>
             </div>
+          </template>
+          <template #empty>
+            <div class="p-datatable-empty-message">No data available.</div>
           </template>
         </DataTable>
         <Paginator
@@ -150,13 +134,11 @@
           :totalRecords="stoksStore.totalActions"
           :rowsPerPageOptions="[10, 20, 30]"
           @page="onPageChange"
-      />
-       </div>
+        />
+      </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

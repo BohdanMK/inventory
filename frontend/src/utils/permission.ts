@@ -12,9 +12,7 @@ export const permissionDirective = {
     // Використовуємо watchEffect для спостереження за змінами в profileStore
     const stopHandle = watchEffect(() => {
       const userRole = profileStore.getUserProfile?.role;
-      const allowedRoles = Array.isArray(binding.value)
-        ? binding.value
-        : [binding.value];
+      const allowedRoles = Array.isArray(binding.value) ? binding.value : [binding.value];
 
       // Якщо немає ролі в користувача, нічого не робимо
       if (!userRole) return;

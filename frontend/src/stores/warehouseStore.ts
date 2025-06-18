@@ -22,11 +22,9 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
     currentPageWarehouses.value = data.page;
     totalWarehouses.value = data.total;
     perPageWarehouses.value = data.perPage;
-  }
+  };
 
-  const getWarehouseList = async (
-    params?: UsersQuery
-  ): Promise<ApiResponsePaginated<IWarehouse[]>> => {
+  const getWarehouseList = async (params?: UsersQuery): Promise<ApiResponsePaginated<IWarehouse[]>> => {
     const url = staticEndpoints.warehouse.getAll;
 
     try {
@@ -56,9 +54,7 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
     }
   };
 
-  const createWarehouse = async (
-    data: IWarehouse
-  ): Promise<ApiResponse<IWarehouse>> => {
+  const createWarehouse = async (data: IWarehouse): Promise<ApiResponse<IWarehouse>> => {
     const url = staticEndpoints.warehouse.create;
     try {
       const response: ApiResponse<IWarehouse> = await axiosInstance.post(url, {
@@ -87,9 +83,7 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
     }
   };
 
-  const deleteWarehouse = async (
-    id: string | number
-  ): Promise<ApiResponse<null>> => {
+  const deleteWarehouse = async (id: string | number): Promise<ApiResponse<null>> => {
     const url = staticEndpoints.warehouse.delete(id);
     try {
       const response: ApiResponse<IWarehouse> = await axiosInstance.delete(url);
@@ -108,9 +102,7 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
     }
   };
 
-  const editWarehouse = async (
-    data: IWarehouse
-  ): Promise<ApiResponse<IWarehouse>> => {
+  const editWarehouse = async (data: IWarehouse): Promise<ApiResponse<IWarehouse>> => {
     const { _id, ...rest } = data;
     const url = staticEndpoints.warehouse.update(_id as string);
     try {
@@ -147,15 +139,15 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
   });
 
   const warehouseLength = computed((): number => {
-    return warehouseList.value.length
+    return warehouseList.value.length;
   });
 
   const filtersWarehouses = computed((): UsersQuery => {
     return {
       page: currentPageWarehouses.value,
-      perPage: perPageWarehouses.value
-    }
-  })
+      perPage: perPageWarehouses.value,
+    };
+  });
 
   return {
     warehouseList,
@@ -169,6 +161,6 @@ export const useWarehouseStore = defineStore('warehouseStore', () => {
     setWarehousesPagination,
     currentPageWarehouses,
     totalWarehouses,
-    perPageWarehouses
+    perPageWarehouses,
   };
 });

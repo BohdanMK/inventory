@@ -4,8 +4,8 @@ export interface ICategory {
 }
 
 export interface ICategoryTable {
-  total: number,
-  page: number,
-  perPage: number,
-  data: ICategory[]
+  total: number;
+  page: number;
+  perPage: number;
+  data: ICategory[];
 }

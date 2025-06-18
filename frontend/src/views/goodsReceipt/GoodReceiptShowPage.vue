@@ -3,14 +3,13 @@
   import Toast from 'primevue/toast';
   import { useRouter, useRoute } from 'vue-router';
   import { useGoodsReceiptStore } from '@/stores/goodsReceiptStore';
-  import type {
-    IProductTemplate
-  } from '@/types/product/product';
+  import type { IProductTemplate } from '@/types/product/product';
   import Skeleton from 'primevue/skeleton';
   import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';
   import ProductList from '@/components/goodsReceipt/ProductList.vue';
   import Textarea from 'primevue/textarea';
+  import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 
   ///state
 
@@ -24,8 +23,7 @@
   const fetchGoodsReceipt = async () => {
     try {
       localPageLoading.value = true;
-      const { success, message, data } =
-        await goodsReceiptStore.getGoodsReceipt(id.value);
+      const { success, message, data } = await goodsReceiptStore.getGoodsReceipt(id.value);
 
       if (!success) {
         console.error('Failed to fetch profile:', message);
@@ -54,6 +52,7 @@
 
 <template>
   <div>
+    <BreadcrumbItem/>
     <Toast />
     <Skeleton v-if="localPageLoading" class="!h-[60vh] w-full" />
     <div v-else class="card">
@@ -63,13 +62,7 @@
             <h3 class="text-xl font-medium">Goods receipt info</h3>
           </template>
           <template #end>
-            <Button
-              type="submit"
-              label="Back"
-              icon="pi pi-arrow-left"
-              class="mr-2"
-              @click="moveBack()"
-            />
+            <Button type="submit" label="Back" icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
           </template>
         </Toolbar>
         <Toolbar class="mb-0 border-0 px-0">
@@ -82,16 +75,11 @@
           </template>
           <template #end>
             <div class="flex items-center gap-1">
-              <h3 class="text-xl font-medium">
-                Cклад: {{ goodsReceiptStore.goodsReceipt.warehouse?.name }}
-              </h3>
+              <h3 class="text-xl font-medium">Cклад: {{ goodsReceiptStore.goodsReceipt.warehouse?.name }}</h3>
             </div>
           </template>
         </Toolbar>
-        <div
-          v-if="goodsReceiptStore.goodsReceipt.comment"
-          class="mb-0 border-0 px-0"
-        >
+        <div v-if="goodsReceiptStore.goodsReceipt.comment" class="mb-0 border-0 px-0">
           <Textarea
             :value="goodsReceiptStore.goodsReceipt.comment"
             name="comment"

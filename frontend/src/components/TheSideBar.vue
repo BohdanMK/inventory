@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import axios from '@/api/axiosInstance';
-  import { computed, reactive, ref } from 'vue';
+  import { computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
@@ -15,19 +15,18 @@
   const userProfile = useProfileStore();
   const route = useRoute();
   const router = useRouter();
-  const { isDark, toggleTheme } = useThemeSwitch();
-  const fileupload = ref();
+  const { isDark } = useThemeSwitch();
 
   // actions
   const onUpload = async (event: any) => {
     console.log('Files uploaded:', event.files);
     const formData = new FormData();
     formData.append('file', event.files[0]);
-
+    console.log(formData);
     try {
       console.log('123124');
       // Надсилання запиту на бекенд для збереження зображення
-      const response = await axios.post(staticEndpoints.uploads.avatar, formData, {
+      const response = await axios.put(staticEndpoints.user.updateProfileAvatar, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // Вказуємо, що передаємо форму з файлом
         },

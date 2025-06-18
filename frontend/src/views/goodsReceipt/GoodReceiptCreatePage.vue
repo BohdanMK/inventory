@@ -6,10 +6,7 @@
   import setFullImgPath from '@/helpers/fullPathImg';
   import { useGoodsReceiptStore } from '@/stores/goodsReceiptStore';
   import { useProductTemplateStore } from '@/stores/productTemplateStore';
-  import type {
-    IProductTemplate,
-    IProductInStock,
-  } from '@/types/product/product';
+  import type { IProductTemplate, IProductInStock } from '@/types/product/product';
   import { useWarehouseStore } from '@/stores/warehouseStore';
   import { Form } from '@primevue/forms';
   import { z } from 'zod';
@@ -21,6 +18,7 @@
   import AutoComplete from 'primevue/autocomplete';
   import ProductList from '@/components/goodsReceipt/ProductList.vue';
   import Textarea from 'primevue/textarea';
+  import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 
   ///state
   const toast = useToast();
@@ -46,13 +44,7 @@
   );
 
   // actions
-  const onSubmit = async ({
-    valid,
-    values,
-  }: {
-    valid: boolean;
-    values: any;
-  }) => {
+  const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     if (!valid) return;
 
     const payload = {
@@ -61,8 +53,7 @@
     };
     console.log(payload);
 
-    const { success, message } =
-      await goodsReceiptStore.createGoodsReceipt(payload);
+    const { success, message } = await goodsReceiptStore.createGoodsReceipt(payload);
 
     if (success) {
       toast.add({
@@ -103,10 +94,9 @@
 
   const fetchProducts = async () => {
     try {
-      const { success, message, data } =
-        await productTemplateStore.getProductTemplateList({
-          name: productName.value,
-        });
+      const { success, message, data } = await productTemplateStore.getProductTemplateList({
+        name: productName.value,
+      });
 
       if (!success) {
         console.error('Failed to fetch profile:', message);
@@ -138,6 +128,7 @@
 <template>
   <div>
     <Toast />
+    <BreadcrumbItem/>
     <div class="card">
       <Form
         v-slot="$form"
@@ -151,19 +142,8 @@
             <h3 class="text-xl font-medium">Create goods receipt</h3>
           </template>
           <template #end>
-            <Button
-              label="Back"
-              outlined
-              icon="pi pi-arrow-left"
-              class="mr-2"
-              @click="moveBack()"
-            />
-            <Button
-              type="submit"
-              label="Create"
-              icon="pi pi-plus"
-              class="mr-2"
-            />
+            <Button label="Back" outlined icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
+            <Button type="submit" label="Create" icon="pi pi-plus" class="mr-2" />
           </template>
         </Toolbar>
         <Toolbar class="mb-0 border-0 px-0">
@@ -184,12 +164,7 @@
                   }
                 "
               />
-              <Button
-                :disabled="selectedProductStatus"
-                icon="pi pi-plus"
-                class="mr-2"
-                @click="addProductInList()"
-              />
+              <Button :disabled="selectedProductStatus" icon="pi pi-plus" class="mr-2" @click="addProductInList()" />
             </div>
           </template>
           <template #end>
@@ -205,13 +180,7 @@
           </template>
         </Toolbar>
         <div class="mb-0 border-0 px-0">
-          <Textarea
-            name="comment"
-            placeholder="Goods receipt info"
-            class="w-full max-w-[400px]"
-            rows="3"
-            cols="30"
-          />
+          <Textarea name="comment" placeholder="Goods receipt info" class="w-full max-w-[400px]" rows="3" cols="30" />
         </div>
       </Form>
       <ProductList />

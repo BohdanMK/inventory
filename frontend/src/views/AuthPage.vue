@@ -4,7 +4,7 @@
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
-  import { set, z } from 'zod';
+  import { z } from 'zod';
   import InputText from 'primevue/inputtext';
   import Password from 'primevue/password';
   import { Form } from '@primevue/forms';
@@ -33,10 +33,7 @@
           .refine(value => /d/.test(value), {
             message: 'Must have a number.',
           }),
-        email: z
-          .string()
-          .min(1, { message: 'Email is required.' })
-          .email({ message: 'Invalid email address.' }),
+        email: z.string().min(1, { message: 'Email is required.' }).email({ message: 'Invalid email address.' }),
       })
     )
   );
@@ -44,11 +41,7 @@
   const onFormSubmit = async ({ valid, values }) => {
     if (!valid) return;
 
-    const { success, message, data } = await authStore.login(
-      values.email,
-      values.password,
-      superAdminLogin.value
-    );
+    const { success, message, data } = await authStore.login(values.email, values.password, superAdminLogin.value);
     console.log(success);
     if (success) {
       toast.add({ severity: 'success', summary: message, life: 3000 });
@@ -68,9 +61,7 @@
 
   // getters
   const textForSuperAdmin = computed((): string => {
-    return superAdminLogin.value
-      ? 'Login like Super Admin.'
-      : 'Login like User.';
+    return superAdminLogin.value ? 'Login like Super Admin.' : 'Login like User.';
   });
 </script>
 
@@ -85,6 +76,7 @@
     />
     <div class="flex flex-col justify-between p-4 leading-normal">
       <Toast />
+      <h2>{{ $t('hello') }}</h2>
       <h3 class="mx-auto mb-2 text-2xl font-medium">{{ textForSuperAdmin }}</h3>
       <Form
         v-slot="$form"
@@ -95,22 +87,12 @@
       >
         <div class="flex flex-col gap-1">
           <InputText name="email" type="text" placeholder="Email" fluid />
-          <Message
-            v-if="$form.email?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ $form.email.error?.message }}</Message
-          >
+          <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+            $form.email.error?.message
+          }}</Message>
         </div>
         <div class="flex flex-col gap-1">
-          <Password
-            name="password"
-            placeholder="Password"
-            :feedback="false"
-            fluid
-            toggleMask
-          />
+          <Password name="password" placeholder="Password" :feedback="false" fluid toggleMask />
           <template v-if="$form.password?.invalid">
             <Message
               v-for="(error, index) of $form.password.errors"
@@ -122,17 +104,10 @@
             >
           </template>
         </div>
-        <Button
-          type="submit"
-          severity="secondary"
-          label="Submit"
-          :loading="loadingStatus"
-        />
+        <Button type="submit" severity="secondary" label="Submit" :loading="loadingStatus" />
       </Form>
       <Button
-        :label="
-          !superAdminLogin ? 'Login like Super Admin.' : 'Login like User.'
-        "
+        :label="!superAdminLogin ? 'Login like Super Admin.' : 'Login like User.'"
         variant="link"
         severity="secondary"
         class="text-black"

@@ -1,10 +1,10 @@
 import axiosInstance from '@/api/axiosInstance';
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { defineStore } from 'pinia';
 import type { ApiResponse, ApiResponsePaginated } from '@/types/axiosResponce';
 import { staticEndpoints } from '@/api/endpoints';
 import type { ICategory } from '@/types/categories/categories';
-import type { UsersQuery } from '@/types';
+import type { UsersQuery, IFilters } from '@/types';
 import type { IPaginatorData } from '@/types/index';
 import toSelectOptions from '@/helpers/selectData';
 import { defaultPaginatedData } from '@/helpers/defaultResponses';
@@ -12,18 +12,26 @@ import { defaultPaginatedData } from '@/helpers/defaultResponses';
 export const useCategoryStore = defineStore('categoryStore', () => {
   // state
   const categoryList = ref<ICategory[]>([]);
+  const filtersCategory = reactive<Pick<IFilters, 'name'>>({
+    name: null,
+  });
 
   const currentPageCategories = ref(1);
   const totalCategories = ref(0);
   const perPageCategories = ref(10);
 
   // actions
+  const resetFiltersCategory = () => {
+    for (const key in filtersCategory) {
+      filtersCategory[key as keyof typeof filtersCategory] = null;
+    }
+  };
 
   const setCategoriesPagination = (data: IPaginatorData<ICategory[]>) => {
     currentPageCategories.value = data.page;
     totalCategories.value = data.total;
     perPageCategories.value = data.perPage;
-  }
+  };
 
   const getCategoryList = async (params?: UsersQuery): Promise<ApiResponsePaginated<ICategory[]>> => {
     const url = staticEndpoints.categories.getCategories;
@@ -47,12 +55,12 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         };
       }
     } catch (error) {
-          return {
-            success: false,
-            message: (error as Error).message || 'Unknown error',
-            data: defaultPaginatedData<ICategory>(),
-          };
-      }
+      return {
+        success: false,
+        message: (error as Error).message || 'Unknown error',
+        data: defaultPaginatedData<ICategory>(),
+      };
+    }
   };
 
   const createCategory = async (name: string): Promise<ApiResponse<ICategory>> => {
@@ -137,17 +145,21 @@ export const useCategoryStore = defineStore('categoryStore', () => {
   };
 
   // getters
-
   const categoryListForSelect = computed(() => {
     return toSelectOptions(categoryList.value, 'name', '_id');
   });
 
-  const filtersCategories = computed((): UsersQuery => {
+  const getFiltersCategories = computed((): UsersQuery => {
     return {
       page: currentPageCategories.value,
-      perPage: perPageCategories.value
-    }
-  })
+      perPage: perPageCategories.value,
+      name: filtersCategory.name || null,
+    };
+  });
+
+  const isFiltersCategoryEmpty = computed(() => {
+    return Object.values(filtersCategory).every(value => value === null || value === '' || value === undefined);
+  });
 
   return {
     createCategory,
@@ -156,10 +168,13 @@ export const useCategoryStore = defineStore('categoryStore', () => {
     editCategory,
     deleteCategory,
     categoryListForSelect,
-    filtersCategories,
+    getFiltersCategories,
     setCategoriesPagination,
     currentPageCategories,
     totalCategories,
-    perPageCategories
+    perPageCategories,
+    filtersCategory,
+    resetFiltersCategory,
+    isFiltersCategoryEmpty,
   };
 });

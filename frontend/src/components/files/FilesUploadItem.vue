@@ -9,14 +9,13 @@
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
 
-
   interface Props {
     file?: string | undefined;
     saveBtn: boolean;
-    chooseLabel?: string,
-    type?: string,
-    acceptType?: string,
-    justFile?: boolean
+    chooseLabel?: string;
+    type?: string;
+    acceptType?: string;
+    justFile?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -25,7 +24,7 @@
     chooseLabel: 'Upload',
     type: 'img',
     acceptType: 'image/*',
-    justFile: false
+    justFile: false,
   });
 
   const emit = defineEmits<{
@@ -35,24 +34,28 @@
   // state
   const toast = useToast();
 
-  const src = ref<string | null>(null); // preview base64
-  const selectedFile = ref<File | null>(null); // actual file
+  const src = ref<string | null>(null);
+  const fileName = ref<string | null>(null);
+  const selectedFile = ref<File | null>(null);
   const visibleSaveBtn = ref<boolean>(true);
 
-  // Вибір файлу
   const onFileSelect = (event: any) => {
     const file = event.files?.[0];
     if (file) {
+      console.log(file);
       selectedFile.value = file;
       const reader = new FileReader();
       reader.onload = (e: any) => {
         src.value = e.target.result;
       };
+      if (props.justFile) {
+        fileName.value = file.name;
+      }
       reader.readAsDataURL(file);
+      visibleSaveBtn.value = true;
     }
   };
 
-  // Надсилання на бекенд
   const onUpload = async () => {
     if (!selectedFile.value) return;
 
@@ -82,22 +85,20 @@
     }
   };
 
-
   const remove = () => {
     src.value = null;
     selectedFile.value = null;
-    visibleSaveBtn.value = true;
+    visibleSaveBtn.value = false;
   };
 
   //watch and hooks
   onMounted(() => {
-    if(props.file) {
+    if (props.file) {
       src.value = props.file;
       visibleSaveBtn.value = false;
     }
-  })
+  });
 </script>
-
 
 <template>
   <div class="card flex min-w-[250px] flex-col items-center gap-6">
@@ -110,34 +111,29 @@
       :accept="acceptType"
       class="p-button-outlined w-full"
       chooseLabel="Upload"
-      :disabled="!!src"
       @select="onFileSelect"
     />
-
     <div v-if="src || file" class="flex w-full flex-col items-center gap-2">
-      <img
-        v-if="src"
-        :src="src"
-        alt="Image"
-        class="w-full rounded-xl shadow-md sm:w-64"
-        style="filter: grayscale(100%)"
-      />
-        <div class="flex gap-2">
-          <template v-if="src">
-
-            <Button label="Remove" severity="danger" @click="remove" />
-          </template>
-          <template v-if="visibleSaveBtn">
-            <Button v-if="src" label="Save" severity="primary" @click="onUpload" />
-          </template>
-        </div>
-
+      <template v-if="!justFile">
+        <img
+          v-if="src"
+          :src="src"
+          alt="Image"
+          class="w-full rounded-xl shadow-md sm:w-64"
+          style="filter: grayscale(100%)"
+        />
+      </template>
+      <span v-else>
+        {{ fileName }}
+      </span>
+      <div v-if="visibleSaveBtn" class="flex gap-2">
+        <Button label="Remove" severity="danger" @click="remove" />
+        <Button label="Save" severity="primary" @click="onUpload" />
+      </div>
     </div>
   </div>
 </template>
 
-
-
 <style scoped>
-/* Приховати дефолтну кнопку FileUpload */
+  /* Приховати дефолтну кнопку FileUpload */
 </style>

@@ -14,7 +14,6 @@
   import Button from 'primevue/button';
   import FilesUploadItem from '@/components/files/FilesUploadItem.vue';
 
-
   // props + emits
 
   interface Props {
@@ -25,8 +24,8 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-      dialogVisible: false,
-      title: 'Action'
+    dialogVisible: false,
+    title: 'Action',
   });
 
   const emit = defineEmits<{
@@ -35,7 +34,7 @@
   }>();
   /// state
   const formRef = ref();
-  const profile = useProfileStore()
+  const profile = useProfileStore();
   const localLoading = ref<boolean>(false);
 
   const dataFile = ref<DataFile>({
@@ -43,20 +42,19 @@
     filePath: '',
   });
 
-   const statusCancelOfType = computed((): boolean => {
-      return props.typeAction === 'CANCEL'
+  const statusCancelOfType = computed((): boolean => {
+    return props.typeAction === 'CANCEL';
   });
 
   const initialValues = ref({
-    comment: ''
+    comment: '',
   });
 
   const resolver = zodResolver(
     z.object({
-      comment: z.string().min(15, { message: 'Comment must be at least 15 characters long' })
+      comment: z.string().min(15, { message: 'Comment must be at least 15 characters long' }),
     })
-  )
-
+  );
 
   //actions
 
@@ -64,38 +62,34 @@
     emit('update:dialogVisible', false);
   };
 
-
   const updateFile = async (data: DataFile) => {
     console.log(data);
     dataFile.value.fileName = data.fileName;
-    dataFile.value.filePath = data.filePath
-  }
-
-
+    dataFile.value.filePath = data.filePath;
+  };
 
   const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     if (!valid) return;
-    console.log(values)
+    console.log(values);
     let product = {
-      product: props.dataItem._id  ?? '',
+      product: props.dataItem._id ?? '',
       count: props.dataItem.count,
       price: props.dataItem.price,
-    }
+    };
     let payloadData: IActionData = {
       typeAction: props.typeAction,
-      warehouse: props.dataItem.warehouse?._id  ?? '',
+      warehouse: props.dataItem.warehouse?._id ?? '',
       products: [product],
       comment: values.comment,
-      fileName: dataFile.value.fileName  ?? '',
-      filePath: dataFile.value.filePath  ?? '',
-      user: profile.userProfile?._id
-    }
-    emit('saveAction', payloadData)
-    emit('update:dialogVisible', false)
-
+      fileName: dataFile.value.fileName ?? '',
+      filePath: dataFile.value.filePath ?? '',
+      user: profile.userProfile?._id,
+    };
+    emit('saveAction', payloadData);
+    emit('update:dialogVisible', false);
   };
 
-      // getters
+  // getters
   const modelValue = computed({
     get: () => props.dialogVisible,
     set: (val: boolean) => emit('update:dialogVisible', val),
@@ -106,8 +100,6 @@
     () => props.dialogVisible,
     newVal => {
       if (newVal) {
-
-
       } else {
         localLoading.value = false;
       }
@@ -124,57 +116,45 @@
 
       <Form
         v-slot="$form"
+        ref="formRef"
         :resolver="resolver"
         :initialValues="initialValues"
         class="mt-0 mb-5 flex w-full flex-col gap-0"
         @submit="onSubmit"
-        ref="formRef"
       >
-        <div v-if="statusCancelOfType"
-          class="mb-3"
-        >
-          Cancel this product - <b> {{ props.dataItem.name }} </b> existing in warehouse - <b> {{ props.dataItem.warehouse?.name }} </b>
+        <div v-if="statusCancelOfType" class="mb-3">
+          Cancel this product - <b> {{ props.dataItem.name }} </b> existing in warehouse -
+          <b> {{ props.dataItem.warehouse?.name }} </b>
         </div>
 
-          <div
-            class="flex flex-col gap-1 relative  pb-[20px] font-medium">
-            {{ props.dataItem.goodsReceiptName }}
-          </div>
-          <div
-            class="flex flex-col gap-1 relative  pb-[20px]">
-            Avalible product quantity: {{ props.dataItem.count }}
-          </div>
-          <div class="mb-0 border-0 px-0 relative  pb-[20px]">
-            <Textarea
-              name="comment"
-              placeholder="*Comment of menagare"
-              class="w-full max-w-[400px]"
-              rows="3"
-              cols="30"
-            />
-            <Message class="absolute bottom-0 left-0 text-[14px] text-[red]" v-if="$form.comment?.invalid" severity="error" size="small" variant="simple">{{
-              $form.comment.error?.message
-            }}</Message>
-          </div>
-          <div>
-              <FilesUploadItem
-                :saveBtn="true"
-                @updateData="updateFile"
-                acceptType=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar"
-                justFile
-              />
-          </div>
+        <div class="relative flex flex-col gap-1 pb-[20px] font-medium">
+          {{ props.dataItem.goodsReceiptName }}
+        </div>
+        <div class="relative flex flex-col gap-1 pb-[20px]">Avalible product quantity: {{ props.dataItem.count }}</div>
+        <div class="relative mb-0 border-0 px-0 pb-[20px]">
+          <Textarea name="comment" placeholder="*Comment of menagare" class="w-full max-w-[400px]" rows="3" cols="30" />
+          <Message
+            v-if="$form.comment?.invalid"
+            class="absolute bottom-0 left-0 text-[14px] text-[red]"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.comment.error?.message }}</Message
+          >
+        </div>
+        <div>
+          <FilesUploadItem
+            :saveBtn="true"
+            acceptType=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar"
+            justFile
+            @updateData="updateFile"
+          />
+        </div>
       </Form>
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" text @click="closeModal()" />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        text
-        :loading="localLoading"
-        @click="formRef?.submit()"
-      />
+      <Button label="Yes" icon="pi pi-check" text :loading="localLoading" @click="formRef?.submit()" />
     </template>
   </Dialog>
 </template>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const profileController = require('../controllers/profileController');
+const { upload } = require('../utils/upload');
 
 // 🔐 GET /api/profile - список користувачів (з авторизацією)
 router.get('/', authMiddleware, profileController.getUsers);
@@ -13,7 +14,7 @@ router.get('/user', authMiddleware, profileController.getCurrentUser);
 router.put('/user', authMiddleware, profileController.updateCurrentUser);
 
 // 🔐 PUT /api/profile/avatar - оновлення аватарки
-router.put('/avatar', authMiddleware, profileController.updateAvatar);
+router.put('/avatar', authMiddleware, upload.single('file'), profileController.updateAvatar);
 
 // 🔐 PUT /api/profile/new-password - оновлення пароля
 router.put('/new-password', authMiddleware, profileController.updatePassword);

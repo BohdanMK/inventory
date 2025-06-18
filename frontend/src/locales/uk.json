@@ -1,0 +1,18 @@
+{
+  "hello": "Привіт",
+  "welcome": "Ласкаво просимо!",
+  "breadcrumbs": {
+    "home": "Головна",
+    "groups": "Групи",
+    "goodsReceiptList": "Список приходів",
+    "goodsReceiptPage": "Сторінка приходу",
+    "goodsReceiptAdd": "Додати прихід",
+    "productsTemplates": "Список шаблонів",
+    "productsTemplatePage": "Сторінка шаблону",
+    "stockList": "Список товарів",
+    "stockActivityList": "Список активностей",
+    "stockActivityAdd": "Додати активність",
+    "stockActivityShow": "Переглянути активність",
+    "settings": "Налаштування"
+  }
+}

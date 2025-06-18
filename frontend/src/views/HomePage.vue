@@ -17,26 +17,13 @@
 
 <template>
   <div>
-    <div
-      class="m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-    >
+    <div class="m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         Active page tabs: {{ pagesStore.countActivePages }}
       </h2>
-      <ul
-        class="max-w-md list-inside list-disc space-y-1 text-gray-500 dark:text-gray-400"
-      >
-        <li
-          v-for="page in pagesStore.activePages"
-          :key="page.id"
-          class="list-none p-2"
-        >
-          <Button
-            icon="pi pi-clone"
-            severity="secondary"
-            aria-label="Bookmark"
-            @click="copyValue(page.id)"
-          />
+      <ul class="max-w-md list-inside list-disc space-y-1 text-gray-500 dark:text-gray-400">
+        <li v-for="page in pagesStore.activePages" :key="page.id" class="list-none p-2">
+          <Button icon="pi pi-clone" severity="secondary" aria-label="Bookmark" @click="copyValue(page.id)" />
           <b>
             Page:
             {{ getPageTitleByRoute(page.route) }}

@@ -23,7 +23,7 @@ export const useStatusStore = defineStore('statusStore', () => {
     currentPageStatuses.value = data.page;
     totalStatuses.value = data.total;
     perPageStatuses.value = data.perPage;
-  }
+  };
 
   const getStatusList = async (params?: UsersQuery): Promise<ApiResponsePaginated<IStatus[]>> => {
     const url = staticEndpoints.statuses.getStatuses;
@@ -142,9 +142,9 @@ export const useStatusStore = defineStore('statusStore', () => {
   const filtersStatuses = computed((): UsersQuery => {
     return {
       page: currentPageStatuses.value,
-      perPage: perPageStatuses.value
-    }
-  })
+      perPage: perPageStatuses.value,
+    };
+  });
 
   return {
     createStatus,
@@ -157,6 +157,6 @@ export const useStatusStore = defineStore('statusStore', () => {
     currentPageStatuses,
     totalStatuses,
     perPageStatuses,
-    filtersStatuses
+    filtersStatuses,
   };
 });

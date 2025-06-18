@@ -22,7 +22,6 @@
   const stocksStore = useStocksStore();
   const deletedItemId = ref<string | number | null>(null);
 
-
   // actions
   const toggleDeleteModal = (id: string | number | null) => {
     deletedItemId.value = id;
@@ -93,9 +92,7 @@
                       </span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <div
-
-                        class="flex flex-col">
+                      <div class="flex flex-col">
                         <label v-if="statusOfTypeProps">Price of supply: {{ item.price }}</label>
                         <label class="font-medium"> Price: </label>
                       </div>
@@ -111,9 +108,7 @@
                   </div>
                 </div>
                 <div class="flex flex-col gap-8 md:items-end">
-                  <div class="flex gap-3 items-center"
-                    v-if="statusOfTypeProps"
-                  >
+                  <div v-if="statusOfTypeProps" class="flex items-center gap-3">
                     Склад:
                     <span class="text-xl font-medium">{{ item.warehouse?.name || item.warehouse }}</span>
                   </div>

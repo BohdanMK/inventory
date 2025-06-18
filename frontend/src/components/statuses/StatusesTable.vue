@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
-  import { useCategoryStore } from '@/stores/categoryStore';
+  import { useStatusStore } from '@/stores/statusStore';
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
   import { formatDataWithTime } from '@/composables/formatDate.ts';
-  import type { ICategory } from '@/types/categories/categories';
+  import type { IStatus } from '@/types/status/statuses';
   import type { UsersQuery } from '@/types';
   import { useAsyncState } from '@/composables/useAsyncState';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
@@ -13,15 +13,16 @@
   import Column from 'primevue/column';
   import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';
-  import CreateItemPopUp from '@/components/settings/popup/CreateItem.vue';
-  import EditItemPopUp from '@/components/settings/popup/EditItem.vue';
+  import CreateItemPopUp from '@/components/popup/CreateItem.vue';
+  import EditItemPopUp from '@/components/popup/EditItem.vue';
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import Paginator from 'primevue/paginator';
+  import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
   // state
-  const editData = ref<ICategory | null>(null);
+  const editData = ref<IStatus | null>(null);
   const toast = useToast();
-  const categoryStore = useCategoryStore();
+  const statusStore = useStatusStore();
   const asyncState = useAsyncState();
   const deletedItemId = ref<string | number | null>(null);
 
@@ -34,9 +35,9 @@
     createPopUpVisible.value = !createPopUpVisible.value;
   };
 
-  const createCategory = async (value: string): Promise<void> => {
+  const createStatus = async (value: string): Promise<void> => {
     try {
-      const { success, message, data } = await categoryStore.createCategory(value);
+      const { success, message } = await statusStore.createStatus(value);
 
       if (success) {
         createPopUpVisible.value = false;
@@ -60,12 +61,12 @@
   const getList = async (params?: UsersQuery): Promise<void> => {
     try {
       asyncState.startLoading();
-      const { success, message, data } = await categoryStore.getCategoryList(params);
+      const { success, message, data } = await statusStore.getStatusList(params);
 
       if (success) {
-        categoryStore.categoryList = data.data;
+        statusStore.statusesList = data.data;
         asyncState.successLoading();
-        categoryStore.setCategoriesPagination(data)
+        statusStore.setStatusesPagination(data);
       } else {
         asyncState.failedLoading(message || 'error loading');
       }
@@ -74,12 +75,12 @@
     }
   };
 
-  const setEditData = (data: ICategory) => {
+  const setEditData = (data: IStatus) => {
     editData.value = null;
     editData.value = { ...data };
   };
 
-  const toggleEditModal = (data: ICategory) => {
+  const toggleEditModal = (data: IStatus) => {
     setEditData(data);
     editPopUpVisible.value = !editPopUpVisible.value;
   };
@@ -89,9 +90,9 @@
     deletePopUpVisible.value = !deletePopUpVisible.value;
   };
 
-  const editCategory = async (dataItem: ICategory): Promise<void> => {
+  const editStatus = async (dataItem: IStatus): Promise<void> => {
     try {
-      const { success, message, data } = await categoryStore.editCategory(dataItem);
+      const { success, message, data } = await statusStore.editStatus(dataItem);
       if (success) {
         toast.add({ severity: 'success', detail: message, life: 3000 });
         editPopUpVisible.value = false;
@@ -112,7 +113,7 @@
 
   const deleteItem = async (id: string | number): Promise<void> => {
     try {
-      const { success, message, data } = await categoryStore.deleteCategory(id);
+      const { success, message } = await statusStore.deleteStatus(id);
       if (success) {
         toast.add({ severity: 'success', detail: message, life: 3000 });
         toggleDeleteModal(null);
@@ -131,9 +132,9 @@
   };
 
   const onPageChange = (event: any) => {
-    categoryStore.currentPageCategories = event.page + 1;
-    categoryStore.perPageCategories = event.rows;
-    getList({ ...categoryStore.filtersCategories });
+    statusStore.currentPageStatuses = event.page + 1;
+    statusStore.perPageStatuses = event.rows;
+    getList({ ...statusStore.filtersStatuses });
   };
 
   /// hooks
@@ -146,35 +147,32 @@
 <template>
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="getList" />
-    <div class="card">
-      <CreateItemPopUp v-model:dialogVisible="createPopUpVisible" title="Create category" @createData="createCategory" />
+    <div v-else class="card">
+      <CreateItemPopUp v-model:dialogVisible="createPopUpVisible" title="Create status" @createData="createStatus" />
       <EditItemPopUp
         v-model:dialogVisible="editPopUpVisible"
         :data="editData || { _id: '', name: '' }"
-        title="Edit category"
-        @editData="editCategory"
+        title="Edit status"
+        @editData="editStatus"
       />
       <DeleteItemPopUp
         :id="deletedItemId"
         v-model:dialogVisible="deletePopUpVisible"
-        title="Are you sure want delete this category?"
+        title="Are you sure want delete this status?"
         @deleteItem="deleteItem"
       />
       <Toast />
-      <div
-        v-if="!asyncState.loadingStatus.value"
-      >
-        <DataTable
-          :value="categoryStore.categoryList"
-          tableStyle="min-width: 50rem"
-        >
-          <Toolbar class="mb-6">
-            <template #start><span class="text-xl font-bold">Categories</span></template>
-            <template #end>
-              <Button label="New" icon="pi pi-plus" class="mr-2" @click="togglePopUpVisible" />
-              <Button icon="pi pi-refresh" rounded raised @click="getList()" />
-            </template>
-          </Toolbar>
+      <Toolbar class="mb-6">
+        <template #start>
+          <TotalResultItem :total="statusStore.totalStatuses" />
+        </template>
+        <template #end>
+          <Button label="New" icon="pi pi-plus" class="mr-2" @click="togglePopUpVisible" />
+          <Button icon="pi pi-refresh" rounded raised @click="getList()" />
+        </template>
+      </Toolbar>
+      <div v-if="!asyncState.loadingStatus.value">
+        <DataTable :value="statusStore.statusesList" tableStyle="min-width: 50rem">
           <Column field="name" header="Name"></Column>
           <Column field="createdAt" header="Created at">
             <template #body="slotProps">
@@ -193,14 +191,17 @@
               />
             </template>
           </Column>
+          <template #empty>
+            <div class="p-datatable-empty-message">No data available.</div>
+          </template>
         </DataTable>
         <Paginator
-          :rows="categoryStore.perPageCategories"
-          :first="(categoryStore.currentPageCategories - 1) * categoryStore.perPageCategories"
-          :totalRecords="categoryStore.totalCategories"
+          :rows="statusStore.perPageStatuses"
+          :first="(statusStore.currentPageStatuses - 1) * statusStore.perPageStatuses"
+          :totalRecords="statusStore.totalStatuses"
           :rowsPerPageOptions="[10, 20, 30]"
           @page="onPageChange"
-      />
+        />
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>

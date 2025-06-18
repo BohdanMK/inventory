@@ -5,8 +5,8 @@
   import Tab from 'primevue/tab';
   import TabPanels from 'primevue/tabpanels';
   import TabPanel from 'primevue/tabpanel';
-  import CategoriesTable from '@/components/settings/CategoriesTable.vue';
-  import StatusesTable from '@/components/settings/StatusesTable.vue';
+  import CategoriesTable from '@/components/categories/CategoriesTable.vue';
+  import StatusesTable from '@/components/statuses/StatusesTable.vue';
 
   const tabListKey = ref<string>('0');
 </script>

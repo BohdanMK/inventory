@@ -10,19 +10,20 @@ export interface IProductTemplate {
 export interface IProductInStock extends IProductTemplate {
   price: number;
   count: number;
-  warehouse?: {name: string , _id: string},
-  goodsReceiptName?: string
+  warehouse?: { name: string; _id: string };
+  goodsReceiptName?: string;
+  countNew?: number;
+  priceNew?: number;
 }
 
 export interface IProductInStockAction extends IProductInStock {
-    countNew: number,
-    priceNew: number
+  countNew: number;
+  priceNew: number;
 }
-
 
 export interface ReplaceProduct {
   count: number;
-  comment?: string,
-  warehouse?: {name: string , _id: string},
-  oldWarehouse?: {name: string , _id: string}
+  comment?: string;
+  warehouse?: { name: string; _id: string };
+  oldWarehouse?: { name: string; _id: string };
 }

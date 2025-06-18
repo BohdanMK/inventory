@@ -1,30 +1,38 @@
 import axiosInstance from '@/api/axiosInstance';
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { defineStore } from 'pinia';
 import type { ApiResponse, ApiResponsePaginated } from '@/types/axiosResponce';
 import { staticEndpoints } from '@/api/endpoints';
 import type { IProductTemplate } from '@/types/product/product';
 import type { IPaginatorData } from '@/types/index';
-import type { UsersQuery } from '@/types';
-import toSelectOptions from '@/helpers/selectData';
+import type { UsersQuery, IFilters } from '@/types';
 import { defaultPaginatedData } from '@/helpers/defaultResponses';
 
 export const useProductTemplateStore = defineStore('productTemplateStore', () => {
   // state
   const productTemplateList = ref<IProductTemplate[]>([]);
+  const filtersProduct = reactive<Pick<IFilters, 'name' | 'category' | 'status'>>({
+    name: null,
+    status: null,
+    category: null,
+  });
 
   const currentPageProducts = ref(1);
   const totalProducts = ref(0);
   const perPageProducts = ref(10);
 
-
-
   //actions
-   const setActionsPagination = (data: IPaginatorData<IProductTemplate[]>) => {
-      currentPageProducts.value = data.page;
-      totalProducts.value = data.total;
-      perPageProducts.value = data.perPage;
-  }
+  const resetFiltersProduct = () => {
+    for (const key in filtersProduct) {
+      filtersProduct[key as keyof typeof filtersProduct] = null;
+    }
+  };
+
+  const setActionsPagination = (data: IPaginatorData<IProductTemplate[]>) => {
+    currentPageProducts.value = data.page;
+    totalProducts.value = data.total;
+    perPageProducts.value = data.perPage;
+  };
   const getProductTemplateList = async (params?: UsersQuery): Promise<ApiResponsePaginated<IProductTemplate[]>> => {
     const url = staticEndpoints.products.getAll;
 
@@ -135,12 +143,19 @@ export const useProductTemplateStore = defineStore('productTemplateStore', () =>
 
   // getters
 
-  const filtersProducts = computed((): UsersQuery => {
+  const getfiltersProducts = computed((): UsersQuery => {
     return {
       page: currentPageProducts.value,
-      perPage: perPageProducts.value
-    }
-  })
+      perPage: perPageProducts.value,
+      name: filtersProduct.name || null,
+      category: filtersProduct.category || null,
+      status: filtersProduct.status || null,
+    };
+  });
+
+  const isFiltersProductEmpty = computed(() => {
+    return Object.values(filtersProduct).every(value => value === null || value === '' || value === undefined);
+  });
 
   return {
     productTemplateList,
@@ -148,10 +163,13 @@ export const useProductTemplateStore = defineStore('productTemplateStore', () =>
     createProductTemplate,
     deleteProduct,
     editProductTemplate,
-    filtersProducts,
+    getfiltersProducts,
     currentPageProducts,
     totalProducts,
     perPageProducts,
-    setActionsPagination
+    setActionsPagination,
+    resetFiltersProduct,
+    isFiltersProductEmpty,
+    filtersProduct,
   };
 });

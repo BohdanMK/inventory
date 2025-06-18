@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-
+import { groups, goodsReceiptList, goodsReceipt, goodsReceiptAdd, productsTemplates, stockList, stockActivityList, stockActivityAdd, stockActivityShow, settings } from '@/router/breadcrumbItem.ts'
 const routes = [
   {
     path: '/',
@@ -11,61 +11,61 @@ const routes = [
     path: '/groups',
     name: 'groups',
     component: () => import('@/views/groupsUser/GroupsPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...groups] },
   },
   {
     path: '/goods-receipt',
     name: 'GoodsReceipt',
     component: () => import('@/views/goodsReceipt/GoodsReceiptPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...goodsReceiptList] },
   },
   {
     path: '/goods-receipt/add',
     name: 'GoodReceiptAdd',
     component: () => import('@/views/goodsReceipt/GoodReceiptCreatePage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...goodsReceiptAdd] },
   },
   {
     path: '/goods-receipt/:id',
     name: 'GoodReceiptShow',
     component: () => import('@/views/goodsReceipt/GoodReceiptShowPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...goodsReceipt] },
   },
   {
     path: '/products',
     name: 'Products',
     component: () => import('@/views/productTemplate/ProductsPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...productsTemplates] },
   },
   {
     path: '/stock-activity',
     name: 'StockActivity',
     component: () => import('@/views/stocks/StockActivityPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...stockActivityList] },
   },
-    {
+  {
     path: '/stock-activity/add',
     name: 'StockActivityAdd',
     component: () => import('@/views/stocks/StockActivityCreatePage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...stockActivityAdd] },
   },
   {
     path: '/stock-activity/:id',
     name: 'StockActivityShow',
     component: () => import('@/views/stocks/StockActionShowPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...stockActivityShow] },
   },
   {
     path: '/stock',
     name: 'Stock',
     component: () => import('@/views/stocks/StockPage.vue'),
-    meta: { layout: 'default', requireAuth: true },
+    meta: { layout: 'default', requireAuth: true, breadcrumbs: [...stockList] },
   },
   {
     path: '/settings',
     name: 'Settings',
     component: () => import('@/views/settings/SettingsPage.vue'),
-    meta: { layout: 'default', requireAuth: true, requireSA: true },
+    meta: { layout: 'default', requireAuth: true, requireSA: true, breadcrumbs: [...settings]  },
   },
   {
     path: '/auth',
