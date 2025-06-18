@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   import { z } from 'zod';
+  import { useI18n } from 'vue-i18n';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { Form } from '@primevue/forms';
   import { useToast } from 'primevue/usetoast';
@@ -31,6 +32,7 @@
   }>();
 
   // state
+  const { t } = useI18n();
   const toast = useToast();
 
   const warehouseStore = useWarehouseStore();
@@ -73,7 +75,7 @@
   const updateProductTemplate = async (dataItem: IWarehouse) => {
     localLoadingCreate.value = true;
     try {
-      const { success, message, data } = await warehouseStore.editWarehouse(dataItem);
+      const { success, message } = await warehouseStore.editWarehouse(dataItem);
 
       if (success) {
         toast.add({ severity: 'success', detail: message, life: 3000 });
@@ -81,7 +83,7 @@
         emit('update:dialogVisible', false);
       } else {
         toast.add({
-          severity: 'error',
+          severity: t('notification.error'),
           summary: message,
           detail: message,
           life: 3000,
@@ -108,7 +110,7 @@
           ...props.data,
         };
       } else {
-        console.log('Dialog closed');
+
       }
     }
   );
@@ -132,19 +134,20 @@
             >
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="address" type="text" placeholder="Address" class="w-full sm:w-56" />
+            <InputText name="address" type="text":placeholder="$t('fields.address')" class="w-full sm:w-56" />
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="contact_person" type="text" placeholder="Contact person" class="w-full sm:w-56" />
+            <InputText name="contact_person" type="text" :placeholder="$t('fields.contact_person')" class="w-full sm:w-56" />
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="contact" type="text" placeholder="Contact" class="w-full sm:w-56" />
+            <InputText name="contact" type="text" :placeholder="$t('fields.contact')" class="w-full sm:w-56" />
           </div>
           <Button
             :loading="localLoadingCreate"
             type="submit"
             severity="secondary"
-            label="Submit"
+            :label="$t('button.submit')"
+            v-tooltip.top="$t('button.submit')"
             class="w-full sm:w-56"
           />
         </div>

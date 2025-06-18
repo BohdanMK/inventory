@@ -31,16 +31,41 @@
   },
   "button": {
     "new": "New",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "filter": "Filter",
+    "edit": "Edit",
+    "delete": "Delete",
+    "submit": "Submit"
   },
   "popup": {
-    "create_category": "Create category"
+    "create_category": "Create category",
+    "create_warehouse": "Create warehouse"
   },
   "notification": {
     "success": "Success",
     "error": "Error"
   },
   "error": {
-    "creating_falled": "Creating falled"
+    "creating_falled": "Creating falled",
+    "delete_falled": "Delete falled"
+  },
+  "fields": {
+    "name": "Name",
+    "address": "Address",
+    "contact_person": "Contact person",
+    "contact": "Contact"
+  },
+  "warehouseTable": {
+    "name": "Name",
+    "address": "Address",
+    "contactPerson": "Contact person",
+    "contact": "Contact",
+    "createdAt": "Created at",
+    "noData": "No data available.",
+    "delete_wh_notification":"Are you sure want delete this warehouse?"
+  },
+  "validations": {
+    "name_required": "Name is required.",
+    "nameMaxLength": "Name must be less than {max} characters."
   }
 }

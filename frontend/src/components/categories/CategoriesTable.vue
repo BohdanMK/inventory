@@ -23,7 +23,7 @@
     };
 </script>
 <template>
-       <DataTable :value="categoryStore.categoryList" tableStyle="min-width: 50rem">
+      <DataTable :value="categoryStore.categoryList" tableStyle="min-width: 50rem">
           <Column field="name" header="Name"></Column>
           <Column field="createdAt" header="Created at">
             <template #body="slotProps">

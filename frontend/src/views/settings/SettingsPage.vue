@@ -8,7 +8,7 @@
   import SettingsGenaralTab from '@/components/settings/SettingsGenaralTab.vue';
   import ProductsSettingTab from '@/components/settings/ProductsSettingTab.vue';
   import UsersSettingsTab from '@/components/settings/UsersSettingsTab.vue';
-  import WarehouseTable from '@/components/warehouse/WarehouseTable.vue';
+  import WarehouseList from '@/components/warehouse/WarehouseList.vue';
   import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 
   // state
@@ -79,7 +79,7 @@
         <TabPanel value="3">
           <Suspense>
             <template #default>
-              <WarehouseTable v-if="tabListKey === '3'" />
+              <WarehouseList v-if="tabListKey === '3'" />
             </template>
             <template #fallback>
               <div class="flex h-full w-full items-center justify-center">

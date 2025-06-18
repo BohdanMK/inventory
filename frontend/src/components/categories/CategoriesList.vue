@@ -135,6 +135,7 @@
                 outlined
                 rounded
                 class="mr-2"
+                v-tooltip.top="$t('button.edit')"
                 @click="toggleEditModal(data)"
               />
               <Button
@@ -142,6 +143,7 @@
                 outlined
                 rounded
                 severity="danger"
+                v-tooltip.top="$t('button.delete')"
                 @click="toggleDeleteModal(data._id)"
               />
             </template>
