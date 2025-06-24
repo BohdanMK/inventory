@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import type {  IUserProfile } from '@/interfaces';
 import type { ApiResponse } from '@/types/axiosResponce';
 import { staticEndpoints } from '@/api/endpoints';
-import type { DataImage } from '@/interfaces/index';
+import type { DataFile } from '@/interfaces/index';
 
 export const useProfileStore = defineStore('profileStore', () => {
 

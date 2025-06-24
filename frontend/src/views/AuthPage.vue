@@ -2,23 +2,30 @@
   import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
-  import { useToast } from 'primevue/usetoast';
-  import Toast from 'primevue/toast';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import { z } from 'zod';
   import InputText from 'primevue/inputtext';
   import Password from 'primevue/password';
   import { Form } from '@primevue/forms';
+  import type { FormSubmitEvent } from '@primevue/forms';
   import Button from 'primevue/button';
   import { useAuthStore } from '@/stores/authStore';
 
+  // interface and type
+
+  type LoginFormValues = {
+    email: string;
+    password: string;
+  };
+
   const router = useRouter();
-  const toast = useToast();
+  const toastNotification = useToastNotification();
   const authStore = useAuthStore();
 
   const superAdminLogin = ref<boolean>(false);
   const loadingStatus = ref<boolean>(false);
 
-  const initialValues = ref({
+  const initialValues  = ref<LoginFormValues>({
     password: '',
     email: '',
   });
@@ -38,24 +45,20 @@
     )
   );
 
-  const onFormSubmit = async ({ valid, values }) => {
+  const onFormSubmit = async ({ valid, values }: FormSubmitEvent<Record<string, any>>) => {
     if (!valid) return;
 
     const { success, message, data } = await authStore.login(values.email, values.password, superAdminLogin.value);
     console.log(success);
     if (success) {
-      toast.add({ severity: 'success', summary: message, life: 3000 });
-      localStorage.setItem('token', data.token);
+      toastNotification.showSuccess(message || '')
+
+      localStorage.setItem('token', data.token || '');
       setTimeout(() => {
         router.push('/');
       }, 1000);
     } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Login failed',
-        detail: message,
-        life: 3000,
-      });
+      toastNotification.showError(message || '');
     }
   };
 

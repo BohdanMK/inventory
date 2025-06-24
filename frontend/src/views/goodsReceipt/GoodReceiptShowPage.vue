@@ -3,7 +3,6 @@
   import Toast from 'primevue/toast';
   import { useRouter, useRoute } from 'vue-router';
   import { useGoodsReceiptStore } from '@/stores/goodsReceiptStore';
-  import type { IProductTemplate } from '@/types/product/product';
   import Skeleton from 'primevue/skeleton';
   import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';

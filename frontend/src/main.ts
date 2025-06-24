@@ -14,6 +14,7 @@ import StyleClass from 'primevue/styleclass';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { registerGlobalComponents } from './globalComponents.ts';
 import App from './App.vue';
 
 library.add(fas);
@@ -39,6 +40,7 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(i18nInstance)
+registerGlobalComponents(app);
 app.directive('styleclass', StyleClass);
 app.directive('tooltip', Tooltip);
 registerPermissionDirective(app);
