@@ -67,5 +67,21 @@
   "validations": {
     "name_required": "Name is required.",
     "nameMaxLength": "Name must be less than {max} characters."
+  },
+  "goodsReceipt": {
+    "receiptName": "Goods receipt name",
+    "createdAt": "Created at",
+    "warehouse": "Warehouse",
+    "details": "Details",
+    "productsInReceipt": "Products in receipt",
+    "productName": "Product name",
+    "category": "Category",
+    "status": "Status",
+    "unitPrice": "Price per unit",
+    "count": "Count",
+    "noData": "No data available.",
+    "nameLabel": "Name",
+    "warehouseLabel": "Warehouse",
+    "filterButton": "Filter"
   }
 }

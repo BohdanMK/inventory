@@ -2,9 +2,7 @@
     import { ref } from 'vue';
     import { useWarehouseStore } from '@/stores/warehouseStore';
     import Toolbar from 'primevue/toolbar';
-    import Toast from 'primevue/toast';
     import AddWarehouseItemPopUp from '@/components/warehouse/popup/AddWarehouseItem.vue';
-    import Button from 'primevue/button';
     import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
      //emits + props
@@ -31,7 +29,6 @@
 </script>
 
 <template>
-    <Toast />
     <Toolbar class="mb-6">
         <template #start>
             <TotalResultItem :total="warehouseStore.totalWarehouses" />

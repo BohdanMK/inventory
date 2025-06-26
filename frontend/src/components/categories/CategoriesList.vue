@@ -2,12 +2,10 @@
   import { ref, onMounted, provide } from 'vue';
   import { useCategoryStore } from '@/stores/categoryStore';
   import { useToast } from 'primevue/usetoast';
-  import Toast from 'primevue/toast';
   import type { ICategory } from '@/types/categories/categories';
   import { useAsyncState } from '@/composables/useAsyncState';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
   import Skeleton from 'primevue/skeleton';
-  import Button from 'primevue/button';
   import EditItemPopUp from '@/components/popup/EditItem.vue';
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import CategoriesTable from '@/components/categories/CategoriesTable.vue';

@@ -1,25 +1,20 @@
 <script setup lang="ts">
     import { ref } from 'vue';
     import { useCategoryStore } from '@/stores/categoryStore';
-    import { useToast } from 'primevue/usetoast';
-    import { useI18n } from 'vue-i18n';
+    import { useToastNotification } from '@/composables/useToastNotification';
     import Toolbar from 'primevue/toolbar';
-    import Toast from 'primevue/toast';
     import CreateItemPopUp from '@/components/popup/CreateItem.vue';
     import CategoriesFilter from '@/components/categories/CategoriesFilter.vue';
-    import Button from 'primevue/button';
     import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
      //emits + props
-
-    const { t } = useI18n();
 
     const emit = defineEmits<{
         (e: 'updateData'): void;
     }>();
 
     // state
-    const toast = useToast();
+    const toastNotification = useToastNotification();
     const categoryStore = useCategoryStore();
     const createPopUpVisible = ref<boolean>(false);
 
@@ -41,14 +36,9 @@
         if (success) {
             createPopUpVisible.value = false;
             updateData();
-            toast.add({ severity: t('notification.success'), detail: message, life: 3000 });
+            toastNotification.showSuccess(message || '');
         } else {
-            toast.add({
-            severity: t('notification.error'),
-            summary: t('error.creating_falled'),
-            detail: message,
-            life: 3000,
-            });
+            toastNotification.showError(message || '');
         }
         } catch (error) {
         console.log(error);

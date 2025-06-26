@@ -4,7 +4,6 @@
   import { useWarehouseStore } from '@/stores/warehouseStore';
   import InputText from 'primevue/inputtext';
   import Select from 'primevue/select';
-  import Button from 'primevue/button';
 
   /// emits and props
 
@@ -48,11 +47,11 @@
 <template>
   <div>
     <div class="flex flex-col gap-2">
-      <label for="name">Name</label>
+      <label for="name">{{ $t('goodsReceipt.nameLabel') }}</label>
       <InputText id="name" v-model="goodsReceiptStore.filtersGoodsReceipt.name" aria-describedby="name-help" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="Price">Warehouse</label>
+      <label for="warehouse">{{ $t('goodsReceipt.warehouseLabel') }}</label>
       <Select
         v-model="goodsReceiptStore.filtersGoodsReceipt.warehouse"
         :options="warehouseStore.warehouseListForSelect"
@@ -63,7 +62,7 @@
       />
     </div>
     <div class="mt-3 flex flex-col gap-2">
-      <Button label="Filter" :loading="localLoading" @click="updatateData()" />
+      <Button :label="$t('goodsReceipt.filterButton')" :loading="localLoading" @click="updatateData()" />
     </div>
   </div>
 </template>

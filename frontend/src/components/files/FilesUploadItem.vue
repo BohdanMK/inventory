@@ -5,9 +5,7 @@
   import type { ApiResponse } from '@/types/axiosResponce';
   import { staticEndpoints } from '@/api/endpoints';
   import FileUpload from 'primevue/fileupload';
-  import Button from 'primevue/button';
   import { useToast } from 'primevue/usetoast';
-  import Toast from 'primevue/toast';
 
   interface Props {
     file?: string | undefined;
