@@ -83,5 +83,28 @@
     "nameLabel": "Name",
     "warehouseLabel": "Warehouse",
     "filterButton": "Filter"
+  },
+  "productTemplate": {
+    "name": "Name",
+    "category": "Category",
+    "status": "Status",
+    "filter": "Filter",
+    "delete_confirm_message": "Are you sure want delete this product?",
+    "edit_category": "Edit category"
+  },
+  "table": {
+    "Name": "Name",
+    "created_at": "Created at",
+    "Image": "Image",
+    "Category": "Category",
+    "Status": "Status"
+  },
+  "default": {
+    "no_data_available": "No data available.",
+    "error_loading": "error loading"
+  },
+  "category": {
+    "edit_category":"Edit category",
+    "confirm_delete_category": "Are you sure want delete this category?"
   }
 }

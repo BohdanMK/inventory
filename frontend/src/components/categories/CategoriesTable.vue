@@ -24,8 +24,11 @@
 </script>
 <template>
       <DataTable :value="categoryStore.categoryList" tableStyle="min-width: 50rem">
-          <Column field="name" header="Name"></Column>
-          <Column field="createdAt" header="Created at">
+          <Column field="name"
+            :header="$t('table.name')"></Column>
+          <Column field="createdAt"
+            :header="$t('table.created_at')"
+            >
             <template #body="slotProps">
               {{ formatDataWithTime(slotProps.data.createdAt) }}
             </template>

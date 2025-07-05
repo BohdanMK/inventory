@@ -2,6 +2,7 @@
   import { ref, onMounted, provide } from 'vue';
   import { useCategoryStore } from '@/stores/categoryStore';
   import { useToast } from 'primevue/usetoast';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import type { ICategory } from '@/types/categories/categories';
   import { useAsyncState } from '@/composables/useAsyncState';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
@@ -10,14 +11,15 @@
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import CategoriesTable from '@/components/categories/CategoriesTable.vue';
   import CategoriesHeader from '@/components/categories/CategoriesHeader.vue'
+  import { useI18n } from 'vue-i18n';
 
   // state
   const editData = ref<ICategory | null>(null);
-  const toast = useToast();
+  const toastNotification = useToastNotification();
   const categoryStore = useCategoryStore();
   const asyncState = useAsyncState();
   const deletedItemId = ref<string | number | null>(null);
-
+  const { t } = useI18n();
   const deletePopUpVisible = ref<boolean>(false);
   const editPopUpVisible = ref<boolean>(false);
 
@@ -33,10 +35,10 @@
         asyncState.successLoading();
         categoryStore.setCategoriesPagination(data);
       } else {
-        asyncState.failedLoading(message || 'error loading');
+        asyncState.failedLoading(message || t('default.error_loading'));
       }
     } catch (e) {
-      asyncState.failedLoading(e instanceof Error ? e.message : 'error loading');
+      asyncState.failedLoading(e instanceof Error ? e.message : t('default.error_loading'));
     }
   };
 
@@ -57,19 +59,13 @@
 
   const editCategory = async (dataItem: ICategory): Promise<void> => {
     try {
-      const { success, message, data } = await categoryStore.editCategory(dataItem);
+      const { success, message } = await categoryStore.editCategory(dataItem);
       if (success) {
-        toast.add({ severity: 'success', detail: message, life: 3000 });
+        toastNotification.showSuccess(message || '');
         editPopUpVisible.value = false;
         getList();
       } else {
-        console.log(data, message);
-        toast.add({
-          severity: 'error',
-          summary: 'Creating falled',
-          detail: message,
-          life: 3000,
-        });
+        asyncState.failedLoading(message || t('default.error_loading'));
       }
     } catch (error) {
       console.log(error);
@@ -80,16 +76,11 @@
     try {
       const { success, message } = await categoryStore.deleteCategory(id);
       if (success) {
-        toast.add({ severity: 'success', detail: message, life: 3000 });
+        toastNotification.showSuccess(message || '');
         toggleDeleteModal(null);
         getList();
       } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Delete falled',
-          detail: message,
-          life: 3000,
-        });
+        toastNotification.showError(message || '');
       }
     } catch (error) {
       console.log(error);
@@ -112,13 +103,13 @@
       <EditItemPopUp
         v-model:dialogVisible="editPopUpVisible"
         :data="editData || { _id: '', name: '' }"
-        title="Edit category"
+        :title="$t('category.edit_category')"
         @editData="editCategory"
       />
       <DeleteItemPopUp
         :id="deletedItemId"
         v-model:dialogVisible="deletePopUpVisible"
-        title="Are you sure want delete this category?"
+        :title="$t('category.confirm_delete_category')"
         @deleteItem="deleteItem"
       />
       <Toast />

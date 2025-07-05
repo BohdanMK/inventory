@@ -15,7 +15,7 @@
 
     // actions
 
-     const updateData = () => {
+    const updateData = () => {
         emit('updateData')
     };
 

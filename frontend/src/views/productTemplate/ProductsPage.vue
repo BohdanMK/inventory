@@ -1,12 +1,12 @@
 <template>
   <div>
     <BreadcrumbItem/>
-    <ProductList />
+    <ProductsList />
   </div>
 </template>
 
 <script setup lang="ts">
-  import ProductList from '@/components/products/ProductList.vue';
+  import ProductsList from '@/components/products/ProductsList.vue';
   import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
 </script>
 

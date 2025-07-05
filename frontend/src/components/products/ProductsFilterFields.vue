@@ -34,7 +34,7 @@
 
   const getStatusesList = async (): Promise<void> => {
     try {
-      const { success, message, data } = await statusStore.getStatusList({ all: true });
+      const { success, data } = await statusStore.getStatusList({ all: true });
 
       if (success) {
         statusStore.statusesList = data.data;
@@ -62,11 +62,11 @@
 <template>
   <div>
     <div class="flex flex-col gap-2">
-      <label for="name">Name</label>
+      <label for="name">{{ $t('fields.name') }}</label>
       <InputText id="name" v-model="productTemplateStore.filtersProduct.name" aria-describedby="name-help" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="Price">Category</label>
+      <label for="category">{{ $t('goodsReceipt.category') }}</label>
       <Select
         v-model="productTemplateStore.filtersProduct.category"
         :options="categoryStore.categoryListForSelect"
@@ -77,7 +77,7 @@
       />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="Price">Status</label>
+      <label for="status">{{ $t('goodsReceipt.status') }}</label>
       <Select
         v-model="productTemplateStore.filtersProduct.status"
         :options="statusStore.statusListForSelect"
@@ -88,7 +88,7 @@
       />
     </div>
     <div class="mt-3 flex flex-col gap-2">
-      <Button label="Filter" :loading="localLoading" @click="updatateData()" />
+      <Button :label="$t('button.filter')" :loading="localLoading" @click="updatateData()" />
     </div>
   </div>
 </template>
