@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import Button from 'primevue/button';
+  import { ref } from 'vue';
 
   // props + emits
   interface Props {
@@ -29,20 +28,14 @@
   };
 
   // watch + hooks
-  watch(
-    () => props.emptyStatusFilter,
-    newValue => {
-      console.log('emptyStatusFilter changed to:', newValue);
-      // Додайте логіку, якщо потрібно реагувати на зміну
-    }
-  );
+
 </script>
 
 <template>
   <div class="relative">
     <Button
       id="dropdownButton"
-      v-tooltip.top="'Filter'"
+      :v-tooltip.top="$t('button.Filter')"
       data-dropdown-toggle="dropdown"
       :severity="visible ? 'warn' : ''"
       icon="pi pi-filter"
@@ -52,7 +45,7 @@
     <Button
       v-if="!props.emptyStatusFilter"
       id="dropdownButton"
-      v-tooltip.top="'Reset filter'"
+      :v-tooltip.top="$t('button.Reset_filter')"
       class="ms-2"
       data-dropdown-toggle="dropdown"
       severity="danger"

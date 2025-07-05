@@ -35,7 +35,12 @@
     "filter": "Filter",
     "edit": "Edit",
     "delete": "Delete",
-    "submit": "Submit"
+    "submit": "Submit",
+    "Remove": "Remove",
+    "Save": "Save",
+    "Upload": "Upload",
+    "Reset_filter": "Reset filter",
+    "Filter": "Filter"
   },
   "popup": {
     "create_category": "Create category",
@@ -66,7 +71,12 @@
   },
   "validations": {
     "name_required": "Name is required.",
-    "nameMaxLength": "Name must be less than {max} characters."
+    "nameMaxLength": "Name must be less than {max} characters.",
+    "Minimum_3_characters": "Minimum 3 characters.",
+    "Maximum_8_characters": "Maximum 8 characters.",
+    "Must_have_a_number": "Must have a number.",
+    "Email_is_required": "Email is required.",
+    "Invalid_email_address": "Invalid email address."
   },
   "goodsReceipt": {
     "receiptName": "Goods receipt name",
@@ -83,6 +93,9 @@
     "nameLabel": "Name",
     "warehouseLabel": "Warehouse",
     "filterButton": "Filter"
+  },
+  "product_list": {
+    "Are_you_sure_want_delete_this_product": "Are you sure want delete this product from list?"
   },
   "productTemplate": {
     "name": "Name",
@@ -101,7 +114,8 @@
   },
   "default": {
     "no_data_available": "No data available.",
-    "error_loading": "error loading"
+    "error_loading": "error loading",
+    "error_occurred": "An error occurred while loading data."
   },
   "category": {
     "edit_category":"Edit category",

@@ -13,7 +13,7 @@
   const downloadFile = () => {
     if (!props.filePath) return;
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || ''; // приклад: http://localhost:3000
+    const baseURL = import.meta.env.VITE_API_BASE_URL || '';
     const fullUrl = `${baseURL}/${props.filePath}`;
 
     const link = document.createElement('a');

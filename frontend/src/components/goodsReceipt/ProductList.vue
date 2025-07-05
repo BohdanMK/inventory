@@ -5,7 +5,6 @@
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import Tag from 'primevue/tag';
   import DataView from 'primevue/dataview';
-  import Button from 'primevue/button';
   import InputText from 'primevue/inputtext';
 
   // props + emits
@@ -46,7 +45,7 @@
     <DeleteItemPopUp
       :id="deletedItemId"
       v-model:dialogVisible="deletePopUpVisible"
-      title="Are you sure want delete this product from list?"
+      :title="$t('product_list.Are_you_sure_want_delete_this_product')"
       @deleteItem="deleteItem"
     />
     <DataView :value="goodsReceiptStore.productList" dataKey="_id">
@@ -114,7 +113,7 @@
         </div>
       </template>
       <template #empty>
-        <div class="p-datatable-empty-message">No data available.</div>
+        <div class="p-datatable-empty-message">{{ $t('default.no_data_available') }}</div>
       </template>
     </DataView>
   </div>

@@ -2,15 +2,15 @@
   import { computed, ref } from 'vue';
   import { useProfileStore } from '@/stores/userProfileStore';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
-  import { useToast } from 'primevue/usetoast';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import Toast from 'primevue/toast';
   import { z } from 'zod';
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
   import Password from 'primevue/password';
   import { Form } from '@primevue/forms';
-  import Button from 'primevue/button';
   import { useAuthStore } from '@/stores/authStore';
+  import { useI18n } from 'vue-i18n';
 
   // props+emits
   interface Props {
@@ -25,8 +25,8 @@
   // state
   const authStore = useAuthStore();
   const profileStore = useProfileStore();
-
-  const toast = useToast();
+  const toastNotification = useToastNotification();
+  const { t } = useI18n();
 
   const initialValues = ref({
     password: '',
@@ -38,12 +38,12 @@
       z.object({
         password: z
           .string()
-          .min(3, { message: 'Minimum 3 characters.' })
-          .max(8, { message: 'Maximum 8 characters.' })
+          .min(3, { message: t('validations.Minimum_3_characters') })
+          .max(8, { message: t('validations.Maximum_8_characters') })
           .refine(value => /d/.test(value), {
-            message: 'Must have a number.',
+            message: t('validations.Must_have_a_number'),
           }),
-        email: z.string().min(1, { message: 'Email is required.' }).email({ message: 'Invalid email address.' }),
+        email: z.string().min(1, { message: t('validations.Email_is_required') }).email({ message: t('validations.Invalid_email_address') }),
       })
     )
   );
@@ -55,20 +55,14 @@
     const { success, message } = await authStore.register(values.email, values.password, isSuperAdmin.value);
 
     if (success) {
-      toast.add({ severity: 'success', detail: message, life: 3000 });
-
+      toastNotification.showSuccess(message || '');
       setTimeout(() => {
         profileStore.createSuperAdmin = false;
         profileStore.createUserPopUp = false;
         emit('updateData');
       }, 1000);
     } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Creating falled',
-        detail: message,
-        life: 3000,
-      });
+      toastNotification.showError(message || '');
     }
 
     setTimeout(() => {

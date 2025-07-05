@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { ref, onMounted, provide } from 'vue';
   import { useCategoryStore } from '@/stores/categoryStore';
-  import { useToast } from 'primevue/usetoast';
   import { useToastNotification } from '@/composables/useToastNotification';
   import type { ICategory } from '@/types/categories/categories';
   import { useAsyncState } from '@/composables/useAsyncState';

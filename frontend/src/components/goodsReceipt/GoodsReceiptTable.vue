@@ -57,7 +57,6 @@
         </template>
         </Column>
 
-        <!-- Розгорнутий шаблон -->
         <template #expansion="slotProps">
         <div class="p-3">
             <h4>{{ $t('goodsReceipt.productsInReceipt') }} "{{ slotProps.data.name }}"</h4>

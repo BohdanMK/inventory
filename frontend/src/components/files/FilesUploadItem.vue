@@ -4,8 +4,9 @@
   import type { DataFile } from '@/interfaces/index';
   import type { ApiResponse } from '@/types/axiosResponce';
   import { staticEndpoints } from '@/api/endpoints';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import FileUpload from 'primevue/fileupload';
-  import { useToast } from 'primevue/usetoast';
+  import { useI18n } from 'vue-i18n';
 
   interface Props {
     file?: string | undefined;
@@ -30,12 +31,12 @@
   }>();
 
   // state
-  const toast = useToast();
-
+  const { t } = useI18n();
   const src = ref<string | null>(null);
   const fileName = ref<string | null>(null);
   const selectedFile = ref<File | null>(null);
   const visibleSaveBtn = ref<boolean>(true);
+  const toastNotification = useToastNotification();
 
   const onFileSelect = (event: any) => {
     const file = event.files?.[0];
@@ -72,14 +73,14 @@
       };
       data.filePath = response.data?.filePath || null;
       data.fileName = response.data?.fileName || null;
+      toastNotification.showSuccess(response.message || '');
 
-      toast.add({ severity: 'success', detail: response.message, life: 3000 });
       emit('updateData', data);
       visibleSaveBtn.value = false;
 
-      // TODO: можеш зробити emit або оновити store / props / щось інше тут
+
     } catch (error) {
-      console.error('Помилка при завантаженні зображення:', error);
+      console.error(t('default.error_occurred'), error);
     }
   };
 
@@ -108,7 +109,7 @@
       :multiple="false"
       :accept="acceptType"
       class="p-button-outlined w-full"
-      chooseLabel="Upload"
+      :chooseLabel="t('button.Upload')"
       @select="onFileSelect"
     />
     <div v-if="src || file" class="flex w-full flex-col items-center gap-2">
@@ -125,8 +126,8 @@
         {{ fileName }}
       </span>
       <div v-if="visibleSaveBtn" class="flex gap-2">
-        <Button label="Remove" severity="danger" @click="remove" />
-        <Button label="Save" severity="primary" @click="onUpload" />
+        <Button :label="$t('button.Remove')" severity="danger" @click="remove" />
+        <Button :label="$t('button.Save')" severity="primary" @click="onUpload" />
       </div>
     </div>
   </div>
