@@ -11,6 +11,7 @@
   import { Form } from '@primevue/forms';
   import { useAuthStore } from '@/stores/authStore';
   import { useI18n } from 'vue-i18n';
+  import type { FormSubmitEvent } from '@primevue/forms';
 
   // props+emits
   interface Props {
@@ -49,7 +50,7 @@
   );
 
   // actions
-  const onFormSubmit = async ({ valid, values }) => {
+  const onFormSubmit = async ({ valid, values }: FormSubmitEvent<Record<string, any>>) => {
     if (!valid) return;
     profileStore.loadingCreating = true;
     const { success, message } = await authStore.register(values.email, values.password, isSuperAdmin.value);
@@ -76,7 +77,6 @@
     return props.role === 'super_admin';
   });
 
-  // обгортаємо видимість у computed із setter/getter
   const dialogVisible = computed<boolean>({
     get() {
       return props.role === 'super_admin' ? profileStore.createSuperAdmin : profileStore.createUserPopUp;
@@ -94,7 +94,7 @@
 <template>
   <div class="card flex justify-center">
     <Toast />
-    <Dialog v-model:visible="dialogVisible" modal header="Create user" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="dialogVisible" modal :header="$t('user.Create_user')" :style="{ width: '25rem' }">
       <Form
         v-slot="$form"
         :resolver="resolver"
@@ -104,13 +104,13 @@
       >
         {{ props.role }}
         <div class="flex flex-col gap-1">
-          <InputText name="email" type="text" placeholder="Email" fluid />
+          <InputText name="email" type="text" :placeholder="$t('fields.Email')" fluid />
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
             $form.email.error?.message
           }}</Message>
         </div>
         <div class="flex flex-col gap-1">
-          <Password name="password" placeholder="Password" :feedback="false" fluid toggleMask />
+          <Password name="password" :placeholder="$t('fields.Password')" :feedback="false" fluid toggleMask />
           <template v-if="$form.password?.invalid">
             <Message
               v-for="(error, index) of $form.password.errors"
@@ -122,7 +122,7 @@
             >
           </template>
         </div>
-        <Button type="submit" severity="secondary" label="Submit" />
+        <Button type="submit" severity="secondary" :placeholder="$t('fields.Submit')" />
       </Form>
     </Dialog>
   </div>

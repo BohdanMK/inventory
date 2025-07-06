@@ -39,7 +39,7 @@
             </template>
           </Column>
           <template #empty>
-            <div class="p-datatable-empty-message">No data available.</div>
+            <div class="p-datatable-empty-message"> {{ $t('default.no_data_available') }}</div>
           </template>
         </DataTable>
         <Paginator

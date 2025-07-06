@@ -9,6 +9,7 @@ import type { IPaginatorData } from '@/types/index';
 import toSelectOptions from '@/helpers/selectData';
 import { defaultPaginatedData } from '@/helpers/defaultResponses';
 
+
 export const useWarehouseStore = defineStore('warehouseStore', () => {
   // state
   const warehouseList = ref<IWarehouse[]>([]);

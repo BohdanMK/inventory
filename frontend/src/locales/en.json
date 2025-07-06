@@ -40,7 +40,9 @@
     "Save": "Save",
     "Upload": "Upload",
     "Reset_filter": "Reset filter",
-    "Filter": "Filter"
+    "Filter": "Filter",
+    "no": "No",
+    "yes": "Yes"
   },
   "popup": {
     "create_category": "Create category",
@@ -58,7 +60,12 @@
     "name": "Name",
     "address": "Address",
     "contact_person": "Contact person",
-    "contact": "Contact"
+    "contact": "Contact",
+    "Email": "Email",
+    "Password": "Password",
+    "Submit": "Submit",
+    "Username": "Username",
+    "Select_role": "Select role"
   },
   "warehouseTable": {
     "name": "Name",
@@ -76,7 +83,8 @@
     "Maximum_8_characters": "Maximum 8 characters.",
     "Must_have_a_number": "Must have a number.",
     "Email_is_required": "Email is required.",
-    "Invalid_email_address": "Invalid email address."
+    "Invalid_email_address": "Invalid email address.",
+    "Username_is_required": "Username is required."
   },
   "goodsReceipt": {
     "receiptName": "Goods receipt name",
@@ -115,10 +123,16 @@
   "default": {
     "no_data_available": "No data available.",
     "error_loading": "error loading",
-    "error_occurred": "An error occurred while loading data."
+    "error_occurred": "An error occurred while loading data.",
+    "Confirm": "Confirm"
   },
   "category": {
     "edit_category":"Edit category",
     "confirm_delete_category": "Are you sure want delete this category?"
+  },
+  "user": {
+    "Are_you_sure_you_want_to_delete_this_user": "Are you sure you want to delete this user?",
+    "Create_user": "Create user",
+    "Edit_user": "Edit user"
   }
 }

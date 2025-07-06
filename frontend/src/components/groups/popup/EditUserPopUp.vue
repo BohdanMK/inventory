@@ -7,10 +7,10 @@
   import Toast from 'primevue/toast';
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
-  import Button from 'primevue/button';
   import Select from 'primevue/select';
   import Message from 'primevue/message';
-
+  import { useI18n } from 'vue-i18n';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import { useProfileStore } from '@/stores/userProfileStore';
 
   // Props + Emits
@@ -33,6 +33,8 @@
   const visible = ref<boolean>(false);
   const profileStore = useProfileStore();
   const toast = useToast();
+  const { t } = useI18n();
+  const toastNotification = useToastNotification();
 
   const roles = ref([
     { name: 'Super Admin', code: 'super_admin' },
@@ -48,8 +50,8 @@
   const resolver = ref(
     zodResolver(
       z.object({
-        email: z.string().min(1, { message: 'Email is required.' }).email({ message: 'Invalid email address.' }),
-        username: z.string().min(1, { message: 'Username is required.' }),
+        email: z.string().min(1, { message:  t('validations.Email_is_required') }).email({ message: t('validations.Invalid_email_address') }),
+        username: z.string().min(1, { message: t('validations.Username_is_required') }),
         role: z.object({
           name: z.string(),
           code: z.string(),
@@ -71,19 +73,14 @@
     });
 
     if (success) {
-      toast.add({ severity: 'success', detail: message, life: 3000 });
+      toastNotification.showSuccess(message || '');
 
       setTimeout(() => {
         visible.value = false;
         emit('updateData');
       }, 10);
     } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Update failed',
-        detail: message,
-        life: 3000,
-      });
+      toastNotification.showError(message || '');
     }
 
     profileStore.loadingCreating = false;
@@ -116,7 +113,7 @@
   <div class="inline">
     <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="visible = !visible" />
     <Toast />
-    <Dialog v-model:visible="visible" modal header="Edit user" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="visible" modal :header="$t('user.Edit_user')" :style="{ width: '25rem' }">
       <Form
         v-slot="$form"
         :resolver="resolver"
@@ -125,24 +122,24 @@
         @submit="onFormSubmit"
       >
         <div class="flex flex-col gap-1">
-          <InputText name="email" type="text" placeholder="Email" />
+          <InputText name="email" type="text" :placeholder="$t('fields.Email')" />
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
             {{ $form.email.error?.message }}
           </Message>
         </div>
 
         <div class="flex flex-col gap-1">
-          <InputText name="username" type="text" placeholder="Username" />
+          <InputText name="username" type="text" :placeholder="$t('fields.Username')" />
           <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">
             {{ $form.username.error?.message }}
           </Message>
         </div>
 
         <div class="flex flex-col gap-1">
-          <Select name="role" :options="roles" optionLabel="name" placeholder="Select role" class="w-full" />
+          <Select name="role" :options="roles" optionLabel="name" :placeholder="$t('fields.Select_role')" class="w-full" />
         </div>
 
-        <Button type="submit" severity="secondary" label="Submit" :loading="profileStore.loadingCreating" />
+        <Button type="submit" severity="secondary" :label="$t('button.submit')" :loading="profileStore.loadingCreating" />
       </Form>
     </Dialog>
   </div>

@@ -4,7 +4,7 @@ import uk from '@/locales/uk.json'
 
 export const i18nInstance = createI18n({
   legacy: false,
-  locale: 'en',
+  locale: 'uk',
   fallbackLocale: 'uk',
   globalInjection: true,
   messages: {

@@ -1,20 +1,14 @@
 <script setup lang="ts">
   import { onMounted, computed } from 'vue';
   import { useProfileStore } from '@/stores/userProfileStore';
-  import { formatDataWithTime } from '@/composables/formatDate.ts';
   import { useAsyncState } from '@/composables/useAsyncState';
   import ErrorBoundary from '@/components/error/ErrorBoundary.vue';
   import Skeleton from 'primevue/skeleton';
-  import setFullImgPath from '@/helpers/fullPathImg.ts';
-  import Toolbar from 'primevue/toolbar';
-  import Button from 'primevue/button';
-  import DataTable from 'primevue/datatable';
-  import Column from 'primevue/column';
   import CreateUserPopUp from '@/components/groups/popup/CreateUserPopUp.vue';
   import DeleteUserPopUp from '@/components/groups/popup/DeleteUserPopUp.vue';
   import EditUserPopUp from '@/components/groups/popup/EditUserPopUp.vue';
-  import TotalResultItem from '@/components/ui/TotalResultItem.vue';
-
+  import UsersTable from '@/components/groups/UsersTable.vue';
+  import UsersHeader from '@/components/groups/UsersHeader.vue';
 
 
   interface Props {
@@ -77,61 +71,21 @@
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="fetchUsers" />
     <div v-else class="card">
-      <Toolbar class="mb-6">
-        <template #start>
-          <TotalResultItem :total="usersList.length" />
-        </template>
-        <template #end>
-          <Button label="New User" icon="pi pi-plus" class="mr-2" @click="toggleModal()" />
-          <Button icon="pi pi-refresh" rounded raised @click="fetchUsers()" />
-        </template>
-      </Toolbar>
+      <UsersHeader
+        :length="usersList.length"
+        @toggleModal="toggleModal()"
+        @reloadList="fetchUsers()"
+      />
       <CreateUserPopUp :role="props.role" @updateData="fetchUsers()" />
-      <DataTable
+      <UsersTable
+        :role="role"
         v-if="!asyncState.loadingStatus.value"
-        :value="usersList"
-        paginator
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 50]"
-        tableStyle="min-width: 50rem"
       >
-        <Column field="username" header="Username">
-          <template #body="slotProps">
-            {{ slotProps.data.username || 'Default' }}
-          </template>
-        </Column>
-        <Column header="Image" class="text-center">
-          <template #body="slotProps">
-            <img
-              v-if="slotProps.data.avatar"
-              :src="setFullImgPath(slotProps.data.avatarFullPath)"
-              :alt="slotProps.data.avatar"
-              class="w-24 rounded"
-            />
-            <i v-else class="pi pi-user-minus mx-auto text-2xl"></i>
-          </template>
-        </Column>
-        <Column field="email" header="Email">
-          <template #body="slotProps">
-            {{ slotProps.data.email }}
-          </template>
-        </Column>
-        <Column field="role" header="Role"></Column>
-        <Column field="createdAt" header="Created At">
-          <template #body="slotProps">
-            {{ formatDataWithTime(slotProps.data.createdAt) }}
-          </template>
-        </Column>
-        <Column :exportable="false" style="min-width: 12rem" class="text-end">
-          <template #body="slotProps">
-            <EditUserPopUp :id="slotProps.data._id" :data="slotProps.data" @updateData="() => emit('forceReload')" />
-            <DeleteUserPopUp :id="slotProps.data._id" @updateData="fetchUsers()" />
-          </template>
-        </Column>
-        <template #empty>
-          <div class="p-datatable-empty-message">No data available.</div>
+        <template #actions="{ data }">
+            <EditUserPopUp :id="data._id" :data="data" @updateData="() => emit('forceReload')" />
+            <DeleteUserPopUp :id="data._id" @updateData="fetchUsers()" />
         </template>
-      </DataTable>
+      </UsersTable>
       <Skeleton v-else width="100%" height="60vh" />
     </div>
   </div>

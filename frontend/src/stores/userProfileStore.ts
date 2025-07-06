@@ -2,7 +2,7 @@ import axiosInstance from '@/api/axiosInstance';
 import { ref, computed, reactive } from 'vue';
 import { defineStore } from 'pinia'
 import type {  IUserProfile } from '@/interfaces';
-import type { ApiResponse } from '@/types/axiosResponce';
+import type { ApiResponse , ApiResponsePaginated } from '@/types/axiosResponce';
 import { staticEndpoints } from '@/api/endpoints';
 import type { DataFile } from '@/interfaces/index';
 
@@ -60,13 +60,13 @@ export const useProfileStore = defineStore('profileStore', () => {
         [key: string]: string | number;
     }
 
-    const fetchUsersList = async (params?: UsersQuery):Promise<ApiResponse<IUserProfile[]>> => {
+    const fetchUsersList = async (params?: UsersQuery):Promise<ApiResponsePaginated<IUserProfile[]>> => {
         loadingUsers.value = true;
 
         const url = staticEndpoints.user.getUsers;
 
         try {
-            const response: ApiResponse<IUserProfile[]> = await axiosInstance.get(url, { params }); // передаєш params сюди
+            const response: ApiResponsePaginated<IUserProfile[]> = await axiosInstance.get(url, { params }); // передаєш params сюди
             if (response.success === false) {
                 return { success: false, message: response.message, data: response.data };
             }
@@ -169,7 +169,7 @@ export const useProfileStore = defineStore('profileStore', () => {
         }
     }
 
-    const updateProfileAvatar = async (data: DataImage):Promise<ApiResponse<IUserProfile>> => {
+    const updateProfileAvatar = async (data: DataFile):Promise<ApiResponse<IUserProfile>> => {
         const url = staticEndpoints.user.updateProfileAvatar;
 
         try {

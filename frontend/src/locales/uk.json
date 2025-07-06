@@ -4,29 +4,135 @@
   "breadcrumbs": {
     "home": "Головна",
     "groups": "Групи",
-    "goodsReceiptList": "Список приходів",
-    "goodsReceiptPage": "Сторінка приходу",
-    "goodsReceiptAdd": "Додати прихід",
+    "goodsReceiptList": "Список надходжень",
+    "goodsReceiptPage": "Сторінка надходження",
+    "goodsReceiptAdd": "Додати надходження",
     "productsTemplates": "Список шаблонів",
     "productsTemplatePage": "Сторінка шаблону",
-    "stockList": "Список товарів",
+    "stockList": "Список складу",
     "stockActivityList": "Список активностей",
     "stockActivityAdd": "Додати активність",
     "stockActivityShow": "Переглянути активність",
     "settings": "Налаштування"
   },
   "sidebar": {
-    "dashboard": "Панель управління",
-    "goodsReceipt": "Накладні",
+    "dashboard": "Панель",
+    "goodsReceipt": "Надходження",
     "stockActivity": "Активність складу",
     "stock": "Склад",
     "products": "Продукти",
     "groups": "Групи",
     "settings": "Налаштування",
     "logOut": "Вийти",
-    "darkMode": "Темний режим",
-    "lightMode": "Світлий режим",
-    "totalTickets": "Всього квитків, призначених користувачу",
-    "userSuccessfullyLogout": "Користувач успішно вийшов"
+    "darkMode": "Темна тема",
+    "lightMode": "Світла тема",
+    "totalTickets": "Загальна кількість завдань користувача",
+    "userSuccessfullyLogout": "Користувача успішно виведено з системи"
+  },
+  "button": {
+    "new": "Новий",
+    "refresh": "Оновити",
+    "filter": "Фільтр",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "submit": "Надіслати",
+    "Remove": "Видалити",
+    "Save": "Зберегти",
+    "Upload": "Завантажити",
+    "Reset_filter": "Скинути фільтр",
+    "Filter": "Фільтрувати",
+    "no": "Ні",
+    "yes": "Так"
+  },
+  "popup": {
+    "create_category": "Створити категорію",
+    "create_warehouse": "Створити склад"
+  },
+  "notification": {
+    "success": "Успішно",
+    "error": "Помилка"
+  },
+  "error": {
+    "creating_falled": "Помилка створення",
+    "delete_falled": "Помилка видалення"
+  },
+  "fields": {
+    "name": "Назва",
+    "address": "Адреса",
+    "contact_person": "Контактна особа",
+    "contact": "Контакт",
+    "Email": "Електронна пошта",
+    "Password": "Пароль",
+    "Submit": "Надіслати",
+    "Username": "Ім’я користувача",
+    "Select_role": "Оберіть роль"
+  },
+  "warehouseTable": {
+    "name": "Назва",
+    "address": "Адреса",
+    "contactPerson": "Контактна особа",
+    "contact": "Контакт",
+    "createdAt": "Дата створення",
+    "noData": "Дані відсутні.",
+    "delete_wh_notification": "Ви впевнені, що хочете видалити цей склад?"
+  },
+  "validations": {
+    "name_required": "Ім’я є обов’язковим.",
+    "nameMaxLength": "Ім’я повинно бути менше ніж {max} символів.",
+    "Minimum_3_characters": "Мінімум 3 символи.",
+    "Maximum_8_characters": "Максимум 8 символів.",
+    "Must_have_a_number": "Має містити цифру.",
+    "Email_is_required": "Електронна пошта є обов’язковою.",
+    "Invalid_email_address": "Недійсна електронна адреса.",
+    "Username_is_required": "Ім’я користувача є обов’язковим."
+  },
+  "goodsReceipt": {
+    "receiptName": "Назва надходження",
+    "createdAt": "Дата створення",
+    "warehouse": "Склад",
+    "details": "Деталі",
+    "productsInReceipt": "Продукти в надходженні",
+    "productName": "Назва продукту",
+    "category": "Категорія",
+    "status": "Статус",
+    "unitPrice": "Ціна за одиницю",
+    "count": "Кількість",
+    "noData": "Дані відсутні.",
+    "nameLabel": "Назва",
+    "warehouseLabel": "Склад",
+    "filterButton": "Фільтр"
+  },
+  "product_list": {
+    "Are_you_sure_want_delete_this_product": "Ви впевнені, що хочете видалити цей продукт зі списку?"
+  },
+  "productTemplate": {
+    "name": "Назва",
+    "category": "Категорія",
+    "status": "Статус",
+    "filter": "Фільтр",
+    "delete_confirm_message": "Ви впевнені, що хочете видалити цей продукт?",
+    "edit_category": "Редагувати категорію"
+  },
+  "table": {
+    "Name": "Назва",
+    "created_at": "Дата створення",
+    "Image": "Зображення",
+    "Category": "Категорія",
+    "Status": "Статус"
+  },
+  "default": {
+    "no_data_available": "Дані відсутні.",
+    "error_loading": "помилка завантаження",
+    "error_occurred": "Сталася помилка під час завантаження даних.",
+    "Confirm": "Підтвердити"
+  },
+  "category": {
+    "edit_category": "Редагувати категорію",
+    "confirm_delete_category": "Ви впевнені, що хочете видалити цю категорію?"
+  },
+  "user": {
+    "Are_you_sure_you_want_to_delete_this_user": "Ви впевнені, що хочете видалити цього користувача?",
+    "Create_user": "Створити користувача",
+    "Edit_user": "Редагувати користувача"
   }
 }
