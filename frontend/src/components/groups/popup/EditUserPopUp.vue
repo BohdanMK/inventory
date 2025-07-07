@@ -3,7 +3,6 @@
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { z } from 'zod';
   import { Form } from '@primevue/forms';
-  import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
@@ -32,7 +31,6 @@
   // State
   const visible = ref<boolean>(false);
   const profileStore = useProfileStore();
-  const toast = useToast();
   const { t } = useI18n();
   const toastNotification = useToastNotification();
 

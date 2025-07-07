@@ -65,7 +65,9 @@
     "Password": "Password",
     "Submit": "Submit",
     "Username": "Username",
-    "Select_role": "Select role"
+    "Select_role": "Select role",
+    "Select_category": "Select a category",
+    "Select_status": "Select a status"
   },
   "warehouseTable": {
     "name": "Name",
@@ -84,7 +86,9 @@
     "Must_have_a_number": "Must have a number.",
     "Email_is_required": "Email is required.",
     "Invalid_email_address": "Invalid email address.",
-    "Username_is_required": "Username is required."
+    "Username_is_required": "Username is required.",
+    "category_is_required": "Category is required.",
+    "status_is_required": "Status is required."
   },
   "goodsReceipt": {
     "receiptName": "Goods receipt name",

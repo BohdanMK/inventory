@@ -5,8 +5,8 @@
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
   import { Form } from '@primevue/forms';
-  import Button from 'primevue/button';
   import type { FormSubmitEvent } from '@primevue/forms';
+  import { useI18n } from 'vue-i18n';
 
   // props+emits
   interface Props {
@@ -25,6 +25,7 @@
     name: string;
   }
 
+  const { t } = useI18n();
   const initialValues = ref<IFormData>({
     name: '',
   });
@@ -34,8 +35,8 @@
       z.object({
         name: z
           .string()
-          .min(1, { message: 'Name is required.' })
-          .max(50, { message: 'Name must be less than 50 characters.' }),
+          .min(1, { message: t('validations.name_required') })
+          .max(50, { message: t('validations.nameMaxLength', { max: 50 }) }),
       })
     )
   );
@@ -84,7 +85,7 @@
             $form.name.error?.message
           }}</Message>
         </div>
-        <Button :loading="createLoading" type="submit" severity="secondary" label="Submit" />
+        <Button :loading="createLoading" type="submit" severity="secondary" :label="$t('button.submit')" />
       </Form>
     </Dialog>
   </div>

@@ -62,8 +62,8 @@
       </div>
     </div>
     <template #footer>
-      <Button label="No" icon="pi pi-times" text @click="closeModal()" />
-      <Button label="Yes" icon="pi pi-check" text :loading="localLoading" @click="deleteUser()" />
+      <Button :label="$t('button.no')" icon="pi pi-times" text @click="closeModal()" />
+      <Button :label="$t('button.yes')" icon="pi pi-check" text :loading="localLoading" @click="deleteUser()" />
     </template>
   </Dialog>
 </template>

@@ -3,8 +3,8 @@
   import { z } from 'zod';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { Form } from '@primevue/forms';
-  import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import { useCategoryStore } from '@/stores/categoryStore';
   import { useStatusStore } from '@/stores/statusStore';
   import { useProductTemplateStore } from '@/stores/productTemplateStore';
@@ -13,9 +13,10 @@
   import type { FormSubmitEvent } from '@primevue/forms';
   import Dialog from 'primevue/dialog';
   import InputText from 'primevue/inputtext';
-  import Button from 'primevue/button';
   import FilesUploadItem from '@/components/files/FilesUploadItem.vue';
   import Select from 'primevue/select';
+  import { useI18n } from 'vue-i18n';
+
 
   //local types
 
@@ -35,11 +36,11 @@
   }>();
 
   // state
-  const toast = useToast();
+  const { t } = useI18n();
+  const toastNotification = useToastNotification();
   const categoryStore = useCategoryStore();
   const statusStore = useStatusStore();
   const productTemplateStore = useProductTemplateStore();
-  const selectedCategory = ref<string | null>(null);
   const localLoadingCreate = ref<boolean>(false);
 
   const initialValues = ref<IProductTemplate>({
@@ -55,10 +56,10 @@
       z.object({
         name: z
           .string()
-          .min(1, { message: 'Name is required.' })
-          .max(50, { message: 'Name must be less than 50 characters.' }),
-        category: z.string().min(1, { message: 'Category is required.' }),
-        status: z.string().min(1, { message: 'Status is required.' }),
+          .min(1, {message: t('validations.name_required') })
+          .max(50, { message: t('validations.nameMaxLength', { max: 50 }) }),
+        category: z.string().min(1, { message: t('validations.category_is_required') }),
+        status: z.string().min(1, { message: t('validations.status_is_required') }),
       })
     )
   );
@@ -91,12 +92,10 @@
         imagePath: initialValues.value.imagePath,
       };
       await createProductTemplate(payload as IProductTemplate);
-      console.log('SUBMIT PAYLOAD:', payload);
     }
   };
 
   const updateProductImg = async (data: DataFile) => {
-    console.log(data);
     initialValues.value.image = data.fileName;
     initialValues.value.imagePath = data.filePath;
   };
@@ -104,19 +103,15 @@
   const createProductTemplate = async (productData: IProductTemplate) => {
     localLoadingCreate.value = true;
     try {
-      const { success, message, data } = await productTemplateStore.createProductTemplate(productData);
+      const { success, message } = await productTemplateStore.createProductTemplate(productData);
 
       if (success) {
-        toast.add({ severity: 'success', detail: message, life: 3000 });
+        toastNotification.showSuccess(message || '');
+
         emit('updateProducts');
         emit('update:dialogVisible', false);
       } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Creating falled',
-          detail: message,
-          life: 3000,
-        });
+        toastNotification.showError(message || '');
       }
     } catch (err) {
       console.log(err);
@@ -145,37 +140,63 @@
 </script>
 
 <template>
-  <Dialog v-model:visible="modelValue" :style="{ width: '550px' }" header="Create product" modal>
+  <Dialog
+    v-model:visible="modelValue"
+    :style="{ width: '550px' }"
+    :header="t('user.Create_user')" 
+    modal
+  >
     <Toast />
-    <Form v-slot="$form" :initialValues :resolver class="grid w-full gap-4 lg:grid-cols-1" @submit="onFormSubmit">
+    <Form
+      v-slot="$form"
+      :initialValues
+      :resolver
+      class="grid w-full gap-4 lg:grid-cols-1"
+      @submit="onFormSubmit"
+    >
       <div class="flex items-center justify-center gap-4">
         <div>
           <FilesUploadItem :saveBtn="false" @updateData="updateProductImg" />
           <input type="hidden" name="image" :value="initialValues.image ?? ''" />
           <input type="hidden" name="imagePath" :value="initialValues.imagePath ?? ''" />
-          <Message v-if="$form.image?.invalid" severity="error" size="small" variant="simple">{{
-            $form.image.error?.message
-          }}</Message>
+          <Message
+            v-if="$form.image?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.image.error?.message }}
+          </Message>
         </div>
+
         <div class="flex flex-col items-center justify-center gap-0">
+          <!-- Name -->
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="name" type="text" placeholder="*Name" class="w-full sm:w-56" />
+            <InputText
+              name="name"
+              type="text"
+              :placeholder="`*${t('fields.name')}`"
+              class="w-full sm:w-56"
+            />
             <Message
               v-if="$form.name?.invalid"
               severity="error"
               class="absolute bottom-0 left-0 text-[red]"
               size="small"
               variant="simple"
-              >{{ $form.name.error?.message }}</Message
             >
+              {{ $form.name.error?.message }}
+            </Message>
           </div>
+
+          <!-- Category -->
           <div class="form-group relative pb-[20px]">
             <Select
               name="category"
               :options="categoryStore.categoryListForSelect"
               optionLabel="name"
               optionValue="code"
-              placeholder="*Select a Category"
+              :placeholder="`*${t('productTemplate.category')}`"
               class="w-full md:w-56"
             />
             <Message
@@ -184,16 +205,19 @@
               class="absolute bottom-0 left-0 text-[14px] text-[red]"
               size="small"
               variant="simple"
-              >{{ $form.category.error?.message }}</Message
             >
+              {{ $form.category.error?.message }}
+            </Message>
           </div>
+
+          <!-- Status -->
           <div class="form-group relative pb-[20px]">
             <Select
               name="status"
               :options="statusStore.statusListForSelect"
               optionLabel="name"
               optionValue="code"
-              placeholder="*Select a Status"
+              :placeholder="`*${t('productTemplate.status')}`"
               class="w-full md:w-56"
             />
             <Message
@@ -202,14 +226,17 @@
               class="absolute bottom-0 left-0 text-[14px] text-[red]"
               size="small"
               variant="simple"
-              >{{ $form.status.error?.message }}</Message
             >
+              {{ $form.status.error?.message }}
+            </Message>
           </div>
+
+          <!-- Submit button -->
           <Button
             :loading="localLoadingCreate"
             type="submit"
             severity="secondary"
-            label="Submit"
+            :label="t('button.submit')"
             class="w-full sm:w-56"
           />
         </div>
@@ -217,5 +244,6 @@
     </Form>
   </Dialog>
 </template>
+
 
 <style scoped></style>
