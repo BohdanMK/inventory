@@ -24,19 +24,19 @@
       <TabList>
         <Tab value="0">
           <i class="pi pi-cog"></i>
-          General Settings
+          {{ $t('settings.general_settings') }}
         </Tab>
         <Tab value="1">
           <i class="pi pi-user"></i>
-          Users Settings
+          {{ $t('settings.users_settings') }}
         </Tab>
         <Tab value="2">
           <i class="pi pi-barcode"></i>
-          Products Settings
+          {{ $t('settings.products_settings') }}
         </Tab>
         <Tab value="3">
           <i class="pi pi-barcode"></i>
-          Warehouses Settings
+          {{ $t('settings.warehouses_settings') }}
         </Tab>
       </TabList>
       <TabPanels>

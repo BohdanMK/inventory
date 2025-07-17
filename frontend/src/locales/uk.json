@@ -9,24 +9,24 @@
     "goodsReceiptAdd": "Додати надходження",
     "productsTemplates": "Список шаблонів",
     "productsTemplatePage": "Сторінка шаблону",
-    "stockList": "Список складу",
+    "stockList": "Список залишків",
     "stockActivityList": "Список активностей",
     "stockActivityAdd": "Додати активність",
-    "stockActivityShow": "Переглянути активність",
+    "stockActivityShow": "Перегляд активності",
     "settings": "Налаштування"
   },
   "sidebar": {
-    "dashboard": "Панель",
-    "goodsReceipt": "Надходження",
+    "dashboard": "Панель керування",
+    "goodsReceipt": "Надходження товарів",
     "stockActivity": "Активність складу",
-    "stock": "Склад",
+    "stock": "Залишки",
     "products": "Продукти",
     "groups": "Групи",
     "settings": "Налаштування",
     "logOut": "Вийти",
     "darkMode": "Темна тема",
     "lightMode": "Світла тема",
-    "totalTickets": "Загальна кількість завдань користувача",
+    "totalTickets": "Загальна кількість заявок, призначених користувачу",
     "userSuccessfullyLogout": "Користувача успішно виведено з системи"
   },
   "button": {
@@ -46,15 +46,17 @@
   },
   "popup": {
     "create_category": "Створити категорію",
-    "create_warehouse": "Створити склад"
+    "edit_warehouse": "Редагувати склад",
+    "create_status": "Створити статус",
+    "edit_status": "Редагувати статус"
   },
   "notification": {
     "success": "Успішно",
     "error": "Помилка"
   },
   "error": {
-    "creating_falled": "Помилка створення",
-    "delete_falled": "Помилка видалення"
+    "creating_falled": "Не вдалося створити",
+    "delete_falled": "Не вдалося видалити"
   },
   "fields": {
     "name": "Назва",
@@ -65,30 +67,34 @@
     "Password": "Пароль",
     "Submit": "Надіслати",
     "Username": "Ім’я користувача",
-    "Select_role": "Оберіть роль"
+    "Select_role": "Оберіть роль",
+    "Select_category": "Оберіть категорію",
+    "Select_status": "Оберіть статус"
   },
   "warehouseTable": {
     "name": "Назва",
     "address": "Адреса",
     "contactPerson": "Контактна особа",
     "contact": "Контакт",
-    "createdAt": "Дата створення",
+    "createdAt": "Створено",
     "noData": "Дані відсутні.",
-    "delete_wh_notification": "Ви впевнені, що хочете видалити цей склад?"
+    "delete_wh_notification": "Ви дійсно хочете видалити цей склад?"
   },
   "validations": {
-    "name_required": "Ім’я є обов’язковим.",
-    "nameMaxLength": "Ім’я повинно бути менше ніж {max} символів.",
+    "name_required": "Ім’я обов’язкове.",
+    "nameMaxLength": "Ім’я має бути коротше за {max} символів.",
     "Minimum_3_characters": "Мінімум 3 символи.",
     "Maximum_8_characters": "Максимум 8 символів.",
     "Must_have_a_number": "Має містити цифру.",
-    "Email_is_required": "Електронна пошта є обов’язковою.",
-    "Invalid_email_address": "Недійсна електронна адреса.",
-    "Username_is_required": "Ім’я користувача є обов’язковим."
+    "Email_is_required": "Електронна пошта обов’язкова.",
+    "Invalid_email_address": "Неправильна електронна адреса.",
+    "Username_is_required": "Ім’я користувача обов’язкове.",
+    "category_is_required": "Категорія обов’язкова.",
+    "status_is_required": "Статус обов’язковий."
   },
   "goodsReceipt": {
     "receiptName": "Назва надходження",
-    "createdAt": "Дата створення",
+    "createdAt": "Створено",
     "warehouse": "Склад",
     "details": "Деталі",
     "productsInReceipt": "Продукти в надходженні",
@@ -100,22 +106,22 @@
     "noData": "Дані відсутні.",
     "nameLabel": "Назва",
     "warehouseLabel": "Склад",
-    "filterButton": "Фільтр"
+    "filterButton": "Фільтрувати"
   },
   "product_list": {
-    "Are_you_sure_want_delete_this_product": "Ви впевнені, що хочете видалити цей продукт зі списку?"
+    "Are_you_sure_want_delete_this_product": "Ви дійсно хочете видалити цей продукт зі списку?"
   },
   "productTemplate": {
     "name": "Назва",
     "category": "Категорія",
     "status": "Статус",
     "filter": "Фільтр",
-    "delete_confirm_message": "Ви впевнені, що хочете видалити цей продукт?",
+    "delete_confirm_message": "Ви дійсно хочете видалити цей продукт?",
     "edit_category": "Редагувати категорію"
   },
   "table": {
     "Name": "Назва",
-    "created_at": "Дата створення",
+    "created_at": "Створено",
     "Image": "Зображення",
     "Category": "Категорія",
     "Status": "Статус"
@@ -123,16 +129,26 @@
   "default": {
     "no_data_available": "Дані відсутні.",
     "error_loading": "помилка завантаження",
-    "error_occurred": "Сталася помилка під час завантаження даних.",
-    "Confirm": "Підтвердити"
+    "error_occurred": "Сталася помилка при завантаженні даних.",
+    "Confirm": "Підтвердити",
+    "want_delete_this_status": "Ви дійсно хочете видалити цей статус?",
+    "Results": "Результати"
   },
   "category": {
     "edit_category": "Редагувати категорію",
-    "confirm_delete_category": "Ви впевнені, що хочете видалити цю категорію?"
+    "confirm_delete_category": "Ви дійсно хочете видалити цю категорію?"
   },
   "user": {
-    "Are_you_sure_you_want_to_delete_this_user": "Ви впевнені, що хочете видалити цього користувача?",
+    "Are_you_sure_you_want_to_delete_this_user": "Ви дійсно хочете видалити цього користувача?",
     "Create_user": "Створити користувача",
     "Edit_user": "Редагувати користувача"
+  },
+  "settings": {
+    "general_settings": "Загальні налаштування",
+    "users_settings": "Налаштування користувачів",
+    "products_settings": "Налаштування продуктів",
+    "warehouses_settings": "Налаштування складів",
+    "product_statuses": "Статуси продуктів",
+    "product_category": "Категорії продуктів"
   }
 }

@@ -4,7 +4,7 @@
   import { useI18n } from 'vue-i18n';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { Form } from '@primevue/forms';
-  import { useToast } from 'primevue/usetoast';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import Toast from 'primevue/toast';
   import { useWarehouseStore } from '@/stores/warehouseStore';
   import type { IWarehouse } from '@/types/warehouse/warehouse';
@@ -31,7 +31,7 @@
 
   // state
   const { t } = useI18n();
-  const toast = useToast();
+  const toastNotification = useToastNotification();
   const warehouseStore = useWarehouseStore();
   const localLoadingCreate = ref<boolean>(false);
 
@@ -77,14 +77,9 @@
         localLoadingCreate.value = false;
         emit('updateList');
         emit('update:dialogVisible', false);
-        toast.add({ severity: 'success', detail: message, life: 3000 });
+        toastNotification.showSuccess(message || '');
       } else {
-        toast.add({
-          severity: t('notification.error'),
-          summary: t('error.creating_falled'),
-          detail: message,
-          life: 3000,
-        });
+       toastNotification.showError(message || '');
       }
     } catch (error) {
       console.log(error);
@@ -101,7 +96,7 @@
 </script>
 
 <template>
-  <Dialog v-model:visible="modelValue" :style="{ width: '550px' }" header="Create warehouse" modal>
+  <Dialog v-model:visible="modelValue" :style="{ width: '550px' }" :header="$t('popup.create_warehouse')" modal>
     <Toast />
     <Form v-slot="$form" :initialValues :resolver class="grid w-full gap-4 lg:grid-cols-1" @submit="onFormSubmit">
       <div class="flex items-center justify-center gap-4">

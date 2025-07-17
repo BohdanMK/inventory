@@ -6,7 +6,7 @@
   import TabPanels from 'primevue/tabpanels';
   import TabPanel from 'primevue/tabpanel';
   import CategoriesList from '@/components/categories/CategoriesList.vue';
-  import StatusesTable from '@/components/statuses/StatusesTable.vue';
+  import StatusesList from '@/components/statuses/StatusesList.vue';
 
   const tabListKey = ref<string>('0');
 </script>
@@ -17,18 +17,18 @@
       <TabList>
         <Tab value="0">
           <font-awesome-icon icon="fa-solid fa-list" />
-          Product statuses
+          {{ $t('settings.product_statuses') }}
         </Tab>
         <Tab value="1">
           <font-awesome-icon icon="fa-solid fa-table-cells" />
-          Product category
+          {{ $t('settings.product_category') }}
         </Tab>
       </TabList>
       <TabPanels>
         <TabPanel value="0">
           <Suspense>
             <template #default>
-              <StatusesTable v-if="tabListKey === '0'" />
+              <StatusesList v-if="tabListKey === '0'" />
             </template>
             <template #fallback>
               <div class="flex h-full w-full items-center justify-center">
