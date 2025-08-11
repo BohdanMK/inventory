@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <ul class="m-0 w-full list-none overflow-hidden p-0">
+  <ul class="m-0 w-full list-none overflow-hidden p-0 text-center">
       <li>
         <router-link
           v-ripple

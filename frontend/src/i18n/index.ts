@@ -4,8 +4,8 @@ import uk from '@/locales/uk.json'
 
 export const i18nInstance = createI18n({
   legacy: false,
-  locale: 'uk',
-  fallbackLocale: 'uk',
+  locale: localStorage.getItem('selectedLang') || import.meta.env.VITE_DEFAULT_LOCALE,
+  fallbackLocale: import.meta.env.VITE_FALLBACK_LOCALE,
   globalInjection: true,
   messages: {
     en,

@@ -1,5 +1,6 @@
 <script setup>
   import { useCurrentDateTime } from '@/composables/useCurrentDateTime';
+  import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
 
   const { currentTime, currentDate } = useCurrentDateTime();
 </script>
@@ -12,6 +13,7 @@
           <h4 class="font text-new-prime font-medium uppercase">Inventory</h4>
         </div>
         <div class="flex items-center gap-2">
+          <LanguageSwitcher/>
           <div class="text-[14px] font-medium">
             <div>Today</div>
             <div>

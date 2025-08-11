@@ -132,7 +132,8 @@
     "error_loading": "error loading",
     "error_occurred": "An error occurred while loading data.",
     "Confirm": "Confirm",
-    "want_delete_this_status": "Are you sure want delete this status?"
+    "want_delete_this_status": "Are you sure want delete this status?",
+    "Results": "Results"
   },
   "category": {
     "edit_category":"Edit category",

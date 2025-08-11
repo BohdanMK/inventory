@@ -48,7 +48,9 @@
         @updateData="getGoodsList()"
       />
       <div v-if="!asyncState.loadingStatus.value">
-        <GoodsReceiptTable />
+        <GoodsReceiptTable
+          @updateData="getGoodsList()"
+        />
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>
