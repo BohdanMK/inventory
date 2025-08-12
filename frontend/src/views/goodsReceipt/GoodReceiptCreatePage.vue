@@ -3,7 +3,7 @@
   import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
   import { useRouter } from 'vue-router';
-  import setFullImgPath from '@/helpers/fullPathImg';
+  import { useToastNotification } from '@/composables/useToastNotification';
   import { useGoodsReceiptStore } from '@/stores/goodsReceiptStore';
   import { useProductTemplateStore } from '@/stores/productTemplateStore';
   import type { IProductTemplate, IProductInStock } from '@/types/product/product';
@@ -19,6 +19,7 @@
   import ProductList from '@/components/goodsReceipt/ProductList.vue';
   import Textarea from 'primevue/textarea';
   import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
+  import { useI18n } from 'vue-i18n';
 
   ///state
   const toast = useToast();
@@ -26,6 +27,8 @@
   const warehouseStore = useWarehouseStore();
   const goodsReceiptStore = useGoodsReceiptStore();
   const router = useRouter();
+  const toastNotification = useToastNotification();
+  const { t } = useI18n();
 
   const productName = ref<string>('');
   const selectedProduct = ref<IProductTemplate>({} as IProductTemplate);
@@ -47,6 +50,16 @@
   const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     if (!valid) return;
 
+    if(!goodsReceiptStore.productList || goodsReceiptStore.productList.length === 0) {
+      toastNotification.showError(t('goodsReceipt.add_product_in_list'));
+      return
+    }
+
+    if(goodsReceiptStore.checkOnEmptyValueInProducts()) {
+      toastNotification.showError(t('goodsReceipt.set_count_and_price'));
+      return
+    }
+
     const payload = {
       ...values,
       products: goodsReceiptStore.productList,
@@ -56,16 +69,12 @@
     const { success, message } = await goodsReceiptStore.createGoodsReceipt(payload);
 
     if (success) {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Goods receipt created',
-      });
+      toastNotification.showSuccess(message || '');
       setTimeout(() => {
         router.push('/goods-receipt');
       }, 800);
     } else {
-      toast.add({ severity: 'error', summary: 'Error', detail: message });
+      toastNotification.showError(message || '');
     }
   };
 
@@ -122,6 +131,7 @@
 
   onMounted(() => {
     getWarehouseList();
+    goodsReceiptStore.resetProductList();
   });
 </script>
 
@@ -139,11 +149,11 @@
       >
         <Toolbar class="mb-6">
           <template #start>
-            <h3 class="text-xl font-medium">Create goods receipt</h3>
+            <h3 class="text-xl font-medium"> {{ $t('goodsReceipt.Create_goods_receipt') }}</h3>
           </template>
           <template #end>
-            <Button label="Back" outlined icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
-            <Button type="submit" label="Create" icon="pi pi-plus" class="mr-2" />
+            <Button :label="$t('button.back')" outlined icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
+            <Button type="submit" :label="$t('button.create')" icon="pi pi-plus" class="mr-2" />
           </template>
         </Toolbar>
         <Toolbar class="mb-0 border-0 px-0">
@@ -153,7 +163,7 @@
                 v-model="productName"
                 :suggestions="productList"
                 optionLabel="name"
-                placeholder="Product name"
+                :placeholder="$t('goodsReceipt.productName')"
                 dropdown
                 fluid
                 @complete="debouncedFetchProducts"
@@ -173,14 +183,14 @@
                 name="warehouse"
                 :options="warehouseStore.warehouseListForSelect"
                 optionLabel="name"
-                placeholder="Select warehouse"
+                :placeholder="$t('goodsReceipt.select_warehouse')"
                 class="w-full min-w-[230px]"
               />
             </div>
           </template>
         </Toolbar>
         <div class="mb-0 border-0 px-0">
-          <Textarea name="comment" placeholder="Goods receipt info" class="w-full max-w-[400px]" rows="3" cols="30" />
+          <Textarea name="comment" :placeholder="$t('goodsReceipt.goods_receipt_info')" class="w-full max-w-[400px]" rows="3" cols="30" />
         </div>
       </Form>
       <ProductList />

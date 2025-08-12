@@ -2,8 +2,9 @@
   import { ref, watch } from 'vue';
   import { Form } from '@primevue/forms';
   import { useProfileStore } from '@/stores/userProfileStore';
+  import { useToastNotification } from '@/composables/useToastNotification';
+  import { useI18n } from 'vue-i18n';
   import type { IUserProfile } from '@/interfaces';
-  import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import { z } from 'zod';
@@ -15,7 +16,8 @@
 
   // state
   const userProfile = useProfileStore();
-  const toast = useToast();
+  const { t } = useI18n();
+  const toastNotification = useToastNotification();
 
   const userList = ref<IUserProfile[]>([]);
   const setNewPassword = ref(false);
@@ -35,15 +37,15 @@
       .object({
         newPassword: z
           .string()
-          .min(3, { message: 'Minimum 3 characters.' })
-          .max(8, { message: 'Maximum 8 characters.' })
+          .min(3, { message: t('validations.Minimum_3_characters') })
+          .max(8, { message: t('validations.Maximum_8_characters') })
           .refine(value => /\d/.test(value), {
-            message: 'Must contain at least one number.',
+            message: t('validations.must_have_number'),
           }),
-        confirmPassword: z.string(), // Без додаткових обмежень, лише базовий тип
+        confirmPassword: z.string(),
       })
       .refine(data => data.newPassword === data.confirmPassword, {
-        message: 'Passwords do not match.',
+        message: t('validations.passwords_do_not_match'),
         path: ['confirmPassword'],
       })
   );
@@ -82,18 +84,13 @@
       const { success, message } = await userProfile.updateUserPassWord(data);
 
       if (success) {
-        toast.add({ severity: 'success', detail: message, life: 3000 });
+        toastNotification.showSuccess(message || '');
         setTimeout(() => {
           resetStateAfterSubmit();
           form.value?.reset();
         }, 400);
       } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Update failed',
-          detail: message,
-          life: 3000,
-        });
+        toastNotification.showError(message || '');
       }
     } catch (err) {
       console.log(err);
@@ -123,21 +120,21 @@
 <template>
   <div>
     <Toast />
-    <h2 class="mb-4 text-xl font-medium">Update users passwords</h2>
+    <h2 class="mb-4 text-xl font-medium">{{ $t('settings.update_users_passwords') }}</h2>
     <div class="card flex flex-col justify-start sm:w-90">
       <div class="card mb-4 flex justify-start">
         <div class="flex flex-wrap gap-4">
           <div class="flex items-center gap-2">
             <RadioButton v-model="userType" inputId="ingredient1" name="userType" value="all" />
-            <label for="ingredient1">All</label>
+            <label for="ingredient1">{{ $t('settings.All') }}</label>
           </div>
           <div class="flex items-center gap-2">
             <RadioButton v-model="userType" inputId="ingredient2" name="userType" value="super_admin" />
-            <label for="ingredient2">Super Admin</label>
+            <label for="ingredient2"> {{ $t('settings.Super_Admin') }}</label>
           </div>
           <div class="flex items-center gap-2">
             <RadioButton v-model="userType" inputId="ingredient3" name="userType" value="user" />
-            <label for="ingredient3">User</label>
+            <label for="ingredient3">User{{ $t('settings.User') }}</label>
           </div>
         </div>
       </div>
@@ -148,7 +145,7 @@
           :suggestions="userList"
           optionLabel="username"
           placeholder="Username"
-          :disabled="Object.keys(selectedUser).length > 0"
+          :disabled="Object.keys(selectedUser).length > 0 && setNewPassword"
           dropdown
           fluid
           @complete="debouncedFetchUsers"
@@ -166,7 +163,7 @@
           :disabled="!Object.keys(selectedUser).length"
           type="button"
           severity="secondary"
-          :label="setNewPassword ? 'Cancel change' : 'Change password'"
+          :label="setNewPassword ? t('settings.cancel_change') : t('settings.change_password')"
           @click="setNewPassword = !setNewPassword"
         />
         <Form
@@ -179,7 +176,7 @@
           <Transition name="slide-fade">
             <div v-if="setNewPassword" class="flex w-full flex-col gap-4">
               <div class="flex flex-col gap-1">
-                <Password name="newPassword" placeholder="New password" :feedback="false" fluid toggleMask />
+                <Password name="newPassword" :placeholder="t('settings.new_password')" :feedback="false" fluid toggleMask />
                 <template v-if="$form.newPassword?.invalid">
                   <Message
                     v-for="(error, index) of $form.newPassword.errors"
@@ -192,7 +189,7 @@
                 </template>
               </div>
               <div class="flex flex-col gap-1">
-                <Password name="confirmPassword" placeholder="Confirm password" :feedback="false" fluid toggleMask />
+                <Password name="confirmPassword" :placeholder="t('settings.confirm_password')" :feedback="false" fluid toggleMask />
                 <template v-if="$form.confirmPassword?.invalid">
                   <Message
                     v-for="(error, index) of $form.confirmPassword.errors"
@@ -204,7 +201,7 @@
                   >
                 </template>
               </div>
-              <Button :loading="localBtnLoading" type="submit" severity="secondary" label="Save" />
+              <Button :loading="localBtnLoading" type="submit" severity="secondary" :label="t('button.Save')" />
             </div>
           </Transition>
         </Form>

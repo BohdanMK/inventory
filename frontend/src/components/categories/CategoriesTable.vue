@@ -25,7 +25,7 @@
 <template>
       <DataTable :value="categoryStore.categoryList" tableStyle="min-width: 50rem">
           <Column field="name"
-            :header="$t('table.name')"></Column>
+            :header="$t('table.Name')"></Column>
           <Column field="createdAt"
             :header="$t('table.created_at')"
             >

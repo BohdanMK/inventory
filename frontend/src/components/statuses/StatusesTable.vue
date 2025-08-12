@@ -27,7 +27,7 @@
 
 <template>
         <DataTable :value="statusStore.statusesList" tableStyle="min-width: 50rem">
-          <Column field="name" :header="$t('table.name')"></Column>
+          <Column field="name" :header="$t('table.Name')"></Column>
           <Column field="createdAt" :header="$t('table.created_at')">
             <template #body="slotProps">
               {{ formatDataWithTime(slotProps.data.createdAt) }}

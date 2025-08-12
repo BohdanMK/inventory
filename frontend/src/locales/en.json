@@ -42,7 +42,9 @@
     "Reset_filter": "Reset filter",
     "Filter": "Filter",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "back": "Back",
+    "create": "Create"
   },
   "popup": {
     "create_category": "Create category",
@@ -90,7 +92,9 @@
     "Invalid_email_address": "Invalid email address.",
     "Username_is_required": "Username is required.",
     "category_is_required": "Category is required.",
-    "status_is_required": "Status is required."
+    "status_is_required": "Status is required.",
+    "must_have_number": "Must contain at least one number.",
+    "passwords_do_not_match": "Passwords do not match."
   },
   "goodsReceipt": {
     "receiptName": "Goods receipt name",
@@ -106,7 +110,12 @@
     "noData": "No data available.",
     "nameLabel": "Name",
     "warehouseLabel": "Warehouse",
-    "filterButton": "Filter"
+    "filterButton": "Filter",
+    "add_product_in_list": "Add product in list!",
+    "set_count_and_price": "Set count and price for all products!",
+    "Create_goods_receipt": "Create goods receipt",
+    "select_warehouse": "Select warehouse",
+    "goods_receipt_info": "Goods receipt info"
   },
   "product_list": {
     "Are_you_sure_want_delete_this_product": "Are you sure want delete this product from list?"
@@ -150,6 +159,14 @@
     "products_settings": "Products Settings",
     "warehouses_settings": "Warehouses Settings",
     "product_statuses": "Product statuses",
-    "product_category": "Product category"
+    "product_category": "Product category",
+    "update_users_passwords": "Update users passwords",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "cancel_change": "Cancel change",
+    "change_password": "Change password",
+    "All": "All",
+    "Super_Admin": "Super Admin",
+    "User": "User"
   }
 }
