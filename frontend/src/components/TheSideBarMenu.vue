@@ -9,7 +9,9 @@
     // state
     const route = useRoute();
 
-    const isActiveRoute = (path: string) => route.path === path;
+    const isActiveRoute = (path: string) => {
+      return route.path === path || route.path.startsWith(path + '/');
+    };
 
 </script>
 

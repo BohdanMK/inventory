@@ -46,7 +46,8 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
 
   const checkOnEmptyValueInProducts = (): boolean => {
     return productList.value.some(
-      (item: IProductInStock) => item.count === 0 || item.price === 0
+      (item: IProductInStock) =>
+        !item.count || !item.price
     )
   }
 

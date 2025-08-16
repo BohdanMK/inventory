@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
-  import { useToast } from 'primevue/usetoast';
   import Toast from 'primevue/toast';
   import { useRouter } from 'vue-router';
   import { useToastNotification } from '@/composables/useToastNotification';
@@ -12,7 +11,6 @@
   import { z } from 'zod';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
   import Select from 'primevue/select';
-  import Button from 'primevue/button';
   import Toolbar from 'primevue/toolbar';
   import debounce from '@/utils/debounce';
   import AutoComplete from 'primevue/autocomplete';
@@ -22,7 +20,7 @@
   import { useI18n } from 'vue-i18n';
 
   ///state
-  const toast = useToast();
+
   const productTemplateStore = useProductTemplateStore();
   const warehouseStore = useWarehouseStore();
   const goodsReceiptStore = useGoodsReceiptStore();

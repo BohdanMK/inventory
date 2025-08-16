@@ -52,7 +52,7 @@
         </template>
         <template #end>
           <router-link to="/stock-activity/add">
-            <Button label="New " icon="pi pi-plus" class="mr-2" />
+            <Button :label="$t('button.new')" icon="pi pi-plus" class="mr-2" />
           </router-link>
           <Button icon="pi pi-refresh" rounded raised @click="getStoksActionList()" />
         </template>

@@ -115,7 +115,10 @@
     "set_count_and_price": "Set count and price for all products!",
     "Create_goods_receipt": "Create goods receipt",
     "select_warehouse": "Select warehouse",
-    "goods_receipt_info": "Goods receipt info"
+    "goods_receipt_info": "Goods receipt info",
+    "select_action": "Select action",
+    "stock_action": "Stock action",
+    "stock_action_create": "Create stock action"
   },
   "product_list": {
     "Are_you_sure_want_delete_this_product": "Are you sure want delete this product from list?"

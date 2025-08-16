@@ -70,10 +70,10 @@
       <div class="mt-0 mb-5 flex w-full flex-col gap-4">
         <Toolbar class="mb-6">
           <template #start>
-            <h3 class="text-xl font-medium">Goods receipt info</h3>
+            <h3 class="text-xl font-medium">{{ $t('goodsReceipt.stock_action') }} </h3>
           </template>
           <template #end>
-            <Button type="submit" label="Back" icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
+            <Button type="submit" :label="$t('button.back')" icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
           </template>
         </Toolbar>
         <Toolbar class="mb-0 border-0 px-0">

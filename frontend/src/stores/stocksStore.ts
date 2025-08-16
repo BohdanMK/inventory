@@ -274,6 +274,7 @@ export const useStocksStore = defineStore('stoksStore', () => {
     return Object.values(filtersStockAction).every(value => value === null || value === '' || value === undefined);
   });
 
+
   return {
     getStockActionList,
     stockActionList,
@@ -303,6 +304,6 @@ export const useStocksStore = defineStore('stoksStore', () => {
     resetFiltersProduct,
     resetFiltersStockAction,
     filtersStockAction,
-    isFiltersStockActionEmpty,
+    isFiltersStockActionEmpty
   };
 });

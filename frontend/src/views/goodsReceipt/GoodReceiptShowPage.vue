@@ -58,7 +58,7 @@
       <div class="mt-0 mb-5 flex w-full flex-col gap-4">
         <Toolbar class="mb-6">
           <template #start>
-            <h3 class="text-xl font-medium">Goods receipt info</h3>
+            <h3 class="text-xl font-medium">{{ $t('goodsReceipt.goods_receipt_info') }}</h3>
           </template>
           <template #end>
             <Button type="submit" label="Back" icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
