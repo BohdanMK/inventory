@@ -61,4 +61,8 @@ export const staticEndpoints: IEndpoint = {
     avatar: '/api/avatar',
     file: '/api/upload',
   },
+  dashBoard: {
+    getProductsInfo: '/api/dashBoard/productsInfo',
+    getStockActionsSummary: '/api/dashBoard/stockActionsSummary'
+  }
 };

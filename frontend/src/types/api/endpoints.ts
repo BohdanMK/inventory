@@ -59,4 +59,8 @@ export interface IEndpoint {
     avatar: string;
     file: string;
   };
+  dashBoard: {
+    getProductsInfo: string;
+    getStockActionsSummary: string;
+  }
 }

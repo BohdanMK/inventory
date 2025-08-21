@@ -3,17 +3,27 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { usePagesStore } from '@/stores/pagesStore';
+import { useProfileStore } from '@/stores/userProfileStore';
 
 interface IActivePage {
   id: string;
   route: string;
 }
 
+interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 const socket = ref<Socket | null>(null);
 const tabs = ref<IActivePage[]>([]);
+const onlineUsers = ref<IUser[]>([]);
 
 export function useSocket() {
   const pagesStore = usePagesStore();
+  const userProfile = useProfileStore();
   const tabId = getOrCreateTabId();
   const luckyNumber = ref<number | null>(null);
 
@@ -26,11 +36,23 @@ export function useSocket() {
         tabId,
         currentPage: window.location.pathname,
       });
+
+      if (userProfile.userProfile?._id) {
+        socket.value?.emit('register-user', {
+          userId: userProfile.userProfile._id,
+        });
+      }
     });
 
     socket.value.on('luckyNumber', (num: number) => {
       console.log('🎲 Lucky Number:', num);
       luckyNumber.value = num;
+    });
+
+    // отримаємо список юзерів
+    socket.value.on('users-update', (users: IUser[]) => {
+      onlineUsers.value = users;
+      console.log('👥 Online users:', users);
     });
 
     socket.value.on('tabs-update', (updatedTabs: IActivePage[]) => {
@@ -48,6 +70,9 @@ export function useSocket() {
     // Повідомляємо сервер, що вкладку слід видалити
     if (socket.value && socket.value.connected) {
       socket.value.emit('remove-tab', { tabId });
+      if (userProfile.userProfile?._id) {
+        socket.value.emit('logout-user', { userId: userProfile.userProfile._id });
+      }
     }
     socket.value?.disconnect();
   });
@@ -68,6 +93,7 @@ export function useSocket() {
     tabId,
     socket,
     tabs,
+    onlineUsers
   };
 }
 

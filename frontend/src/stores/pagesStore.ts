@@ -7,7 +7,7 @@ export interface IActivePage {
 }
 
 export const usePagesStore = defineStore('pagesStore', () => {
-  const activePages = ref<IActivePage[]>([]); // масив сторінок
+  const activePages = ref<IActivePage[]>([]); 
   const countActivePages = computed(() => activePages.value.length);
 
   return {
