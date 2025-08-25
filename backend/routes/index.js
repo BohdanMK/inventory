@@ -12,7 +12,8 @@ const productTemplateRoutes = require('./productTemplate');
 const warehouseRoutes = require('./warehouse');
 const goodsReceiptRoutes = require('./goodsReceipt');
 const productInStockRoutes = require('./productInStockRoutes');
-const stockRoutes = require('./stockRoutes')
+const stockRoutes = require('./stockRoutes');
+const dashBoardRoutes = require('./dashBoard');
 
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.use('/warehouse', warehouseRoutes);
 router.use('/goods-receipts', goodsReceiptRoutes);
 router.use('/products-in-stock', productInStockRoutes);
 router.use('/stock-actions', stockRoutes);
+router.use('/dashBoard', dashBoardRoutes);
 
 module.exports = router;

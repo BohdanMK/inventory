@@ -16,13 +16,13 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*', // або ['http://localhost:3000'], якщо фронт на іншому порту
+    origin: '*', // ['http://localhost:3000']
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   },
 });
 
 const PORT = process.env.PORT || 3001;
-const MONGO_URI = 'mongodb://localhost:27017/inventory' // заміни при потребі
+const MONGO_URI = 'mongodb://localhost:27017/inventory'
 
 // Підключення до MongoDB
 mongoose
