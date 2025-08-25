@@ -10,6 +10,8 @@
   import FileUpload from 'primevue/fileupload';
   import { staticEndpoints } from '@/api/endpoints';
   import { useI18n } from 'vue-i18n';
+  // import { useSocket } from '@/composables/useSocket';
+  // import { socketAPI, disconnectSocket } from '@/socket/socketManager';
   import TheSideBarMenu from '@/components/TheSideBarMenu.vue';
 
   // state
@@ -20,6 +22,7 @@
   const router = useRouter();
   const { isDark } = useThemeSwitch();
   const { t } = useI18n();
+  // const { isConnected, tabId } = useSocket();
 
   // actions
 
@@ -43,8 +46,10 @@
   const isActiveRoute = (path: string) => route.path === path;
 
   const logOutUser = (): void => {
+
     userProfile.logOutUser();
     toastNotification.showSuccess(t('sidebar.userSuccessfullyLogout') || '');
+ 
 
     setTimeout(() => {
       userProfile.loadingProfile = true;

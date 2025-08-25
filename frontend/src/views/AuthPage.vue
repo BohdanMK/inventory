@@ -11,6 +11,7 @@
   import Button from 'primevue/button';
   import { useAuthStore } from '@/stores/authStore';
 
+
   // interface and type
 
   type LoginFormValues = {
@@ -51,11 +52,13 @@
     const { success, message, data } = await authStore.login(values.email, values.password, superAdminLogin.value);
     console.log(success);
     if (success) {
+
       toastNotification.showSuccess(message || '')
 
       localStorage.setItem('token', data.token || '');
       setTimeout(() => {
         router.push('/');
+
       }, 1000);
     } else {
       toastNotification.showError(message || '');

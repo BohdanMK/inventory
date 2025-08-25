@@ -61,7 +61,6 @@
 
   function getPageTitleByRoute(routePath: string) {
     const matchedRoute = router.getRoutes().find(r => r.path === routePath);
-    console.log(matchedRoute);
     return matchedRoute?.name || routePath;
   }
 
@@ -69,6 +68,7 @@
   onMounted(() => {
     getProductsInfo();
     getStockActionsSummaryInfo();
+    pagesStore.initTabs();
   })
 
 </script>

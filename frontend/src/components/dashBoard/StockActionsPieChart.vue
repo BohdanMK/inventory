@@ -33,9 +33,9 @@
         return {
             labels: dashBoardStore.stockActionsSummary.map(item => item.type),
             datasets: [
-            {
-                data: dashBoardStore.stockActionsSummary.map(item => item.count)
-            }
+                {
+                    data: dashBoardStore.stockActionsSummary.map(item => item.count)
+                }
             ]
         };
     });
@@ -84,8 +84,21 @@
         <Skeleton v-if="props.loading"  width="100%" height="10rem"></Skeleton>
         <div v-else>
             <div class="flex justify-around">
-                <Chart type="doughnut"  :style="{ width: '380px', height: '380px' }" :data="chartData" :options="chartOptions" class="w-full md:w-[30rem]" />
-                <Chart type="bar" :data="barChartData" :width="380" :height="380":options="barChartOptions" />
+                <Chart
+                    v-if="chartData?.datasets?.length"
+                    type="doughnut"
+                    :style="{ width: '380px', height: '380px' }"
+                    :data="chartData"
+                    :options="chartOptions"
+                    class="w-full md:w-[30rem]" />
+                <Chart
+                    v-if="barChartData?.datasets?.length"
+                    type="bar"
+                    :data="barChartData"
+                    :width="380"
+                    :height="380"
+                    :options="barChartOptions"
+                />
             </div>
         </div>
 

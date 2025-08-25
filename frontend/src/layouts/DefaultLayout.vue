@@ -1,15 +1,21 @@
 <script setup lang="ts">
-  import { watch, onBeforeUnmount, ref } from 'vue';
-  import { useSocket } from '@/composables/useSocket';
+  import { watch, onUnmounted, ref, onMounted } from 'vue';
+  import { useProfileStore } from "@/stores/userProfileStore";
+  import { useSocketStore } from '@/stores/socketStore';
   import { usePagesStore } from '@/stores/pagesStore';
+  import { useUsersStore } from "@/stores/usersStore";
   import { useRouter } from 'vue-router'; //
-  import { useProfileStore } from '@/stores/userProfileStore';
   import ProgressSpinner from 'primevue/progressspinner';
   import TheHeader from '@/components/TheHeader.vue';
   import TheSideBar from '@/components/TheSideBar.vue';
+  import ActionsBar from '@/components/actions/ActionsBar.vue';
+
+  import { useActionsStore } from '@/stores/actionsStore';
+
 
   const pagesStore = usePagesStore();
-  const { tabId, socket } = useSocket();
+  const usersStore = useUsersStore();
+  const socketStore = useSocketStore();
   const router = useRouter();
 
   const profileStore = useProfileStore();
@@ -23,7 +29,6 @@
       return;
     }
 
-    // Якщо профіль уже є — не тягнемо ще раз
     profileStore.loadingProfile = true;
 
     const { success, message, data } = await profileStore.fetchUserProfile();
@@ -42,31 +47,36 @@
     profileStore.loadingProfile = false;
   };
 
-  getProfile();
 
-  watch(
-    () => router.currentRoute.value.path,
-    newRoute => {
-      // console.log(socket)
-      if (socket.value && socket.value.connected) {
-        socket.value.emit('update-tab', {
-          tabId,
-          currentPage: newRoute,
-        });
-      }
-    },
-    { immediate: true, deep: true }
-  );
 
-  onBeforeUnmount(() => {
-    if (socket.value && socket.value.connected && tabId) {
-      socket.value.emit('remove-tab', { tabId });
+  onMounted(async () => {
+    await getProfile();
+    if (profileStore.userProfile && profileStore.userProfile._id) {
+
+      socketStore.connect(profileStore.userProfile._id);
+
+      pagesStore.initTabs();
+
+      const myTabId = crypto.randomUUID();
+      pagesStore.registerTab(myTabId, router.currentRoute.value.fullPath);
+
+      watch(() => router.currentRoute.value.fullPath, (newPath) => {
+        pagesStore.updateTab(myTabId, newPath);
+      });
+
+      // init users list
+      usersStore.registerUser(profileStore.userProfile._id);
+      usersStore.initUsersListeners();
+      
+    } else {
+      console.warn("⚠️ No userId found, socket not connected");
     }
+});
 
-    if (socket.value) {
-      socket.value.off('tabs-update');
-    }
+  onUnmounted(() => {
+    socketStore.disconnect();
   });
+
 </script>
 
 <template>
@@ -80,7 +90,7 @@
       </div>
     </div>
 
-    <div v-else class="dark:bg-gray-600">
+    <div v-else class="dark:bg-gray-600 relative">
       <TheHeader />
       <main>
         <div class="flex">
@@ -91,6 +101,7 @@
             <slot />
           </div>
         </div>
+        <ActionsBar/>
       </main>
     </div>
   </transition>
