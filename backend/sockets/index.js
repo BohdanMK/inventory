@@ -31,6 +31,7 @@ module.exports = function (io) {
       try {
         const chatHistory = await ChatMessage.find()
           .populate('userId', 'username email avatarFullPath')
+          .populate('replyTo', 'message userId')
           .sort({ timestamp: -1 })
           .limit(50)
           .lean();
@@ -43,7 +44,15 @@ module.exports = function (io) {
           avatar: msg.userId.avatarFullPath,
           message: msg.message,
           timestamp: msg.timestamp,
-          messageType: msg.messageType
+          messageType: msg.messageType,
+          deleted: msg.deleted || false,
+          replyTo: msg.replyTo
+          ? {
+              _id: msg.replyTo._id,
+              message: msg.replyTo.message,
+              userId: msg.replyTo.userId,
+            }
+          : null,
         }));
 
         socket.emit('chat-history', formattedHistory);
@@ -53,39 +62,98 @@ module.exports = function (io) {
       }
     });
 
-    socket.on('send-message', async ({ message, userId }) => {
+      socket.on('send-message', async ({ message, userId, replyTo = null }) => {
       try {
+        if (!userId || !message || !message.trim()) {
+          socket.emit('chat-error', { message: 'userId and non-empty message are required' });
+          return;
+        }
 
-        const newMessage = new ChatMessage({
-          userId: userId,
+        const doc = new ChatMessage({
+          userId,
           message: message.trim(),
-          messageType: 'text'
+          messageType: 'text',
+          replyTo: replyTo || null
         });
 
-        const savedMessage = await newMessage.save();
-
-        const populatedMessage = await ChatMessage.findById(savedMessage._id)
+        const saved = await doc.save();
+        const populated = await ChatMessage.findById(saved._id)
           .populate('userId', 'username email avatarFullPath')
+          .populate('replyTo', 'message userId deleted')
           .lean();
 
-
-        const formattedMessage = {
-          _id: populatedMessage._id,
-          userId: populatedMessage.userId._id,
-          username: populatedMessage.userId.username,
-          avatar: populatedMessage.userId.avatarFullPath,
-          message: populatedMessage.message,
-          timestamp: populatedMessage.timestamp,
-          messageType: populatedMessage.messageType
-        };
-
-
-        io.emit('new-message', formattedMessage);
-
-        console.log('💬 New message saved and broadcast:', formattedMessage.username, ':', formattedMessage.message);
+        const formatted = formatMessage(populated);
+        io.emit('new-message', formatted);
+        // console.log('💬 New message:', formatted.username, ':', formatted.message);
       } catch (error) {
         console.error('❌ Error saving message:', error);
         socket.emit('chat-error', { message: 'Failed to save message' });
+      }
+    });
+
+    // ---------------- EDIT ----------------
+    socket.on('edit-message', async ({ messageId, newText, userId }) => {
+      try {
+        if (!messageId || !userId) {
+          socket.emit('chat-error', { message: 'messageId and userId are required' });
+          return;
+        }
+        const msg = await ChatMessage.findById(messageId);
+        if (!msg) {
+          socket.emit('chat-error', { message: 'Message not found' });
+          return;
+        }
+        if (msg.userId.toString() !== userId) {
+          socket.emit('chat-error', { message: 'Permission denied' });
+          return;
+        }
+        if (msg.deleted) {
+          socket.emit('chat-error', { message: 'Cannot edit deleted message' });
+          return;
+        }
+
+        msg.message = (newText || '').trim();
+        msg.edited = true;
+        await msg.save();
+
+        const populated = await ChatMessage.findById(messageId)
+          .populate('userId', 'username email avatarFullPath')
+          .populate('replyTo', 'message userId deleted')
+          .lean();
+
+        io.emit('message-updated', formatMessage(populated));
+      } catch (err) {
+        console.error('❌ Edit error:', err);
+        socket.emit('chat-error', { message: 'Failed to edit message' });
+      }
+    });
+
+    // ---------------- SOFT DELETE ----------------
+    socket.on('delete-message', async ({ messageId, userId }) => {
+      try {
+        if (!messageId || !userId) {
+          socket.emit('chat-error', { message: 'messageId and userId are required' });
+          return;
+        }
+        const msg = await ChatMessage.findById(messageId);
+        if (!msg) {
+          socket.emit('chat-error', { message: 'Message not found' });
+          return;
+        }
+        if (msg.userId.toString() !== userId) {
+          socket.emit('chat-error', { message: 'Permission denied' });
+          return;
+        }
+
+        msg.deleted = true;
+        msg.message = "Message deleted"; // або "Message deleted"
+        await msg.save();
+
+        // Для узгодженості UI — або відправляємо мінімум, або весь формат
+        io.emit('message-deleted', { _id: msg._id });
+      } catch (err) {
+        console.error('❌ Delete error:', err);
+        socket.emit('chat-error', { message: 'Failed to delete message' });
       }
     });
 
@@ -167,7 +235,7 @@ module.exports = function (io) {
         }
       }
       broadcastTabs();
-      
+
     });
 
     function broadcastTabs() {
@@ -191,6 +259,28 @@ module.exports = function (io) {
         email: user.email,
         avatar: user.avatarFullPath,
       })));
+    };
+
+    function formatMessage(msg) {
+      return {
+        _id: msg._id,
+        userId: msg.userId?._id || msg.userId,
+        username: msg.userId?.username || 'Unknown',
+        avatar: msg.userId?.avatarFullPath || null,
+        message: msg.deleted ? null : msg.message, // якщо видалене — null
+        deleted: msg.deleted || false,
+        edited: msg.edited || false,
+        timestamp: msg.timestamp,
+        messageType: msg.messageType,
+        replyTo: msg.replyTo
+          ? {
+              _id: msg.replyTo._id,
+              message: msg.replyTo.deleted ? null : msg.replyTo.message,
+              userId: msg.replyTo.userId,
+              deleted: msg.replyTo.deleted,
+            }
+          : null,
+      };
     }
   });
 };
