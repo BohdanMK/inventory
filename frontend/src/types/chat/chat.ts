@@ -6,4 +6,14 @@ export interface IMessageChat {
     message: string;
     timestamp: string;
     messageType: 'text' | 'image' | 'file';
+    deleted?: boolean;
+    replyTo?: IReplyTo
+}
+
+export interface IReplyTo {
+    _id: string;
+    userId: string;
+    username?: string;
+    avatar?: string;
+    message: string;
 }

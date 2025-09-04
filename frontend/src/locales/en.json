@@ -44,7 +44,8 @@
     "no": "No",
     "yes": "Yes",
     "back": "Back",
-    "create": "Create"
+    "create": "Create",
+    "reply": "Reply"
   },
   "popup": {
     "create_category": "Create category",
