@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted, nextTick, computed, reactive  } from 'vue';
+import { ref, onUnmounted, onMounted, nextTick, computed  } from 'vue';
 import type { IMessageChat }  from '@/types/chat/chat.ts';
 import EmojiPicker from 'vue3-emoji-picker'
 import "vue3-emoji-picker/css";
 import Drawer from 'primevue/drawer';
 import Textarea from 'primevue/textarea';
-import Button from 'primevue/button';
 import { useActionsStore } from '@/stores/actionsStore';
 import { useChatStore } from '@/stores/chatStore';
 import { useProfileStore } from '@/stores/userProfileStore';
-// import { useSocket } from '@/composables/useSocket';
 import setFullImgPath from '@/helpers/fullPathImg.ts';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
-
-
+import EmojiList  from '@/components/chat/EmojiList.vue';
 
 
 /// state
@@ -24,13 +21,28 @@ const userProfile = useProfileStore();
 const confirm = useConfirm();
 const messages = ref<string[]>([]);
 const newMessage = ref<string>("");
-const showEmojiPicker = ref(false);
+const showEmojiPicker = ref<boolean>(false);
+const showMessageEmoji = ref<boolean>(false);
 const isSending = ref(false);
 const isLoadingMore = ref(false);
 const messagesContainer = ref<HTMLElement | null>(null);
-const baseClasses = 'mb-2 w-[80%] px-2 py-4 flex flex-col gap-3 text-sm rounded-lg items-start';
+const baseClasses = 'mb-3 w-[80%] flex flex-col text-sm  items-start rounded-xl  relative z-1';
 const replyMesssage = ref<IMessageChat | null>(null);
+const messageEmojiPicker = ref<HTMLElement | null>(null);
+const idMessage = ref<string | null>(null);
 
+const toggleEmojiForMessage = (id: string) => {
+  showMessageEmoji.value = !showMessageEmoji.value;
+  idMessage.value = id;
+}
+
+const addEmojiToMessage = (emoji: any) => {
+  if (!idMessage.value || !userProfile.userProfile?._id) return;
+
+  chatStore.handleSendReactedMessage(idMessage.value, userProfile.userProfile?._id, emoji.i );
+  showMessageEmoji.value = !showMessageEmoji.value
+
+};
 
 const addEmoji = (emoji: any) => {
   newMessage.value += emoji.i;
@@ -102,6 +114,18 @@ const removeReplyTo = () => {
   replyMesssage.value = null;
 }
 
+const handleClickOutside = (event: MouseEvent) => {
+  if (
+    showMessageEmoji.value &&
+    messageEmojiPicker.value &&
+    !messageEmojiPicker.value.contains(event.target as Node)
+  ) {
+    showMessageEmoji.value = false;
+  }
+};
+
+
+
   /// getters
 
   const otherClasses = (isMine: boolean) =>
@@ -119,10 +143,12 @@ const removeReplyTo = () => {
       if (userProfile?.userProfile?._id) {
         chatStore.initChat(userProfile?.userProfile?._id || '');
       }
+      document.addEventListener("click", handleClickOutside);
   });
 
   onUnmounted(() => {
     chatStore.stopChat();
+    document.removeEventListener("click", handleClickOutside);
   });
 </script>
 
@@ -134,8 +160,12 @@ const removeReplyTo = () => {
       position="right"
       :style="{ width: 500 + 'px' }"
     >
-      <div class="h-[90vh] flex flex-col justify-between gap-0">
-
+      <div class="h-[90vh] flex flex-col justify-between gap-0" ref="messageEmojiPicker">
+        <EmojiPicker
+          v-if="showMessageEmoji"
+          class="absolute top-0 left-0 z-50"
+          @select="addEmojiToMessage"
+        />
         <!-- messages -->
         <div ref="messagesContainer" class="card border border-gray-300 p-3 rounded-md flex-1 overflow-y-auto mb-3">
             <template
@@ -148,11 +178,16 @@ const removeReplyTo = () => {
 
                   <div
                     v-if="message.replyTo"
-                    class="w-full p-1 bg-amber-50 m-[-5px]"
+                    class="w-full flex flex-col p-1 bg-amber-50 px-2"
                   >
-                    {{ message.replyTo.message }}
+                    <h3 class="font-medium">
+                      {{ message.replyTo.username }}
+                    </h3>
+                    <h4>
+                      {{ message.replyTo.message }}
+                    </h4>
                   </div>
-                  <div class="flex w-full gap-3 items-center">
+                  <div class="flex w-full gap-3 items-center px-3 py-3">
                     <div class="flex-shrink-0 flex flex-col">
                       <img
                         :src="setFullImgPath(message.avatar)"
@@ -174,7 +209,16 @@ const removeReplyTo = () => {
                       </div>
 
                     </div>
-                    <div class="flex flex-col" v-if="!message.deleted">
+                    <div class="flex gap-0.5" v-if="!message.deleted">
+                      <Button
+                        v-tooltip.top="$t('button.reaction')"
+                        severity="info"
+                        variant="text"
+                        class="p-0 m-0"
+                        @click="toggleEmojiForMessage(message._id)"
+                      >
+                        <font-awesome-icon icon="fa-solid fa-face-smile" />
+                      </Button>
                       <template v-if="isMine(message.userId)">
 
                         <ConfirmPopup></ConfirmPopup>
@@ -196,8 +240,12 @@ const removeReplyTo = () => {
                           class="p-0 m-0"
                           @click="setReplyTo(message)"
                       />
+
                     </div>
                   </div>
+                  <EmojiList
+                    :message="message"
+                  />
               </div>
             </template>
         </div>

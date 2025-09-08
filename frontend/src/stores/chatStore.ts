@@ -13,6 +13,8 @@ export const useChatStore = defineStore("chat", () => {
     socketService.on("chat-history", setMessages);
     socketService.on("new-message", addMessage);
     socketService.on("message-deleted", handleDeletedMessage);
+
+    socketService.on("message-reacted", handleReactedMessage);
   }
 
 
@@ -49,7 +51,24 @@ export const useChatStore = defineStore("chat", () => {
     if (msg) {
       msg.deleted = true;
     }
+  };
+
+  function handleReactedMessage(updatedMsg: IMessageChat) {
+    const index = messagesList.value.findIndex(m => m._id === updatedMsg._id);
+    if (index !== -1) {
+      messagesList.value[index] = updatedMsg;
+    } else {
+      messagesList.value.push(updatedMsg);
+    }
   }
 
-  return { messagesList, initChat, stopChat, sendMessage, deleteMessage };
+  function handleSendReactedMessage(msgId: string, userId: string, emoji: string) {
+    socketService.emit("react-message", { messageId: msgId, userId, emoji })
+  }
+
+  function handleRemoveReaction(msgId: string, userId: string, emoji: string) {
+    socketService.emit("remove-react-message", { messageId: msgId, userId, emoji });
+  }
+
+  return { messagesList, initChat, stopChat, sendMessage, deleteMessage, handleReactedMessage, handleSendReactedMessage, handleRemoveReaction };
 });

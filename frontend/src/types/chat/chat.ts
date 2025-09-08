@@ -7,7 +7,8 @@ export interface IMessageChat {
     timestamp: string;
     messageType: 'text' | 'image' | 'file';
     deleted?: boolean;
-    replyTo?: IReplyTo
+    replyTo?: IReplyTo,
+    reactions?: IReactions[]
 }
 
 export interface IReplyTo {
@@ -16,4 +17,10 @@ export interface IReplyTo {
     username?: string;
     avatar?: string;
     message: string;
+}
+
+export interface IReactions {
+    userId: string,
+    emoji: string,
+    username: string
 }
