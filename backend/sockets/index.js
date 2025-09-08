@@ -2,67 +2,92 @@ const User = require('../models/User');
 const ChatMessage = require('../models/ChatMessage');
 const tabs = new Map();
 const onlineUsers = new Map();
+const mongoose = require('mongoose');
+
+function toObjectId(id) {
+  if (mongoose.Types.ObjectId.isValid(id) && !(id instanceof mongoose.Types.ObjectId)) {
+    return new mongoose.Types.ObjectId(id);
+  }
+  return id;
+}
+
 
 module.exports = function (io) {
   io.on('connection', (socket) => {
-        // ---------------- USERS ----------------
+    // ---------------- USERS ----------------
     socket.on('register-user', async ({ userId }) => {
       if (!onlineUsers.has(userId)) {
-          console.log('📝 Registering user:', { userId });
+        console.log('📝 Registering user:', { userId });
         onlineUsers.set(userId, new Set());
       }
       onlineUsers.get(userId).add(socket.id);
 
       await broadcastUsers();
-
     });
 
-    /// get chat messssages
-
+    // ---------------- CHAT HISTORY ----------------
     socket.on('get-chat-history', async ({ userId }) => {
-
       if (!userId) {
         console.warn('❌ get-chat-history called without userId');
         socket.emit('chat-error', { message: 'UserId is required to load chat history' });
         return;
       }
 
-      // load chat history
       try {
+        // НЕ використовуємо .lean() на populate реакцій
         const chatHistory = await ChatMessage.find()
-          .populate('userId', 'username email avatarFullPath')
-          .populate('replyTo', 'message userId')
-          .sort({ timestamp: -1 })
+          .sort({ createdAt: -1 })
           .limit(50)
-          .lean();
+          .populate('userId', 'username email avatarFullPath')
+          .populate({
+            path: 'replyTo',
+            select: 'message userId deleted',
+            populate: { path: 'userId', select: 'username avatarFullPath' }
+          })
+          .populate('reactions.userId', 'username avatarFullPath'); // ключова зміна
 
-
-      const formattedHistory = chatHistory.reverse().map(msg => ({
-          _id: msg._id,
-          userId: msg.userId._id,
-          username: msg.userId.username,
-          avatar: msg.userId.avatarFullPath,
-          message: msg.message,
-          timestamp: msg.timestamp,
-          messageType: msg.messageType,
-          deleted: msg.deleted || false,
-          replyTo: msg.replyTo
-          ? {
-              _id: msg.replyTo._id,
-              message: msg.replyTo.message,
-              userId: msg.replyTo.userId,
-            }
-          : null,
-        }));
+        // Тепер робимо форматування в plain object
+        const formattedHistory = chatHistory.reverse().map(msg => {
+          const m = msg.toObject();
+          return {
+            _id: m._id,
+            userId: m.userId?._id || m.userId,
+            username: m.userId?.username || 'Unknown',
+            avatar: m.userId?.avatarFullPath || null,
+            message: m.deleted ? null : m.message,
+            deleted: m.deleted || false,
+            edited: m.edited || false,
+            timestamp: m.createdAt,
+            messageType: m.messageType,
+            reactions: Array.isArray(m.reactions) ? m.reactions.map(r => ({
+              emoji: r.emoji,
+              userId: r.userId?._id || r.userId,
+              username: r.userId?.username || 'Unknown',
+              avatar: r.userId?.avatarFullPath || null
+            })) : [],
+            replyTo: m.replyTo
+              ? {
+                  _id: m.replyTo._id,
+                  message: m.replyTo.deleted ? null : m.replyTo.message,
+                  userId: m.replyTo.userId?._id || m.replyTo.userId,
+                  username: m.replyTo.userId?.username || 'Unknown',
+                  avatar: m.replyTo.userId?.avatarFullPath || null,
+                  deleted: m.replyTo.deleted,
+                }
+              : null,
+          };
+        });
 
         socket.emit('chat-history', formattedHistory);
+
       } catch (error) {
         console.error('❌ Error loading chat history:', error);
         socket.emit('chat-error', { message: 'Failed to load chat history' });
       }
     });
 
-      socket.on('send-message', async ({ message, userId, replyTo = null }) => {
+    // ---------------- SEND MESSAGE ----------------
+    socket.on('send-message', async ({ message, userId, replyTo = null }) => {
       try {
         if (!userId || !message || !message.trim()) {
           socket.emit('chat-error', { message: 'userId and non-empty message are required' });
@@ -79,12 +104,15 @@ module.exports = function (io) {
         const saved = await doc.save();
         const populated = await ChatMessage.findById(saved._id)
           .populate('userId', 'username email avatarFullPath')
-          .populate('replyTo', 'message userId deleted')
+          .populate({
+            path: 'replyTo',
+            select: 'message userId deleted',
+            populate: { path: 'userId', select: 'username avatarFullPath' }
+          })
           .lean();
 
         const formatted = formatMessage(populated);
         io.emit('new-message', formatted);
-        // console.log('💬 New message:', formatted.username, ':', formatted.message);
       } catch (error) {
         console.error('❌ Error saving message:', error);
         socket.emit('chat-error', { message: 'Failed to save message' });
@@ -118,7 +146,11 @@ module.exports = function (io) {
 
         const populated = await ChatMessage.findById(messageId)
           .populate('userId', 'username email avatarFullPath')
-          .populate('replyTo', 'message userId deleted')
+          .populate({
+            path: 'replyTo',
+            select: 'message userId deleted',
+            populate: { path: 'userId', select: 'username avatarFullPath' }
+          })
           .lean();
 
         io.emit('message-updated', formatMessage(populated));
@@ -146,10 +178,9 @@ module.exports = function (io) {
         }
 
         msg.deleted = true;
-        msg.message = "Message deleted"; // або "Message deleted"
+        msg.message = "Message deleted";
         await msg.save();
 
-        // Для узгодженості UI — або відправляємо мінімум, або весь формат
         io.emit('message-deleted', { _id: msg._id });
       } catch (err) {
         console.error('❌ Delete error:', err);
@@ -157,26 +188,23 @@ module.exports = function (io) {
       }
     });
 
+    // ---------------- LOAD MORE ----------------
     socket.on('load-more-messages', async ({ before, limit = 20 }) => {
       try {
         const query = before ? { timestamp: { $lt: new Date(before) } } : {};
 
         const messages = await ChatMessage.find(query)
           .populate('userId', 'username email avatarFullPath')
+          .populate({
+            path: 'replyTo',
+            select: 'message userId deleted',
+            populate: { path: 'userId', select: 'username avatarFullPath' }
+          })
           .sort({ timestamp: -1 })
           .limit(limit)
           .lean();
 
-        const formattedMessages = messages.reverse().map(msg => ({
-          _id: msg._id,
-          userId: msg.userId._id,
-          username: msg.userId.username,
-          avatar: msg.userId.avatarFullPath,
-          message: msg.message,
-          timestamp: msg.timestamp,
-          messageType: msg.messageType
-        }));
-
+        const formattedMessages = messages.reverse().map(formatMessage);
         socket.emit('more-messages', formattedMessages);
       } catch (error) {
         console.error('❌ Error loading more messages:', error);
@@ -184,6 +212,78 @@ module.exports = function (io) {
       }
     });
 
+    // ----------------REACT ON MESSAGE ---------------
+
+    socket.on('react-message', async ({ messageId, userId, emoji }) => {
+      try {
+
+        if (!messageId || !userId || !emoji) {
+          socket.emit('chat-error', { message: 'messageId, userId і emoji обовʼязкові' });
+          return;
+        }
+
+        const msg = await ChatMessage.findById(messageId);
+        if (!msg) {
+          socket.emit('chat-error', { message: 'Message not found' });
+          return;
+        }
+
+
+        msg.reactions = msg.reactions.filter(r => r.userId.toString() !== userId);
+
+
+        msg.reactions.push({ emoji, userId: new mongoose.Types.ObjectId(userId) });
+
+        await msg.save();
+
+        const populated = await ChatMessage.findById(messageId)
+          .populate('userId', 'username avatarFullPath')
+          .populate('reactions.userId', 'username avatarFullPath')
+          .lean();
+
+        io.emit('message-reacted', formatMessage(populated));
+      } catch (err) {
+        console.error('❌ Reaction error:', err);
+        socket.emit('chat-error', { message: 'Failed to react to message' });
+      }
+    });
+
+
+    /// ------remove emoji ------
+
+    socket.on('remove-react-message', async ({ messageId, userId, emoji }) => {
+      try {
+
+        if (!messageId || !userId || !emoji) {
+          socket.emit('chat-error', { message: 'messageId, userId і emoji обовʼязкові' });
+          return;
+        }
+
+        const msg = await ChatMessage.findById(messageId);
+        if (!msg) {
+          socket.emit('chat-error', { message: 'Message not found' });
+          return;
+        }
+
+
+        msg.reactions = msg.reactions.filter(r => r.userId.toString() !== userId);
+
+        await msg.save();
+
+        const populated = await ChatMessage.findById(messageId)
+          .populate('userId', 'username avatarFullPath')
+          .populate('reactions.userId', 'username avatarFullPath')
+          .lean();
+
+        io.emit('message-reacted', formatMessage(populated));
+      } catch (err) {
+        console.error('❌ Reaction error:', err);
+        socket.emit('chat-error', { message: 'Failed to react to message' });
+      }
+    });
+
+
+    // ---------------- LOGOUT ----------------
     socket.on('logout-user', async ({ userId }) => {
       if (onlineUsers.has(userId)) {
         onlineUsers.get(userId).delete(socket.id);
@@ -194,10 +294,8 @@ module.exports = function (io) {
       }
     });
 
-
-    // for tabs
+    // ---------------- TABS ----------------
     socket.on('register-tab', ({ tabId, currentPage }) => {
-      // console.log('📝 Registering tab:', { tabId, currentPage });
       tabs.set(tabId, { socketId: socket.id, route: currentPage });
       broadcastTabs();
     });
@@ -209,8 +307,6 @@ module.exports = function (io) {
       }
     });
 
-
-
     socket.on('remove-tab', ({ tabId }) => {
       if (tabs.has(tabId)) {
         tabs.delete(tabId);
@@ -218,6 +314,7 @@ module.exports = function (io) {
       }
     });
 
+    // ---------------- DISCONNECT ----------------
     socket.on('disconnect', () => {
       for (const [userId, sockets] of onlineUsers.entries()) {
         if (sockets.has(socket.id)) {
@@ -235,20 +332,19 @@ module.exports = function (io) {
         }
       }
       broadcastTabs();
-
     });
 
+    // ---------------- HELPERS ----------------
     function broadcastTabs() {
       const tabList = Array.from(tabs.entries()).map(([id, data]) => ({
         id,
         route: data.route,
       }));
       io.emit('tabs-update', tabList);
-    };
+    }
 
     async function broadcastUsers() {
-        const userIds = Array.from(onlineUsers.keys());
-
+      const userIds = Array.from(onlineUsers.keys());
 
       const users = await User.find({ _id: { $in: userIds } })
         .select('_id username email avatarFullPath');
@@ -259,7 +355,7 @@ module.exports = function (io) {
         email: user.email,
         avatar: user.avatarFullPath,
       })));
-    };
+    }
 
     function formatMessage(msg) {
       return {
@@ -267,16 +363,24 @@ module.exports = function (io) {
         userId: msg.userId?._id || msg.userId,
         username: msg.userId?.username || 'Unknown',
         avatar: msg.userId?.avatarFullPath || null,
-        message: msg.deleted ? null : msg.message, // якщо видалене — null
+        message: msg.deleted ? null : msg.message,
         deleted: msg.deleted || false,
         edited: msg.edited || false,
         timestamp: msg.timestamp,
         messageType: msg.messageType,
+        reactions: Array.isArray(msg.reactions) ? msg.reactions.map(r => ({
+          emoji: r.emoji,
+          userId: r.userId?._id || r.userId,
+          username: r.userId?.username || 'Unknown',
+          avatar: r.userId?.avatarFullPath || null
+        })) : [],
         replyTo: msg.replyTo
           ? {
               _id: msg.replyTo._id,
               message: msg.replyTo.deleted ? null : msg.replyTo.message,
-              userId: msg.replyTo.userId,
+              userId: msg.replyTo.userId?._id || msg.replyTo.userId,
+              username: msg.replyTo.userId?.username || 'Unknown',
+              avatar: msg.replyTo.userId?.avatarFullPath || null,
               deleted: msg.replyTo.deleted,
             }
           : null,
