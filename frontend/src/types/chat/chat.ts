@@ -1,3 +1,5 @@
+import type { DataFile } from '@/interfaces/index';
+
 export interface IMessageChat {
     _id: string;
     userId: string;
@@ -8,7 +10,8 @@ export interface IMessageChat {
     messageType: 'text' | 'image' | 'file';
     deleted?: boolean;
     replyTo?: IReplyTo,
-    reactions?: IReactions[]
+    reactions?: IReactions[],
+    files?: DataFile[]
 }
 
 export interface IReplyTo {

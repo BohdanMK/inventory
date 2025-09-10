@@ -49,7 +49,7 @@
 
     userProfile.logOutUser();
     toastNotification.showSuccess(t('sidebar.userSuccessfullyLogout') || '');
- 
+
 
     setTimeout(() => {
       userProfile.loadingProfile = true;
@@ -63,6 +63,7 @@
   // getters
 
   const getAvatar = computed(() => {
+    if(!userProfile.userProfile?.avatarFullPath) return false
     return userProfile.userProfile.avatarFullPath
       ? `${import.meta.env.VITE_API_URL}${userProfile.userProfile.avatarFullPath}`
       : 'https://fakeimg.pl/300x300';
@@ -75,9 +76,11 @@
   >
     <Toast />
 
-    <div class="relative mt-[50px] w-[150px]">
+    <div class="relative mt-[50px] w-[150px] flex justify-center">
       <img v-if="getAvatar" class="rounded-[50%] object-cover" :src="getAvatar" alt="" />
-      <img v-else class="rounded-[50%]" src="https://fakeimg.pl/150x150" alt="" />
+      <div v-else class="flex items-center h-[80px] w-[80px] rounded-full bg-white">
+          <i  class=" pi pi-user-minus mx-auto text-5xl"></i>
+      </div>
 
       <FileUpload
         class="p-button-outlined custom-fileuploader !absolute right-0 bottom-[0px] !rounded-[50%] !bg-white !p-[10px]"

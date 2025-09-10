@@ -19,6 +19,6 @@ export interface IUserProfile {
 }
 
 export interface DataFile {
-  fileName: string | null;
-  filePath: string | null;
+  fileName?: string;
+  filePath?: string;
 }

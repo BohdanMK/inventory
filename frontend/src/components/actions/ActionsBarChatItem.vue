@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted, nextTick, computed  } from 'vue';
+import { ref, onUnmounted, onMounted, nextTick, computed, watch  } from 'vue';
 import type { IMessageChat }  from '@/types/chat/chat.ts';
 import EmojiPicker from 'vue3-emoji-picker'
 import "vue3-emoji-picker/css";
@@ -12,6 +12,9 @@ import setFullImgPath from '@/helpers/fullPathImg.ts';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
 import EmojiList  from '@/components/chat/EmojiList.vue';
+import { useUnreadMessages } from "@/composables/useUnreadMessages";
+import { useFileUpload } from "@/composables/uploadFiles.ts";
+import MessageFileViewer from '@/components/chat/MessageFileViewer.vue';
 
 
 /// state
@@ -30,6 +33,13 @@ const baseClasses = 'mb-3 w-[80%] flex flex-col text-sm  items-start rounded-xl 
 const replyMesssage = ref<IMessageChat | null>(null);
 const messageEmojiPicker = ref<HTMLElement | null>(null);
 const idMessage = ref<string | null>(null);
+const { reset } = useUnreadMessages();
+const fileInput = ref<HTMLInputElement | null>(null);
+const { uploadFiles } = useFileUpload();
+
+// for files
+const files = ref<File[]>([]);
+const previewUrls = ref<string[]>([]);
 
 const toggleEmojiForMessage = (id: string) => {
   showMessageEmoji.value = !showMessageEmoji.value;
@@ -51,20 +61,27 @@ const addEmoji = (emoji: any) => {
 const sendMessage = async () => {
   if (!newMessage.value.trim() || isSending.value) return;
 
+  let fileUrls;
+
+  if (files.value.length) {
+
+    fileUrls = await uploadFiles(files.value);
+  }
+  console.log(fileUrls)
+
   const messageText = newMessage.value.trim();
   isSending.value = true;
 
   try {
-    chatStore.sendMessage(messageText, userProfile.userProfile?._id || '', replyMesssage.value ? replyMesssage.value._id : null);
+    chatStore.sendMessage(messageText, userProfile.userProfile?._id || '', replyMesssage.value ? replyMesssage.value._id : null, fileUrls);
 
       newMessage.value = "";
+      files.value = [];
+      fileUrls = null;
       showEmojiPicker.value = false;
-      // Скролимо вниз після відправки
-      // await nextTick();
+      previewUrls.value = [];
       scrollToBottom();
-    // } else {
-    //   console.error('Failed to send message');
-    // }
+
   } catch (error) {
     console.error('Error sending message:', error);
   } finally {
@@ -97,11 +114,9 @@ const confirm2 = (messageId: string, event: Event) => {
         },
         accept: () => {
           console.log(event);
-            // toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
             chatStore.deleteMessage(messageId, userProfile.userProfile?._id || '');
         },
         reject: () => {
-            // toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
         }
     });
 };
@@ -124,7 +139,35 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
+const handleFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
 
+    Array.from(target.files).forEach((file) => {
+      files.value.push(file);
+
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) previewUrls.value.push(e.target.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewUrls.value.push(file.name);
+      }
+    });
+
+    target.value = '';
+  };
+
+  const removeFile = (index: number) => {
+    files.value.splice(index, 1);
+    previewUrls.value.splice(index, 1);
+  };
+
+  const triggerFileSelect = () => {
+    fileInput.value?.click();
+  };
 
   /// getters
 
@@ -143,12 +186,19 @@ const handleClickOutside = (event: MouseEvent) => {
       if (userProfile?.userProfile?._id) {
         chatStore.initChat(userProfile?.userProfile?._id || '');
       }
+
       document.addEventListener("click", handleClickOutside);
   });
 
   onUnmounted(() => {
     chatStore.stopChat();
     document.removeEventListener("click", handleClickOutside);
+  });
+
+  watch(() => actionsStore.chatActionsVisible, (newVal) => {
+    if(newVal) {
+      reset()
+    }
   });
 </script>
 
@@ -175,7 +225,13 @@ const handleClickOutside = (event: MouseEvent) => {
             >
 
               <div v-if="!message.deleted" :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`">
+                  <div class="w-full flex gap-2 bg-sky-100 p-3 rounded-t-xl" v-if="message.files && message.files.length > 0">
 
+                    <MessageFileViewer
+                    v-for="file in message.files" :key="file.fileName"
+                      :file="file"
+                    />
+                  </div>
                   <div
                     v-if="message.replyTo"
                     class="w-full flex flex-col p-1 bg-amber-50 px-2"
@@ -190,10 +246,12 @@ const handleClickOutside = (event: MouseEvent) => {
                   <div class="flex w-full gap-3 items-center px-3 py-3">
                     <div class="flex-shrink-0 flex flex-col">
                       <img
+                        v-if="message.avatar"
                         :src="setFullImgPath(message.avatar)"
                         :alt="message.username"
                         class="w-8 h-8 rounded-full object-cover"
                       />
+                      <i v-else class="pi pi-user-minus mx-auto text-2xl"></i>
                     </div>
                     <div class="flex flex-col flex-auto">
                       <div>
@@ -212,7 +270,7 @@ const handleClickOutside = (event: MouseEvent) => {
                     <div class="flex gap-0.5" v-if="!message.deleted">
                       <Button
                         v-tooltip.top="$t('button.reaction')"
-                        severity="info"
+                        severity="secondary"
                         variant="text"
                         class="p-0 m-0"
                         @click="toggleEmojiForMessage(message._id)"
@@ -243,6 +301,7 @@ const handleClickOutside = (event: MouseEvent) => {
 
                     </div>
                   </div>
+
                   <EmojiList
                     :message="message"
                   />
@@ -274,6 +333,15 @@ const handleClickOutside = (event: MouseEvent) => {
               @click="removeReplyTo()"
           />
         </div>
+        <div v-if="previewUrls.length" class="flex gap-2 mb-2 flex-wrap">
+          <div v-for="(url, i) in previewUrls" :key="i" class="relative">
+            <img v-if="url.startsWith('data:image/')" :src="url" class="w-20 h-20 object-cover rounded-md" />
+            <div v-else class="w-20 h-20 flex items-center justify-center border rounded-md">
+              {{ url }}
+            </div>
+            <Button icon="pi pi-times" severity="danger" class="absolute top-0 right-0 p-1" @click="removeFile(i)" />
+        </div>
+        </div>
         <div class="flex gap-2 items-end">
           <Button icon="pi pi-face-smile" @click="showEmojiPicker = !showEmojiPicker" outlined />
           <div class="relative">
@@ -289,7 +357,11 @@ const handleClickOutside = (event: MouseEvent) => {
           </div>
           <div class="flex gap-2">
               <Button icon="pi pi-send" aria-label="Filter" severity="success" @click="sendMessage" />
-              <Button icon="pi pi-file-arrow-up" aria-label="Filter" severity="warn" />
+
+              <label class="cursor-pointer">
+                <input ref="fileInput" type="file" multiple class="hidden" @change="handleFileChange" />
+                <Button icon="pi pi-file-arrow-up" severity="warn" @click="triggerFileSelect"/>
+              </label>
           </div>
         </div>
       </div>

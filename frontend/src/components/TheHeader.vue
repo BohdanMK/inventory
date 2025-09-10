@@ -1,6 +1,7 @@
 <script setup>
   import { useCurrentDateTime } from '@/composables/useCurrentDateTime';
   import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
+  import NewMessageTip from '@/components/chat/NewMessageTip.vue';
 
   const { currentTime, currentDate } = useCurrentDateTime();
 </script>
@@ -12,7 +13,8 @@
           <img src="@/assets/main-logo.png" alt="logo" />
           <h4 class="font text-new-prime font-medium uppercase">Inventory</h4>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
+          <NewMessageTip/>
           <LanguageSwitcher/>
           <div class="text-[14px] font-medium">
             <div>Today</div>

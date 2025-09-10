@@ -71,8 +71,8 @@
         fileName: '',
         filePath: '',
       };
-      data.filePath = response.data?.filePath || null;
-      data.fileName = response.data?.fileName || null;
+      data.filePath = response.data?.filePath;
+      data.fileName = response.data?.fileName;
       toastNotification.showSuccess(response.message || '');
 
       emit('updateData', data);

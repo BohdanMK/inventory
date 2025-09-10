@@ -3,10 +3,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { socketService } from "@/socket/socketService";
 import type { IMessageChat } from "@/types/chat/chat";
+import { useToastNotification } from '@/composables/useToastNotification';
+import { useProfileStore } from '@/stores/userProfileStore';
+import { useUnreadMessages } from "@/composables/useUnreadMessages";
 
 export const useChatStore = defineStore("chat", () => {
   const messagesList = ref<IMessageChat[]>([]);
-
+  const toastNotification = useToastNotification();
+  const userProfile = useProfileStore();
+  const { increment } = useUnreadMessages();
 
   function initChat(userId: string) {
     socketService.emit("get-chat-history", { userId });
@@ -25,8 +30,8 @@ export const useChatStore = defineStore("chat", () => {
   }
 
 
-  function sendMessage(msg: string, userId: string, replyTo: string | null) {
-    socketService.emit("send-message", { message: msg, userId, replyTo });
+  function sendMessage(msg: string, userId: string, replyTo: string | null , files?: any | null ) {
+    socketService.emit("send-message", { message: msg, userId, replyTo, files });
   }
 
 
@@ -38,6 +43,10 @@ export const useChatStore = defineStore("chat", () => {
   function addMessage(msg: IMessageChat) {
     if (!messagesList.value.find(m => m._id === msg._id)) {
       messagesList.value.push(msg);
+      if(userProfile.userProfile?._id !== msg.userId) {
+        increment();
+        toastNotification.showSuccess(`${msg.username} - ${msg.message}` || '', 'New message')
+      }
     }
   }
 
@@ -70,5 +79,14 @@ export const useChatStore = defineStore("chat", () => {
     socketService.emit("remove-react-message", { messageId: msgId, userId, emoji });
   }
 
-  return { messagesList, initChat, stopChat, sendMessage, deleteMessage, handleReactedMessage, handleSendReactedMessage, handleRemoveReaction };
+  return {
+      messagesList,
+      initChat,
+      stopChat,
+      sendMessage,
+      deleteMessage,
+      handleReactedMessage,
+      handleSendReactedMessage,
+      handleRemoveReaction
+    };
 });

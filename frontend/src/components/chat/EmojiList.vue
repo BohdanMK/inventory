@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import Popover from 'primevue/popover';
     import type { IMessageChat }  from '@/types/chat/chat.ts';
     import { useProfileStore } from '@/stores/userProfileStore';
@@ -32,10 +32,25 @@
         if (!props.message._id || !userProfile.userProfile?._id) return;
 
         chatStore.handleRemoveReaction(props.message._id, userProfile.userProfile?._id, emoji )
-        
+
     };
 
     // getters
+    const visibleStatus = computed(() => {
+        if(props.message.reactions) {
+            return props.message.reactions?.length > 2
+        } else {
+            return false
+        }
+    })
+
+    const reactionAdditionalLength = computed(() => {
+        if(props.message.reactions) {
+            return props.message.reactions?.length - 2
+        } else {
+            return 0
+        }
+    })
 </script>
 
 <template>
@@ -45,7 +60,9 @@
             {{ reaction.emoji }}
             </div>
         </div>
-
+        <div v-if="visibleStatus" class="bg-white p-0 pe-1 rounded-sm">
+            +{{ reactionAdditionalLength }}
+        </div>
         <Popover
             ref="op"
             class="p-3"
