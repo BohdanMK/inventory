@@ -4,14 +4,6 @@ const tabs = new Map();
 const onlineUsers = new Map();
 const mongoose = require('mongoose');
 
-function toObjectId(id) {
-  if (mongoose.Types.ObjectId.isValid(id) && !(id instanceof mongoose.Types.ObjectId)) {
-    return new mongoose.Types.ObjectId(id);
-  }
-  return id;
-}
-
-
 module.exports = function (io) {
   io.on('connection', (socket) => {
     // ---------------- USERS ----------------
@@ -59,6 +51,7 @@ module.exports = function (io) {
             edited: m.edited || false,
             timestamp: m.createdAt,
             messageType: m.messageType,
+            files: msg.files || [],
             reactions: Array.isArray(m.reactions) ? m.reactions.map(r => ({
               emoji: r.emoji,
               userId: r.userId?._id || r.userId,
@@ -87,18 +80,19 @@ module.exports = function (io) {
     });
 
     // ---------------- SEND MESSAGE ----------------
-    socket.on('send-message', async ({ message, userId, replyTo = null }) => {
+    socket.on('send-message', async ({ message, userId, replyTo = null, files = [] }) => {
       try {
-        if (!userId || !message || !message.trim()) {
-          socket.emit('chat-error', { message: 'userId and non-empty message are required' });
+        if (!userId || (!message?.trim() && (!files || files.length === 0))) {
+          socket.emit('chat-error', { message: 'userId і хоча б message або files обовʼязкові' });
           return;
         }
 
         const doc = new ChatMessage({
           userId,
-          message: message.trim(),
-          messageType: 'text',
-          replyTo: replyTo || null
+          message: message?.trim() || null,
+          messageType: files.length > 0 ? 'file' : 'text',
+          replyTo: replyTo || null,
+          files
         });
 
         const saved = await doc.save();
@@ -384,6 +378,7 @@ module.exports = function (io) {
               deleted: msg.replyTo.deleted,
             }
           : null,
+        files: msg.files || []
       };
     }
   });

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const chatMessageSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    message: { type: String, required: true, trim: true },
+    message: { type: String, trim: true },
     messageType: { type: String, enum: ['text', 'image', 'file'], default: 'text' },
     edited: { type: Boolean, default: false },
     deleted: { type: Boolean, default: false },
@@ -13,10 +13,16 @@ const chatMessageSchema = new mongoose.Schema({
             userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
         }],
         default: []
+    },
+    files: {
+        type: [{
+            fileName: String,
+            filePath: String
+        }],
+        default: []
     }
 }, { timestamps: true });
 
 chatMessageSchema.index({ createdAt: -1 });
-
 
 module.exports = mongoose.model('ChatMessage', chatMessageSchema);
