@@ -114,7 +114,7 @@ module.exports = function (io) {
     });
 
     // ---------------- EDIT ----------------
-    socket.on('edit-message', async ({ messageId, newText, userId }) => {
+    socket.on('edit-message', async ({ messageId, userId, newText }) => {
       try {
         if (!messageId || !userId) {
           socket.emit('chat-error', { message: 'messageId and userId are required' });
