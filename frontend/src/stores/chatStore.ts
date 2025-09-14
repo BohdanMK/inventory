@@ -19,7 +19,8 @@ export const useChatStore = defineStore("chat", () => {
     socketService.on("new-message", addMessage);
     socketService.on("message-deleted", handleDeletedMessage);
 
-    socketService.on("message-reacted", handleReactedMessage);
+    socketService.on("message-reacted", handleUpdateMessage);
+    socketService.on("message-updated", handleUpdateMessage);
   }
 
 
@@ -32,6 +33,10 @@ export const useChatStore = defineStore("chat", () => {
 
   function sendMessage(msg: string, userId: string, replyTo: string | null , files?: any | null ) {
     socketService.emit("send-message", { message: msg, userId, replyTo, files });
+  }
+
+  function editMessage(messageId: string, userId: string, msg: string) {
+    socketService.emit("edit-message", {messageId, userId, newText: msg });
   }
 
 
@@ -62,7 +67,7 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  function handleReactedMessage(updatedMsg: IMessageChat) {
+  function handleUpdateMessage(updatedMsg: IMessageChat) {
     const index = messagesList.value.findIndex(m => m._id === updatedMsg._id);
     if (index !== -1) {
       messagesList.value[index] = updatedMsg;
@@ -79,13 +84,15 @@ export const useChatStore = defineStore("chat", () => {
     socketService.emit("remove-react-message", { messageId: msgId, userId, emoji });
   }
 
+
   return {
       messagesList,
       initChat,
       stopChat,
       sendMessage,
+      editMessage,
       deleteMessage,
-      handleReactedMessage,
+      handleUpdateMessage,
       handleSendReactedMessage,
       handleRemoveReaction
     };

@@ -36,6 +36,7 @@ const idMessage = ref<string | null>(null);
 const { reset } = useUnreadMessages();
 const fileInput = ref<HTMLInputElement | null>(null);
 const { uploadFiles } = useFileUpload();
+const messageToEdit = ref<IMessageChat | null>(null);
 
 // for files
 const files = ref<File[]>([]);
@@ -90,6 +91,20 @@ const sendMessage = async () => {
   }
 };
 
+const editMessage = async () => {
+  if (!messageToEdit.value || !messageToEdit.value.message) return;
+  isSending.value = true;
+  try {
+    chatStore.editMessage(messageToEdit.value?._id,  userProfile.userProfile?._id || '', messageToEdit.value.message );
+    removeEditMessage();
+
+  } catch (error) {
+    console.error('Error sending message:', error);
+  } finally {
+    isSending.value = false;
+  }
+}
+
 const scrollToBottom = async () => {
   await nextTick();
   if (messagesContainer.value) {
@@ -112,9 +127,10 @@ const confirm2 = (messageId: string, event: Event) => {
             label: 'Delete',
             severity: 'danger'
         },
-        accept: () => {
+        accept: async () => {
           console.log(event);
-            chatStore.deleteMessage(messageId, userProfile.userProfile?._id || '');
+          await  chatStore.deleteMessage(messageId, userProfile.userProfile?._id || '');
+          removeEditMessage()
         },
         reject: () => {
         }
@@ -127,7 +143,16 @@ const setReplyTo = (message: IMessageChat) => {
 
 const removeReplyTo = () => {
   replyMesssage.value = null;
-}
+};
+
+const setEditMessage = (message: IMessageChat) => {
+  messageToEdit.value = {...message};
+};
+
+const removeEditMessage = () => {
+  messageToEdit.value = null;
+};
+
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
@@ -216,6 +241,7 @@ const handleFileChange = (event: Event) => {
           class="absolute top-0 left-0 z-50"
           @select="addEmojiToMessage"
         />
+
         <!-- messages -->
         <div ref="messagesContainer" class="card border border-gray-300 p-3 rounded-md flex-1 overflow-y-auto mb-3">
             <template
@@ -225,6 +251,15 @@ const handleFileChange = (event: Event) => {
             >
 
               <div v-if="!message.deleted" :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`">
+                <Button
+                  v-tooltip.top="$t('button.reaction')"
+                  severity="secondary"
+                  variant="text"
+                  class="p-0 m-0 absolute bottom-[-10px] left-[10px]"
+                  @click="toggleEmojiForMessage(message._id)"
+                >
+                  <i class="pi pi-face-smile" style="color: slateblue"></i>
+                </Button>
                   <div class="w-full flex gap-2 bg-sky-100 p-3 rounded-t-xl" v-if="message.files && message.files.length > 0">
 
                     <MessageFileViewer
@@ -268,24 +303,24 @@ const handleFileChange = (event: Event) => {
 
                     </div>
                     <div class="flex gap-0.5" v-if="!message.deleted">
-                      <Button
-                        v-tooltip.top="$t('button.reaction')"
-                        severity="secondary"
-                        variant="text"
-                        class="p-0 m-0"
-                        @click="toggleEmojiForMessage(message._id)"
-                      >
-                        <font-awesome-icon icon="fa-solid fa-face-smile" />
-                      </Button>
-                      <template v-if="isMine(message.userId)">
 
+
+                      <template v-if="isMine(message.userId)">
+                        <Button
+                          v-tooltip.top="$t('button.edit')"
+                          icon="pi pi-pencil"
+                          severity="warn"
+                          variant="text"
+                          class="w-[20px] p-0 m-0"
+                          @click="setEditMessage(message)"
+                        />
                         <ConfirmPopup></ConfirmPopup>
                         <Button
                           v-tooltip.top="$t('button.delete')"
                           icon="pi pi-trash"
                           severity="danger"
                           variant="text"
-                          class="p-0 m-0"
+                          class="w-[20px] p-0 m-0"
                           @click="confirm2(message._id, $event)"
                         />
                       </template>
@@ -295,7 +330,7 @@ const handleFileChange = (event: Event) => {
                           icon="pi pi-reply"
                           severity="warn"
                           variant="text"
-                          class="p-0 m-0"
+                          class="w-[20px] p-0 m-0"
                           @click="setReplyTo(message)"
                       />
 
@@ -326,10 +361,10 @@ const handleFileChange = (event: Event) => {
 
           </div>
           <Button
-              icon="pi pi-trash"
+              icon="pi pi-times"
               severity="danger"
               variant="text"
-              class="p-0 m-0"
+              class="w-[20px] p-0 m-0"
               @click="removeReplyTo()"
           />
         </div>
@@ -343,26 +378,39 @@ const handleFileChange = (event: Event) => {
         </div>
         </div>
         <div class="flex gap-2 items-end">
-          <Button icon="pi pi-face-smile" @click="showEmojiPicker = !showEmojiPicker" outlined />
-          <div class="relative">
-            <EmojiPicker
-              v-if="showEmojiPicker"
-              @select="addEmoji"
-              class="absolute bottom-12 left-0 z-50"
-            />
-          </div>
-          <div class="flex-auto flex items-center">
 
-            <Textarea  v-model="newMessage" rows="1" autoResize  class="w-full"/>
-          </div>
-          <div class="flex gap-2">
-              <Button icon="pi pi-send" aria-label="Filter" severity="success" @click="sendMessage" />
+          <!--edits message fields-->
+          <template v-if="messageToEdit">
+            <div class="flex-auto flex items-center" >
+              <Textarea  v-model="messageToEdit.message" rows="1" autoResize  class="w-full"/>
+            </div>
+            <div class="flex gap-2">
+                <Button icon="pi pi-check" aria-label="Filter" severity="success" @click="editMessage" />
+                <Button icon="pi pi-times" aria-label="Filter" severity="danger" @click="removeEditMessage" />
+            </div>
+          </template>
+          <!--new message fields-->
+          <template v-else>
+            <Button icon="pi pi-face-smile" @click="showEmojiPicker = !showEmojiPicker" outlined />
+            <div class="relative">
+              <EmojiPicker
+                v-if="showEmojiPicker"
+                @select="addEmoji"
+                class="absolute bottom-12 left-0 z-50"
+              />
+            </div>
+            <div class="flex-auto flex items-center">
+              <Textarea  v-model="newMessage" rows="1" autoResize  class="w-full"/>
+            </div>
+            <div class="flex gap-2">
+                <Button icon="pi pi-send" aria-label="Filter" severity="success" @click="sendMessage" />
 
-              <label class="cursor-pointer">
-                <input ref="fileInput" type="file" multiple class="hidden" @change="handleFileChange" />
-                <Button icon="pi pi-file-arrow-up" severity="warn" @click="triggerFileSelect"/>
-              </label>
-          </div>
+                <label class="cursor-pointer">
+                  <input ref="fileInput" type="file" multiple class="hidden" @change="handleFileChange" />
+                  <Button icon="pi pi-file-arrow-up" severity="warn" @click="triggerFileSelect"/>
+                </label>
+            </div>
+          </template>
         </div>
       </div>
     </Drawer>

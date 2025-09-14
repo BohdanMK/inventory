@@ -54,7 +54,7 @@
 </script>
 
 <template>
-    <div class="flex absolute bottom-[-10px] left-[15px] cursor-pointer">
+    <div class="flex absolute bottom-[-10px] left-[28px] cursor-pointer">
         <div v-for="(reaction, index) in message.reactions" :key="reaction.userId" @click="toggle">
             <div v-if="index < 2" :class="index > 0 ? 'ms-[-12px]' : ''">
             {{ reaction.emoji }}
