@@ -29,16 +29,15 @@ module.exports = function (io) {
         // НЕ використовуємо .lean() на populate реакцій
         const chatHistory = await ChatMessage.find()
           .sort({ createdAt: -1 })
-          .limit(50)
+          .limit(10)
           .populate('userId', 'username email avatarFullPath')
           .populate({
             path: 'replyTo',
             select: 'message userId deleted',
             populate: { path: 'userId', select: 'username avatarFullPath' }
           })
-          .populate('reactions.userId', 'username avatarFullPath'); // ключова зміна
+          .populate('reactions.userId', 'username avatarFullPath');
 
-        // Тепер робимо форматування в plain object
         const formattedHistory = chatHistory.reverse().map(msg => {
           const m = msg.toObject();
           return {
@@ -185,7 +184,7 @@ module.exports = function (io) {
     // ---------------- LOAD MORE ----------------
     socket.on('load-more-messages', async ({ before, limit = 20 }) => {
       try {
-        const query = before ? { timestamp: { $lt: new Date(before) } } : {};
+        const query = before ? { createdAt: { $lt: new Date(before) } } : {};
 
         const messages = await ChatMessage.find(query)
           .populate('userId', 'username email avatarFullPath')
@@ -194,12 +193,14 @@ module.exports = function (io) {
             select: 'message userId deleted',
             populate: { path: 'userId', select: 'username avatarFullPath' }
           })
-          .sort({ timestamp: -1 })
+          .sort({ createdAt: -1 })
           .limit(limit)
           .lean();
 
         const formattedMessages = messages.reverse().map(formatMessage);
-        socket.emit('more-messages', formattedMessages);
+        setTimeout(() => {
+          socket.emit('more-messages', formattedMessages);
+        }, 4000)
       } catch (error) {
         console.error('❌ Error loading more messages:', error);
         socket.emit('chat-error', { message: 'Failed to load more messages' });
@@ -360,7 +361,7 @@ module.exports = function (io) {
         message: msg.deleted ? null : msg.message,
         deleted: msg.deleted || false,
         edited: msg.edited || false,
-        timestamp: msg.timestamp,
+        timestamp: msg.createdAt,
         messageType: msg.messageType,
         reactions: Array.isArray(msg.reactions) ? msg.reactions.map(r => ({
           emoji: r.emoji,
