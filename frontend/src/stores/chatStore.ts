@@ -1,6 +1,7 @@
 // stores/chatStore.ts
+import { SOCKET_EVENTS } from "@/constants/socketEvents";
 import { defineStore } from "pinia";
-import { ref, computed, nextTick } from "vue";
+import { ref, computed } from "vue";
 import { socketService } from "@/socket/socketService";
 import type { IMessageChat } from "@/types/chat/chat";
 import { useToastNotification } from '@/composables/useToastNotification';
@@ -15,114 +16,105 @@ export const useChatStore = defineStore("chat", () => {
   const isLoadingMore = ref<boolean>(false);
   const { increment } = useUnreadMessages();
 
-  // state loaders
   const loadersStore = useLoadersStore();
 
-  function initChat(userId: string) {
-    socketService.emit("get-chat-history", { userId });
-    socketService.on("chat-history", setMessages);
-    socketService.on("new-message", addMessage);
-    socketService.on("message-deleted", handleDeletedMessage);
+  const initChat = (userId: string) => {
+    socketService.emit(SOCKET_EVENTS.GET_CHAT_HISTORY, { userId });
+    socketService.on(SOCKET_EVENTS.CHAT_HISTORY, setMessages);
+    socketService.on(SOCKET_EVENTS.NEW_MESSAGE, addMessage);
+    socketService.on(SOCKET_EVENTS.MESSAGE_DELETED, handleDeletedMessage);
+    socketService.on(SOCKET_EVENTS.MESSAGE_REACTED, handleUpdateMessage);
+    socketService.on(SOCKET_EVENTS.MESSAGE_UPDATED, handleUpdateMessage);
+    socketService.on(SOCKET_EVENTS.MORE_MESSAGES, handlerAddMoreMessagess);
+  };
 
-    socketService.on("message-reacted", handleUpdateMessage);
-    socketService.on("message-updated", handleUpdateMessage);
-    socketService.on("more-messages", handlerAddMoreMessagess);
-  }
+  const stopChat = () => {
+    socketService.off(SOCKET_EVENTS.CHAT_HISTORY, setMessages);
+    socketService.off(SOCKET_EVENTS.NEW_MESSAGE, addMessage);
+    socketService.off(SOCKET_EVENTS.MESSAGE_DELETED, handleDeletedMessage);
+  };
 
+  const sendMessage = (msg: string, userId: string, replyTo: string | null, files?: any | null) => {
+    socketService.emit(SOCKET_EVENTS.SEND_MESSAGE, { message: msg, userId, replyTo, files });
+  };
 
-  function stopChat() {
-    socketService.off("chat-history", setMessages);
-    socketService.off("new-message", addMessage);
-    socketService.off("message-deleted", handleDeletedMessage);
-  }
+  const editMessage = (messageId: string, userId: string, msg: string) => {
+    socketService.emit(SOCKET_EVENTS.EDIT_MESSAGE, { messageId, userId, newText: msg });
+  };
 
-
-  function sendMessage(msg: string, userId: string, replyTo: string | null , files?: any | null ) {
-    socketService.emit("send-message", { message: msg, userId, replyTo, files });
-  }
-
-  function editMessage(messageId: string, userId: string, msg: string) {
-    socketService.emit("edit-message", {messageId, userId, newText: msg });
-  }
-
-
-  function setMessages(msgs: IMessageChat[]) {
+  const setMessages = (msgs: IMessageChat[]) => {
     messagesList.value = msgs;
-  }
+  };
 
-
-  function addMessage(msg: IMessageChat) {
+  const addMessage = (msg: IMessageChat) => {
     if (!messagesList.value.find(m => m._id === msg._id)) {
       messagesList.value.push(msg);
-      if(userProfile.userProfile?._id !== msg.userId) {
+      if (userProfile.userProfile?._id !== msg.userId) {
         increment();
-        toastNotification.showSuccess(`${msg.username} - ${msg.message}` || '', 'New message')
+        toastNotification.showSuccess(`${msg.username} - ${msg.message}` || '', 'New message');
       }
     }
-  }
+  };
 
-  function loadMoreMessages() {
+  const loadMoreMessages = () => {
     if (!messagesList.value.length || isLoadingMore.value) return;
 
     const oldestMessage = messagesList.value[0];
     loadersStore.loadMoreStatus = true;
-    socketService.emit("load-more-messages", {
+    socketService.emit(SOCKET_EVENTS.LOAD_MORE_MESSAGES, {
       before: oldestMessage.timestamp,
       limit: 20
     });
-  }
-
-  const handlerAddMoreMessagess = (msgs: IMessageChat[]) => {
-      messagesList.value = [...msgs, ...messagesList.value];
-      loadersStore.loadMoreStatus = false;
-    };
-
-  const deleteMessage = (messageId: string, userId: string) => {
-    socketService.emit("delete-message", { messageId, userId  });
-    // messagesList.value = messagesList.value.filter(m => m._id !== messageId);
   };
 
-  function handleDeletedMessage({ _id }: { _id: string }) {
+  const handlerAddMoreMessagess = (msgs: IMessageChat[]) => {
+    messagesList.value = [...msgs, ...messagesList.value];
+    loadersStore.loadMoreStatus = false;
+  };
+
+  const deleteMessage = (messageId: string, userId: string) => {
+    socketService.emit(SOCKET_EVENTS.DELETE_MESSAGE, { messageId, userId });
+  };
+
+  const handleDeletedMessage = ({ _id }: { _id: string }) => {
     const msg = messagesList.value.find(m => m._id === _id);
     if (msg) {
       msg.deleted = true;
     }
   };
 
-  function handleUpdateMessage(updatedMsg: IMessageChat) {
+  const handleUpdateMessage = (updatedMsg: IMessageChat) => {
     const index = messagesList.value.findIndex(m => m._id === updatedMsg._id);
     if (index !== -1) {
       messagesList.value[index] = updatedMsg;
     } else {
       messagesList.value.push(updatedMsg);
     }
-  }
+  };
 
-  function handleSendReactedMessage(msgId: string, userId: string, emoji: string) {
-    socketService.emit("react-message", { messageId: msgId, userId, emoji })
-  }
+  const handleSendReactedMessage = (msgId: string, userId: string, emoji: string) => {
+    socketService.emit(SOCKET_EVENTS.REACT_MESSAGE, { messageId: msgId, userId, emoji });
+  };
 
-  function handleRemoveReaction(msgId: string, userId: string, emoji: string) {
-    socketService.emit("remove-react-message", { messageId: msgId, userId, emoji });
-  }
+  const handleRemoveReaction = (msgId: string, userId: string, emoji: string) => {
+    socketService.emit(SOCKET_EVENTS.REMOVE_REACT_MESSAGE, { messageId: msgId, userId, emoji });
+  };
 
   // getters
-
   const messagesListLength = computed(() => messagesList.value.length);
 
-
   return {
-      messagesList,
-      messagesListLength,
-      initChat,
-      stopChat,
-      sendMessage,
-      editMessage,
-      deleteMessage,
-      handleUpdateMessage,
-      handleSendReactedMessage,
-      handleRemoveReaction,
-      loadMoreMessages,
-      isLoadingMore
-    };
+    messagesList,
+    messagesListLength,
+    initChat,
+    stopChat,
+    sendMessage,
+    editMessage,
+    deleteMessage,
+    handleUpdateMessage,
+    handleSendReactedMessage,
+    handleRemoveReaction,
+    loadMoreMessages,
+    isLoadingMore
+  };
 });

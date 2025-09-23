@@ -1,3 +1,4 @@
+import { SOCKET_EVENTS } from "@/constants/socketEvents";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { socketService } from "@/socket/socketService";
@@ -14,7 +15,7 @@ export const useSocketStore = defineStore("socket", () => {
   const loadersStore = useLoadersStore();
 
   function connect(userId: string) {
-    socketService.connect("http://localhost:3001");
+    socketService.connect(import.meta.env.VITE_SOCKET_CONNECTION);
 
     socketService.on("connect", () => {
       isConnected.value = true;
@@ -25,8 +26,8 @@ export const useSocketStore = defineStore("socket", () => {
       isConnected.value = false;
     });
 
-    socketService.off("chat-error", handleChatError);
-    socketService.on("chat-error", handleChatError);
+    socketService.off(SOCKET_EVENTS.CHAT_ERROR, handleChatError);
+    socketService.on(SOCKET_EVENTS.CHAT_ERROR, handleChatError);
   }
 
   function disconnect() {

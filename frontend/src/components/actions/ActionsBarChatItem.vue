@@ -5,20 +5,22 @@ import EmojiPicker from 'vue3-emoji-picker'
 import "vue3-emoji-picker/css";
 import Drawer from 'primevue/drawer';
 import Textarea from 'primevue/textarea';
-import { useActionsStore } from '@/stores/actionsStore';
-import { useChatStore } from '@/stores/chatStore';
-import { useProfileStore } from '@/stores/userProfileStore';
-import { formatDataWithTime } from '@/composables/formatDate.ts';
-import setFullImgPath from '@/helpers/fullPathImg.ts';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
-import EmojiList  from '@/components/chat/EmojiList.vue';
+import { useActionsStore } from '@/stores/actionsStore';
+import { useChatStore } from '@/stores/chatStore';
+import { useLoadersStore } from "@/stores/loadersStore";
+import { useProfileStore } from '@/stores/userProfileStore';
+import setFullImgPath from '@/helpers/fullPathImg.ts';
+import { formatDataWithTime } from '@/composables/formatDate.ts';
 import { useUnreadMessages } from "@/composables/useUnreadMessages";
 import { useFileUpload } from "@/composables/uploadFiles.ts";
 import MessageFileViewer from '@/components/chat/MessageFileViewer.vue';
-import { useLoadersStore } from "@/stores/loadersStore";
+import EmojiList  from '@/components/chat/EmojiList.vue';
+import { useI18n } from 'vue-i18n';
 
 /// state
+const { t } = useI18n();
 const actionsStore = useActionsStore();
 const chatStore = useChatStore();
 const userProfile = useProfileStore();
@@ -109,15 +111,15 @@ const editMessage = async () => {
 const confirm2 = (messageId: string, event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
-        message: 'Do you want to delete this message?',
+        message: t('chat.do_you_want_to_delete_this_message'),
         icon: 'pi pi-info-circle',
         rejectProps: {
-            label: 'Cancel',
+            label: t('button.cancel'),
             severity: 'secondary',
             outlined: true
         },
         acceptProps: {
-            label: 'Delete',
+            label: t('button.delete'),
             severity: 'danger'
         },
         accept: async () => {
@@ -265,7 +267,7 @@ const handleFileChange = (event: Event) => {
       <template #header>
         <div class="flex items-center w-full">
           <h3 class="text-xl font-semibold">
-            Chat <span class="text-blue-500">{{ chatStore.messagesListLength }}</span> messages
+            {{ t('chat.chat') }} <span class="text-blue-500">{{ chatStore.messagesListLength }}</span>   {{ t('chat.messages') }}
           </h3>
           <Button
             icon="pi pi-sync"
@@ -303,9 +305,7 @@ const handleFileChange = (event: Event) => {
             <template
               v-for="message in chatStore.messagesList"
               :key="message._id"
-
             >
-
               <div
                 v-if="!message.deleted" :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`"
                 :id="`message-${message._id}`"

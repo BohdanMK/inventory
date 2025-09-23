@@ -10,7 +10,7 @@
             >
                 <template #button="{ toggleCallback }">
                     <Button variant="outlined" class="border" @click="toggleCallback">
-                       <i class="pi pi-list" style="font-size: 2rem"></i>
+                        <i class="pi pi-list" style="font-size: 2rem"></i>
                     </Button>
                 </template>
             </SpeedDial>
@@ -34,17 +34,20 @@ import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { useActionsStore } from '@/stores/actionsStore';
 import SpeedDial from 'primevue/speeddial';
+import { useI18n } from 'vue-i18n';
 const ActionsBarChatItem = defineAsyncComponent(() => import('@/components/actions/ActionsBarChatItem.vue'));
 
-const toast = useToast();
-const router = useRouter();
+
 
 // state
+const toast = useToast();
+const router = useRouter();
+const { t } = useI18n();
 const actionsStore = useActionsStore();
 
 const items = ref([
     {
-        label: 'Chat',
+        label: t('chat.chat'),
         icon: 'pi pi-envelope',
         command: () => actionsStore.toggleChatActionsStatus()
     }

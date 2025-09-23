@@ -10,18 +10,24 @@
     filePath: undefined,
   });
 
-  const downloadFile = () => {
+  const downloadFile = async () => {
     if (!props.filePath) return;
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
     const fullUrl = `${baseURL}/${props.filePath}`;
 
-    const link = document.createElement('a');
-    link.href = fullUrl;
-    link.setAttribute('download', props.file || 'file');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const res = await fetch(fullUrl);
+      const blob = await res.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', props.file || 'file.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Download error:', err);
+    }
   };
 </script>
 

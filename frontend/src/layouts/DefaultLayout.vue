@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { watch, onUnmounted, ref, onMounted } from 'vue';
+  import { watch, onUnmounted, onMounted, ref } from 'vue';
   import { useProfileStore } from "@/stores/userProfileStore";
   import { useSocketStore } from '@/stores/socketStore';
   import { usePagesStore } from '@/stores/pagesStore';
@@ -10,17 +10,18 @@
   import TheSideBar from '@/components/TheSideBar.vue';
   import ActionsBar from '@/components/actions/ActionsBar.vue';
 
-  import { useActionsStore } from '@/stores/actionsStore';
-
-
+  // state
   const pagesStore = usePagesStore();
   const usersStore = useUsersStore();
   const socketStore = useSocketStore();
   const router = useRouter();
-
   const profileStore = useProfileStore();
+  const isDesktop = ref(true);
 
   // actions
+  const checkScreen = () => {
+    isDesktop.value = window.innerWidth > 991;
+  };
 
   const getProfile = async (): Promise<void> => {
     const token = localStorage.getItem('token');
@@ -50,9 +51,13 @@
 
 
   onMounted(async () => {
+    // check screen size
+    checkScreen();
+    window.addEventListener('resize', checkScreen);
+
     await getProfile();
     if (profileStore.userProfile && profileStore.userProfile._id) {
-
+      // connect socket
       socketStore.connect(profileStore.userProfile._id);
 
       pagesStore.initTabs();
@@ -67,13 +72,15 @@
       // init users list
       usersStore.registerUser(profileStore.userProfile._id);
       usersStore.initUsersListeners();
-      
+
     } else {
       console.warn("⚠️ No userId found, socket not connected");
     }
 });
 
   onUnmounted(() => {
+    window.removeEventListener('resize', checkScreen);
+
     socketStore.disconnect();
   });
 
@@ -91,24 +98,24 @@
     </div>
 
     <div v-else class="dark:bg-gray-600 relative">
-      <TheHeader />
-      <main>
-        <div class="flex">
-          <TheSideBar />
-          <div
-            class="m-4 w-full overflow-x-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-          >
-            <slot />
+        <TheHeader />
+        <main v-if="isDesktop">
+          <div class="flex">
+            <TheSideBar />
+            <div
+              class="m-4 w-full overflow-x-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            >
+              <slot />
+            </div>
           </div>
-        </div>
-        <ActionsBar/>
+          <ActionsBar/>
       </main>
+      <div v-else class="w-full text-3xl text-center mt-[50px] font-medium">{{ $t('modile_version_is_comming_soon') }}</div>
     </div>
   </transition>
 </template>
 
 <style scoped>
-  /* Анімація для спінера */
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity 0.5s ease;
