@@ -8,6 +8,7 @@ import Textarea from 'primevue/textarea';
 import { useActionsStore } from '@/stores/actionsStore';
 import { useChatStore } from '@/stores/chatStore';
 import { useProfileStore } from '@/stores/userProfileStore';
+import { formatDataWithTime } from '@/composables/formatDate.ts';
 import setFullImgPath from '@/helpers/fullPathImg.ts';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm";
@@ -15,19 +16,18 @@ import EmojiList  from '@/components/chat/EmojiList.vue';
 import { useUnreadMessages } from "@/composables/useUnreadMessages";
 import { useFileUpload } from "@/composables/uploadFiles.ts";
 import MessageFileViewer from '@/components/chat/MessageFileViewer.vue';
-
+import { useLoadersStore } from "@/stores/loadersStore";
 
 /// state
 const actionsStore = useActionsStore();
 const chatStore = useChatStore();
 const userProfile = useProfileStore();
+const loadersStore = useLoadersStore();
 const confirm = useConfirm();
-const messages = ref<string[]>([]);
 const newMessage = ref<string>("");
 const showEmojiPicker = ref<boolean>(false);
 const showMessageEmoji = ref<boolean>(false);
 const isSending = ref(false);
-const isLoadingMore = ref(false);
 const messagesContainer = ref<HTMLElement | null>(null);
 const baseClasses = 'mb-3 w-[80%] flex flex-col text-sm  items-start rounded-xl  relative z-1';
 const replyMesssage = ref<IMessageChat | null>(null);
@@ -81,7 +81,7 @@ const sendMessage = async () => {
       fileUrls = null;
       showEmojiPicker.value = false;
       previewUrls.value = [];
-      scrollToBottom();
+      scrollBottom();
 
   } catch (error) {
     console.error('Error sending message:', error);
@@ -105,13 +105,6 @@ const editMessage = async () => {
   }
 }
 
-const scrollToBottom = async () => {
-  await nextTick();
-  if (messagesContainer.value) {
-    console.log(messagesContainer.value.scrollHeight);
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-  }
-};
 
 const confirm2 = (messageId: string, event: Event) => {
     confirm.require({
@@ -194,6 +187,33 @@ const handleFileChange = (event: Event) => {
     fileInput.value?.click();
   };
 
+  const scrollToMessage = (messageId: string) => {
+    const el = document.getElementById(`message-${messageId}`);
+    if (el && messagesContainer.value) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("bg-yellow-100");
+      setTimeout(() => el.classList.remove("bg-yellow-100"), 5000);
+    }
+  };
+
+  const loadMoreMessages = () => {
+    chatStore.loadMoreMessages();
+  }
+
+  const scrollTop = async () => {
+    await nextTick();
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const scrollBottom = async () => {
+    await nextTick();
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTo({ top: messagesContainer.value.scrollHeight, behavior: "smooth" });
+    }
+  };
+
   /// getters
 
   const otherClasses = (isMine: boolean) =>
@@ -225,16 +245,52 @@ const handleFileChange = (event: Event) => {
       reset()
     }
   });
+
+  watch(
+    () => chatStore.messagesList.length,
+      async () => {
+        await nextTick();
+        scrollBottom();
+      }
+  );
 </script>
 
 <template>
   <div>
     <Drawer
       v-model:visible="actionsStore.chatActionsVisible"
-      header="Chat"
       position="right"
       :style="{ width: 500 + 'px' }"
     >
+      <template #header>
+        <div class="flex items-center w-full">
+          <h3 class="text-xl font-semibold">
+            Chat <span class="text-blue-500">{{ chatStore.messagesListLength }}</span> messages
+          </h3>
+          <Button
+            icon="pi pi-sync"
+            severity="info"
+            variant="text"
+            v-tooltip.top="$t('button.load_more')"
+            :loading="loadersStore.loadMoreStatus"
+            @click="loadMoreMessages()"
+          />
+          <Button
+            icon="pi pi-arrow-up"
+            severity="Warn"
+            variant="text"
+            v-tooltip.top="$t('button.scroll_top')"
+            @click="scrollTop()"
+          />
+          <Button
+            icon="pi pi-arrow-down"
+            severity="info"
+            variant="text"
+            v-tooltip.top="$t('button.scroll_bottom')"
+            @click="scrollBottom()"
+          />
+        </div>
+      </template>
       <div class="h-[90vh] flex flex-col justify-between gap-0" ref="messageEmojiPicker">
         <EmojiPicker
           v-if="showMessageEmoji"
@@ -250,7 +306,10 @@ const handleFileChange = (event: Event) => {
 
             >
 
-              <div v-if="!message.deleted" :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`">
+              <div
+                v-if="!message.deleted" :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`"
+                :id="`message-${message._id}`"
+                >
                 <Button
                   v-tooltip.top="$t('button.reaction')"
                   severity="secondary"
@@ -269,72 +328,82 @@ const handleFileChange = (event: Event) => {
                   </div>
                   <div
                     v-if="message.replyTo"
-                    class="w-full flex flex-col p-1 bg-amber-50 px-2"
+                    class="w-full flex p-1 bg-amber-50 px-2"
                   >
-                    <h3 class="font-medium">
-                      {{ message.replyTo.username }}
-                    </h3>
-                    <h4>
-                      {{ message.replyTo.message }}
-                    </h4>
-                  </div>
-                  <div class="flex w-full gap-3 items-center px-3 py-3">
-                    <div class="flex-shrink-0 flex flex-col">
-                      <img
-                        v-if="message.avatar"
-                        :src="setFullImgPath(message.avatar)"
-                        :alt="message.username"
-                        class="w-8 h-8 rounded-full object-cover"
-                      />
-                      <i v-else class="pi pi-user-minus mx-auto text-2xl"></i>
-                    </div>
                     <div class="flex flex-col flex-auto">
-                      <div>
-                        <span class="font-medium">
-                          {{ message.username }}
-                        </span>
-                        <span>
-
-                        </span>
-                      </div>
-                      <div>
-                        {{ message.message }}
-                      </div>
-
+                      <h3 class="font-medium">
+                        {{ message.replyTo.username }}
+                      </h3>
+                      <h4>
+                        {{ message.replyTo.message }}
+                      </h4>
                     </div>
-                    <div class="flex gap-0.5" v-if="!message.deleted">
-
-
-                      <template v-if="isMine(message.userId)">
-                        <Button
-                          v-tooltip.top="$t('button.edit')"
-                          icon="pi pi-pencil"
-                          severity="warn"
-                          variant="text"
-                          class="w-[20px] p-0 m-0"
-                          @click="setEditMessage(message)"
+                    <button
+                      class="cursor-pointer"
+                      @click="scrollToMessage(message.replyTo._id)">
+                      <font-awesome-icon icon="fa-solid fa-reply" />
+                    </button>
+                  </div>
+                  <div class="w-full px-3 py-3">
+                    <div class="flex gap-3 items-center">
+                      <div class="flex-shrink-0 flex flex-col">
+                        <img
+                          v-if="message.avatar"
+                          :src="setFullImgPath(message.avatar)"
+                          :alt="message.username"
+                          class="w-8 h-8 rounded-full object-cover"
                         />
-                        <ConfirmPopup></ConfirmPopup>
-                        <Button
-                          v-tooltip.top="$t('button.delete')"
-                          icon="pi pi-trash"
-                          severity="danger"
-                          variant="text"
-                          class="w-[20px] p-0 m-0"
-                          @click="confirm2(message._id, $event)"
-                        />
-                      </template>
-                      <Button
-                          v-if="!isMine(message.userId)"
-                          v-tooltip.top="$t('button.reply')"
-                          icon="pi pi-reply"
-                          severity="warn"
-                          variant="text"
-                          class="w-[20px] p-0 m-0"
-                          @click="setReplyTo(message)"
-                      />
+                        <i v-else class="pi pi-user-minus mx-auto text-2xl"></i>
+                      </div>
+                      <div class="flex flex-col flex-auto">
+                        <div>
+                          <span class="font-medium">
+                            {{ message.username }}
+                          </span>
+                          <span>
 
+                          </span>
+                        </div>
+                        <div>
+                          {{ message.message }}
+                        </div>
+
+                      </div>
+                      <div class="flex gap-0.5" v-if="!message.deleted">
+
+
+                        <template v-if="isMine(message.userId)">
+                          <Button
+                            v-tooltip.top="$t('button.edit')"
+                            icon="pi pi-pencil"
+                            severity="warn"
+                            variant="text"
+                            class="w-[20px] p-0 m-0"
+                            @click="setEditMessage(message)"
+                          />
+                          <ConfirmPopup></ConfirmPopup>
+                          <Button
+                            v-tooltip.top="$t('button.delete')"
+                            icon="pi pi-trash"
+                            severity="danger"
+                            variant="text"
+                            class="w-[20px] p-0 m-0"
+                            @click="confirm2(message._id, $event)"
+                          />
+                        </template>
+                        <Button
+                            v-if="!isMine(message.userId)"
+                            v-tooltip.top="$t('button.reply')"
+                            icon="pi pi-reply"
+                            severity="warn"
+                            variant="text"
+                            class="w-[20px] p-0 m-0"
+                            @click="setReplyTo(message)"
+                        />
+
+                      </div>
                     </div>
+                    <div class="w-full text-end text-[10px] leading-none">{{ formatDataWithTime(message.timestamp) }}</div>
                   </div>
 
                   <EmojiList
@@ -371,8 +440,10 @@ const handleFileChange = (event: Event) => {
         <div v-if="previewUrls.length" class="flex gap-2 mb-2 flex-wrap">
           <div v-for="(url, i) in previewUrls" :key="i" class="relative">
             <img v-if="url.startsWith('data:image/')" :src="url" class="w-20 h-20 object-cover rounded-md" />
-            <div v-else class="w-20 h-20 flex items-center justify-center border rounded-md">
-              {{ url }}
+            <div v-else class="w-20 h-20 flex items-center justify-center border rounded-md overflow-hidden">
+              <div>
+                {{ url }}
+              </div>
             </div>
             <Button icon="pi pi-times" severity="danger" class="absolute top-0 right-0 p-1" @click="removeFile(i)" />
         </div>

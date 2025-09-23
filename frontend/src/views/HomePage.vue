@@ -74,9 +74,9 @@
 </script>
 
 <template>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-1 xl:gap-[15px]">
     <!--dashboard cards-->
-    <div class="col-span-6 m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div class="col-span-12 lg:col-span-6 m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         Active page tabs: {{ pagesStore.countActivePages }}
       </h2>
@@ -93,19 +93,19 @@
         </li>
       </ul>
     </div>
-    <div class="col-span-6">
+    <div class="col-span-12 lg:col-span-6">
       <ProductsInfoCard
         :loading="asyncStateProducts.loadingStatus.value"
         @updateData="getProductsInfo()"
       />
     </div>
-    <div class="col-span-9">
+    <div class="col-span-12 lg:col-span-9">
       <StockActionsPieChart
         :loading="asyncStateProducts.loadingStatus.value"
         @updateData="getProductsInfo()"
       />
     </div>
-    <div class="col-span-3">
+    <div class="col-span-12 md:col-span-3">
       <ListActiveUser/>
     </div>
   </div>

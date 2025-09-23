@@ -1,17 +1,22 @@
 // stores/chatStore.ts
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed, nextTick } from "vue";
 import { socketService } from "@/socket/socketService";
 import type { IMessageChat } from "@/types/chat/chat";
 import { useToastNotification } from '@/composables/useToastNotification';
 import { useProfileStore } from '@/stores/userProfileStore';
 import { useUnreadMessages } from "@/composables/useUnreadMessages";
+import { useLoadersStore } from "@/stores/loadersStore";
 
 export const useChatStore = defineStore("chat", () => {
   const messagesList = ref<IMessageChat[]>([]);
   const toastNotification = useToastNotification();
   const userProfile = useProfileStore();
+  const isLoadingMore = ref<boolean>(false);
   const { increment } = useUnreadMessages();
+
+  // state loaders
+  const loadersStore = useLoadersStore();
 
   function initChat(userId: string) {
     socketService.emit("get-chat-history", { userId });
@@ -21,6 +26,7 @@ export const useChatStore = defineStore("chat", () => {
 
     socketService.on("message-reacted", handleUpdateMessage);
     socketService.on("message-updated", handleUpdateMessage);
+    socketService.on("more-messages", handlerAddMoreMessagess);
   }
 
 
@@ -55,6 +61,22 @@ export const useChatStore = defineStore("chat", () => {
     }
   }
 
+  function loadMoreMessages() {
+    if (!messagesList.value.length || isLoadingMore.value) return;
+
+    const oldestMessage = messagesList.value[0];
+    loadersStore.loadMoreStatus = true;
+    socketService.emit("load-more-messages", {
+      before: oldestMessage.timestamp,
+      limit: 20
+    });
+  }
+
+  const handlerAddMoreMessagess = (msgs: IMessageChat[]) => {
+      messagesList.value = [...msgs, ...messagesList.value];
+      loadersStore.loadMoreStatus = false;
+    };
+
   const deleteMessage = (messageId: string, userId: string) => {
     socketService.emit("delete-message", { messageId, userId  });
     // messagesList.value = messagesList.value.filter(m => m._id !== messageId);
@@ -84,9 +106,14 @@ export const useChatStore = defineStore("chat", () => {
     socketService.emit("remove-react-message", { messageId: msgId, userId, emoji });
   }
 
+  // getters
+
+  const messagesListLength = computed(() => messagesList.value.length);
+
 
   return {
       messagesList,
+      messagesListLength,
       initChat,
       stopChat,
       sendMessage,
@@ -94,6 +121,8 @@ export const useChatStore = defineStore("chat", () => {
       deleteMessage,
       handleUpdateMessage,
       handleSendReactedMessage,
-      handleRemoveReaction
+      handleRemoveReaction,
+      loadMoreMessages,
+      isLoadingMore
     };
 });

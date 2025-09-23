@@ -20,13 +20,12 @@ const updateData = () => {
   emit('updateData');
 };
 
-// типізація
 interface StockActionSummary {
   type: string;
   count: number;
 }
 
-// computed для даних
+// computed
 const hasChartData = computed(
   () => !!dashBoardStore.stockActionsSummary?.length
 );
@@ -99,14 +98,14 @@ const barChartOptions = computed(() => ({
         height="10rem"
       />
       <div v-else key="charts">
-        <div class="flex flex-col md:flex-row justify-around gap-8">
+        <div class="flex flex-col xl:flex-row items-center  justify-around gap-8 xl:gap-2">
           <Chart
             v-if="hasChartData"
             type="doughnut"
             :data="chartData"
             :options="chartOptions"
             class="w-full md:w-[30rem]"
-            :style="{ width: '380px', height: '380px' }"
+            :style="{ width: '300px', height: '320px' }"
           />
           <Chart
             v-if="hasChartData"

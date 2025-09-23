@@ -46,7 +46,10 @@
     "back": "Back",
     "create": "Create",
     "reply": "Reply",
-    "reaction": "Reaction"
+    "reaction": "Reaction",
+    "load_more": "Load more",
+    "scroll_top": "Scroll top",
+    "scroll_bottom": "Scroll bottom"
   },
   "popup": {
     "create_category": "Create category",

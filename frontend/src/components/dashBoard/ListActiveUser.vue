@@ -12,7 +12,7 @@
 </script>
 
 <template>
-    <div class="m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div class="m-4 rounded-lg border border-gray-200 bg-white p-2  xl:p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <ul class="divide-y divide-gray-200">
             <li
             v-for="user in usersStore.onlineUsers"
@@ -29,7 +29,7 @@
                 <i  class=" pi pi-user-minus mx-auto text-2xl"></i>
             </div>
             <div>
-                <p class="font-medium">{{ user.name }}</p>
+                <p class="font-medium text-wrap">{{ user.name }}</p>
                 <p class="text-xs text-gray-700 font-bold">{{ user.email }}</p>
             </div>
             </li>

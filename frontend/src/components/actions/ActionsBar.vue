@@ -10,7 +10,7 @@
             >
                 <template #button="{ toggleCallback }">
                     <Button variant="outlined" class="border" @click="toggleCallback">
-                       <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i>
+                       <i class="pi pi-list" style="font-size: 2rem"></i>
                     </Button>
                 </template>
             </SpeedDial>
@@ -45,36 +45,8 @@ const actionsStore = useActionsStore();
 const items = ref([
     {
         label: 'Chat',
-        icon: 'pi pi-pencil',
+        icon: 'pi pi-envelope',
         command: () => actionsStore.toggleChatActionsStatus()
-    },
-    {
-        label: 'Update',
-        icon: 'pi pi-refresh',
-        command: () => {
-            toast.add({ severity: 'success', summary: 'Update', detail: 'Data Updated', life: 3000 });
-        }
-    },
-    {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => {
-            toast.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
-        }
-    },
-    {
-        label: 'Upload',
-        icon: 'pi pi-upload',
-        command: () => {
-            router.push('/fileupload');
-        }
-    },
-    {
-        label: 'Vue Website',
-        icon: 'pi pi-external-link',
-        command: () => {
-            window.location.href = 'https://vuejs.org/'
-        }
     }
 ])
 </script>
