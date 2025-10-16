@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { watch, onUnmounted, onMounted, ref } from 'vue';
-  import { useProfileStore } from "@/stores/userProfileStore";
+  import { useProfileStore } from '@/stores/userProfileStore';
   import { useSocketStore } from '@/stores/socketStore';
   import { usePagesStore } from '@/stores/pagesStore';
-  import { useUsersStore } from "@/stores/usersStore";
+  import { useUsersStore } from '@/stores/usersStore';
   import { useRouter } from 'vue-router'; //
   import ProgressSpinner from 'primevue/progressspinner';
   import TheHeader from '@/components/TheHeader.vue';
@@ -48,8 +48,6 @@
     profileStore.loadingProfile = false;
   };
 
-
-
   onMounted(async () => {
     // check screen size
     checkScreen();
@@ -65,25 +63,26 @@
       const myTabId = crypto.randomUUID();
       pagesStore.registerTab(myTabId, router.currentRoute.value.fullPath);
 
-      watch(() => router.currentRoute.value.fullPath, (newPath) => {
-        pagesStore.updateTab(myTabId, newPath);
-      });
+      watch(
+        () => router.currentRoute.value.fullPath,
+        newPath => {
+          pagesStore.updateTab(myTabId, newPath);
+        }
+      );
 
       // init users list
       usersStore.registerUser(profileStore.userProfile._id);
       usersStore.initUsersListeners();
-
     } else {
-      console.warn("⚠️ No userId found, socket not connected");
+      console.warn('⚠️ No userId found, socket not connected');
     }
-});
+  });
 
   onUnmounted(() => {
     window.removeEventListener('resize', checkScreen);
 
     socketStore.disconnect();
   });
-
 </script>
 
 <template>
@@ -97,20 +96,22 @@
       </div>
     </div>
 
-    <div v-else class="dark:bg-gray-600 relative">
-        <TheHeader />
-        <main v-if="isDesktop">
-          <div class="flex">
-            <TheSideBar />
-            <div
-              class="m-4 w-full overflow-x-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-            >
-              <slot />
-            </div>
+    <div v-else class="relative dark:bg-gray-600">
+      <TheHeader />
+      <main v-if="isDesktop">
+        <div class="flex">
+          <TheSideBar />
+          <div
+            class="m-4 w-full overflow-x-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+          >
+            <slot />
           </div>
-          <ActionsBar/>
+        </div>
+        <ActionsBar />
       </main>
-      <div v-else class="w-full text-3xl text-center mt-[50px] font-medium">{{ $t('modile_version_is_comming_soon') }}</div>
+      <div v-else class="mt-[50px] w-full text-center text-3xl font-medium">
+        {{ $t('modile_version_is_comming_soon') }}
+      </div>
     </div>
   </transition>
 </template>

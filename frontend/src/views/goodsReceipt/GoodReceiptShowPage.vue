@@ -51,7 +51,7 @@
 
 <template>
   <div>
-    <BreadcrumbItem/>
+    <BreadcrumbItem />
     <Toast />
     <Skeleton v-if="localPageLoading" class="!h-[60vh] w-full" />
     <div v-else class="card">

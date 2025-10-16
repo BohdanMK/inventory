@@ -1,152 +1,152 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useToastNotification } from "@/composables/useToastNotification";
-import setFullImgPath from "@/helpers/fullPathImg";
-import { stockActionData } from "@/staticData/stockActionData.ts";
-import type { DataFile } from "@/interfaces/index";
-import type { IProductTemplate, IProductInStockAction } from "@/types/product/product";
-import { useStocksStore } from "@/stores/stocksStore";
-import { useProfileStore } from "@/stores/userProfileStore";
-import { Form } from "@primevue/forms";
-import { z } from "zod";
-import { zodResolver } from "@primevue/forms/resolvers/zod";
-import Select from "primevue/select";
-import Toolbar from "primevue/toolbar";
-import debounce from "@/utils/debounce";
-import AutoComplete from "primevue/autocomplete";
-import Textarea from "primevue/textarea";
-import FilesUploadItem from "@/components/files/FilesUploadItem.vue";
-import { useI18n } from "vue-i18n";
+  import { ref, computed } from 'vue';
+  import { useToastNotification } from '@/composables/useToastNotification';
+  import setFullImgPath from '@/helpers/fullPathImg';
+  import { stockActionData } from '@/staticData/stockActionData.ts';
+  import type { DataFile } from '@/interfaces/index';
+  import type { IProductTemplate, IProductInStockAction } from '@/types/product/product';
+  import { useStocksStore } from '@/stores/stocksStore';
+  import { useProfileStore } from '@/stores/userProfileStore';
+  import { Form } from '@primevue/forms';
+  import { z } from 'zod';
+  import { zodResolver } from '@primevue/forms/resolvers/zod';
+  import Select from 'primevue/select';
+  import Toolbar from 'primevue/toolbar';
+  import debounce from '@/utils/debounce';
+  import AutoComplete from 'primevue/autocomplete';
+  import Textarea from 'primevue/textarea';
+  import FilesUploadItem from '@/components/files/FilesUploadItem.vue';
+  import { useI18n } from 'vue-i18n';
 
-interface Props {
-  localWarehouse?: { name: string; code: string };
-}
-const props = defineProps<Props>();
-const emit = defineEmits<{
-  (e: "success"): void;
-}>();
-
-// state
-const formRef = ref();
-const toastNotification = useToastNotification();
-const profile = useProfileStore();
-const stocksStore = useStocksStore();
-const { t } = useI18n();
-
-const productName = ref<string>("");
-const selectedProduct = ref<IProductTemplate>({} as IProductTemplate);
-const productList = ref<IProductTemplate[]>([]);
-const initialValues = ref({});
-
-const resolver = zodResolver(
-  z.object({
-    typeAction: z.object({ name: z.string(), code: z.string() }),
-    comment: z.string().optional(),
-  })
-);
-
-const dataFile = ref<DataFile>({
-  fileName: "",
-  filePath: "",
-});
-
-// actions
-const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
-  if (!valid) return;
-  if (checkOnEmptyValueInProducts()) {
-    toastNotification.showError(t("goodsReceipt.set_count_and_price"));
-    return;
+  interface Props {
+    localWarehouse?: { name: string; code: string };
   }
+  const props = defineProps<Props>();
+  const emit = defineEmits<{
+    (e: 'success'): void;
+  }>();
 
-  const payload = {
-    ...values,
-    fileName: dataFile.value.fileName,
-    filePath: dataFile.value.filePath,
-    products: [...transformProductsData.value],
-    typeAction: values.typeAction.code,
-    warehouse: props.localWarehouse?.code || null,
-    comment: values.comment,
-    user: profile.userProfile?._id,
-  };
+  // state
+  const formRef = ref();
+  const toastNotification = useToastNotification();
+  const profile = useProfileStore();
+  const stocksStore = useStocksStore();
+  const { t } = useI18n();
 
-  const { success, message } = await stocksStore.stockskActions(payload);
+  const productName = ref<string>('');
+  const selectedProduct = ref<IProductTemplate>({} as IProductTemplate);
+  const productList = ref<IProductTemplate[]>([]);
+  const initialValues = ref({});
 
-  if (success) {
-    toastNotification.showSuccess(message || "");
-    emit("success");
-  } else {
-    toastNotification.showError(message || "");
-  }
-};
+  const resolver = zodResolver(
+    z.object({
+      typeAction: z.object({ name: z.string(), code: z.string() }),
+      comment: z.string().optional(),
+    })
+  );
 
-const addProductInList = () => {
-  if (!selectedProductStatus.value) {
-    const product = selectedProduct.value as Partial<IProductInStockAction>;
-    const data: IProductInStockAction = {
-      ...selectedProduct.value,
-      count: product.count ?? 0,
-      price: product.price ?? 0,
-      countNew: 0,
-      priceNew: 0,
+  const dataFile = ref<DataFile>({
+    fileName: '',
+    filePath: '',
+  });
+
+  // actions
+  const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
+    if (!valid) return;
+    if (checkOnEmptyValueInProducts()) {
+      toastNotification.showError(t('goodsReceipt.set_count_and_price'));
+      return;
+    }
+
+    const payload = {
+      ...values,
+      fileName: dataFile.value.fileName,
+      filePath: dataFile.value.filePath,
+      products: [...transformProductsData.value],
+      typeAction: values.typeAction.code,
+      warehouse: props.localWarehouse?.code || null,
+      comment: values.comment,
+      user: profile.userProfile?._id,
     };
-    stocksStore.addProductInList(data);
-    selectedProduct.value = {} as IProductTemplate;
-    productName.value = "";
-  }
-};
 
-const fetchProducts = async () => {
-  if (!props.localWarehouse?.code) {
-    productList.value = [];
-    return;
-  }
-  try {
-    const { success, message, data } = await stocksStore.getProductsInStockList({
-      name: productName.value,
-      warehouse: props.localWarehouse?.code,
-    });
+    const { success, message } = await stocksStore.stockskActions(payload);
 
     if (success) {
-      productList.value = data.data;
+      toastNotification.showSuccess(message || '');
+      emit('success');
     } else {
-      console.error("Failed to fetch products:", message);
+      toastNotification.showError(message || '');
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
 
-const debouncedFetchProducts = debounce(fetchProducts, 300);
+  const addProductInList = () => {
+    if (!selectedProductStatus.value) {
+      const product = selectedProduct.value as Partial<IProductInStockAction>;
+      const data: IProductInStockAction = {
+        ...selectedProduct.value,
+        count: product.count ?? 0,
+        price: product.price ?? 0,
+        countNew: 0,
+        priceNew: 0,
+      };
+      stocksStore.addProductInList(data);
+      selectedProduct.value = {} as IProductTemplate;
+      productName.value = '';
+    }
+  };
 
-const updateFile = async (data: DataFile) => {
-  dataFile.value.fileName = data.fileName;
-  dataFile.value.filePath = data.filePath;
-};
+  const fetchProducts = async () => {
+    if (!props.localWarehouse?.code) {
+      productList.value = [];
+      return;
+    }
+    try {
+      const { success, message, data } = await stocksStore.getProductsInStockList({
+        name: productName.value,
+        warehouse: props.localWarehouse?.code,
+      });
 
-// getters
-const selectedProductStatus = computed((): boolean => {
-  return Object.keys(selectedProduct.value).length === 0;
-});
+      if (success) {
+        productList.value = data.data;
+      } else {
+        console.error('Failed to fetch products:', message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-const checkOnEmptyValueInProducts = (): boolean => {
-  return transformProductsData.value.some((item) => !item.count || !item.price);
-};
+  const debouncedFetchProducts = debounce(fetchProducts, 300);
 
-const transformProductsData = computed(() => {
-  if (stocksStore.productListForCreateAction) {
-    return stocksStore.productListForCreateAction.map((item) => ({
-      product: item._id,
-      count: Number(item.countNew),
-      price: Number(item.priceNew),
-    }));
-  } else {
-    return [];
-  }
-});
-/// expose methods
-defineExpose({
-    submit: () => formRef.value?.submit()
-});
+  const updateFile = async (data: DataFile) => {
+    dataFile.value.fileName = data.fileName;
+    dataFile.value.filePath = data.filePath;
+  };
+
+  // getters
+  const selectedProductStatus = computed((): boolean => {
+    return Object.keys(selectedProduct.value).length === 0;
+  });
+
+  const checkOnEmptyValueInProducts = (): boolean => {
+    return transformProductsData.value.some(item => !item.count || !item.price);
+  };
+
+  const transformProductsData = computed(() => {
+    if (stocksStore.productListForCreateAction) {
+      return stocksStore.productListForCreateAction.map(item => ({
+        product: item._id,
+        count: Number(item.countNew),
+        price: Number(item.priceNew),
+      }));
+    } else {
+      return [];
+    }
+  });
+  /// expose methods
+  defineExpose({
+    submit: () => formRef.value?.submit(),
+  });
 </script>
 
 <template>

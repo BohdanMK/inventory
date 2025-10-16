@@ -44,18 +44,13 @@
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="getGoodsList" />
     <div v-else class="card">
-      <GoodsReceiptHeader
-        @updateData="getGoodsList()"
-      />
+      <GoodsReceiptHeader @updateData="getGoodsList()" />
       <div v-if="!asyncState.loadingStatus.value">
-        <GoodsReceiptTable
-          @updateData="getGoodsList()"
-        />
+        <GoodsReceiptTable @updateData="getGoodsList()" />
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>
   </div>
 </template>
-
 
 <style scoped></style>

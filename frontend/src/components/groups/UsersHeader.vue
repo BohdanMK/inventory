@@ -8,7 +8,7 @@
 
   const props = defineProps<Props>();
 
-   const emit = defineEmits<{
+  const emit = defineEmits<{
     (e: 'toggleModal'): void;
     (e: 'reloadList'): void;
   }>();
@@ -18,19 +18,16 @@
   // actions
 
   /// getters
-
 </script>
 
 <template>
-
-    <Toolbar class="mb-6">
-        <template #start>
-            <TotalResultItem :total="length" />
-        </template>
-        <template #end>
-            <Button label="New User" icon="pi pi-plus" class="mr-2" @click="() => emit('toggleModal')" />
-            <Button icon="pi pi-refresh" rounded raised @click="() => emit('reloadList')" />
-        </template>
-    </Toolbar>
-
+  <Toolbar class="mb-6">
+    <template #start>
+      <TotalResultItem :total="length" />
+    </template>
+    <template #end>
+      <Button label="New User" icon="pi pi-plus" class="mr-2" @click="() => emit('toggleModal')" />
+      <Button icon="pi pi-refresh" rounded raised @click="() => emit('reloadList')" />
+    </template>
+  </Toolbar>
 </template>

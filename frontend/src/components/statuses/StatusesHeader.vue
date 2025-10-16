@@ -6,11 +6,10 @@
   import CreateItemPopUp from '@/components/popup/CreateItem.vue';
   import TotalResultItem from '@/components/ui/TotalResultItem.vue';
 
-
   //emits + props
 
   const emit = defineEmits<{
-      (e: 'updateData'): void;
+    (e: 'updateData'): void;
   }>();
 
   // state
@@ -21,7 +20,7 @@
   // action
 
   const updateData = () => {
-      emit('updateData')
+    emit('updateData');
   };
 
   const togglePopUpVisible = (): void => {
@@ -47,19 +46,21 @@
   };
 
   /// hooks
-
-
 </script>
 
 <template>
-      <Toolbar class="mb-6">
-        <template #start>
-          <TotalResultItem :total="statusStore.totalStatuses" />
-        </template>
-        <template #end>
-          <CreateItemPopUp v-model:dialogVisible="createPopUpVisible" :title="$t('popup.create_status')" @createData="createStatus" />
-          <Button :label="$t('button.new')" icon="pi pi-plus" class="mr-2" @click="togglePopUpVisible" />
-          <Button icon="pi pi-refresh" rounded raised @click="updateData()" />
-        </template>
-      </Toolbar>
+  <Toolbar class="mb-6">
+    <template #start>
+      <TotalResultItem :total="statusStore.totalStatuses" />
+    </template>
+    <template #end>
+      <CreateItemPopUp
+        v-model:dialogVisible="createPopUpVisible"
+        :title="$t('popup.create_status')"
+        @createData="createStatus"
+      />
+      <Button :label="$t('button.new')" icon="pi pi-plus" class="mr-2" @click="togglePopUpVisible" />
+      <Button icon="pi pi-refresh" rounded raised @click="updateData()" />
+    </template>
+  </Toolbar>
 </template>

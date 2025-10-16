@@ -63,6 +63,6 @@ export const staticEndpoints: IEndpoint = {
   },
   dashBoard: {
     getProductsInfo: '/api/dashBoard/productsInfo',
-    getStockActionsSummary: '/api/dashBoard/stockActionsSummary'
-  }
+    getStockActionsSummary: '/api/dashBoard/stockActionsSummary',
+  },
 };

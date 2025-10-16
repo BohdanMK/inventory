@@ -45,11 +45,8 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
   };
 
   const checkOnEmptyValueInProducts = (): boolean => {
-    return productList.value.some(
-      (item: IProductInStock) =>
-        !item.count || !item.price
-    )
-  }
+    return productList.value.some((item: IProductInStock) => !item.count || !item.price);
+  };
 
   const deleteLocalItem = (id: string | number): void => {
     productList.value = productList.value.filter(item => item._id !== id);
@@ -177,6 +174,6 @@ export const useGoodsReceiptStore = defineStore('goodsReceiptStore', () => {
     filtersGoodsReceipt,
     resetFiltersGoodsReceipt,
     isFiltersGoodsReceiptEmpty,
-    checkOnEmptyValueInProducts
+    checkOnEmptyValueInProducts,
   };
 });

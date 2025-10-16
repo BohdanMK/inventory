@@ -14,8 +14,8 @@
           <h4 class="font text-new-prime font-medium uppercase">Inventory</h4>
         </div>
         <div class="flex items-center gap-3">
-          <NewMessageTip/>
-          <LanguageSwitcher/>
+          <NewMessageTip />
+          <LanguageSwitcher />
           <div class="text-[14px] font-medium">
             <div>Today</div>
             <div>

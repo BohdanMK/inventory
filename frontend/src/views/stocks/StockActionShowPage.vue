@@ -63,14 +63,14 @@
 
 <template>
   <div>
-    <BreadcrumbItem/>
+    <BreadcrumbItem />
     <Toast />
     <Skeleton v-if="localPageLoading" class="!h-[60vh] w-full" />
     <div v-else class="card">
       <div class="mt-0 mb-5 flex w-full flex-col gap-4">
         <Toolbar class="mb-6">
           <template #start>
-            <h3 class="text-xl font-medium">{{ $t('goodsReceipt.stock_action') }} </h3>
+            <h3 class="text-xl font-medium">{{ $t('goodsReceipt.stock_action') }}</h3>
           </template>
           <template #end>
             <Button type="submit" :label="$t('button.back')" icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
@@ -88,7 +88,6 @@
           </template>
           <template #end>
             <div class="flex items-center gap-1">
-
               <h3 class="text-xl font-medium">Cклад: {{ getWarehouseName(stocksStore.stockAction.warehouse) }}</h3>
             </div>
           </template>

@@ -13,6 +13,6 @@ export const useActionsStore = defineStore('actionsStore', () => {
 
   return {
     chatActionsVisible,
-    toggleChatActionsStatus
+    toggleChatActionsStatus,
   };
 });

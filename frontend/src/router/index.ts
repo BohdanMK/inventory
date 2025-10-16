@@ -1,5 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { groups, goodsReceiptList, goodsReceipt, goodsReceiptAdd, productsTemplates, stockList, stockActivityList, stockActivityAdd, stockActivityShow, settings } from '@/router/breadcrumbItem.ts'
+import {
+  groups,
+  goodsReceiptList,
+  goodsReceipt,
+  goodsReceiptAdd,
+  productsTemplates,
+  stockList,
+  stockActivityList,
+  stockActivityAdd,
+  stockActivityShow,
+  settings,
+} from '@/router/breadcrumbItem.ts';
 const routes = [
   {
     path: '/',
@@ -65,7 +76,7 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: () => import('@/views/settings/SettingsPage.vue'),
-    meta: { layout: 'default', requireAuth: true, requireSA: true, breadcrumbs: [...settings]  },
+    meta: { layout: 'default', requireAuth: true, requireSA: true, breadcrumbs: [...settings] },
   },
   {
     path: '/auth',

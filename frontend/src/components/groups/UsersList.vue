@@ -10,7 +10,6 @@
   import UsersTable from '@/components/groups/UsersTable.vue';
   import UsersHeader from '@/components/groups/UsersHeader.vue';
 
-
   interface Props {
     role: string;
   }
@@ -71,19 +70,12 @@
   <div>
     <ErrorBoundary v-if="asyncState.errorText.value" @reload="fetchUsers" />
     <div v-else class="card">
-      <UsersHeader
-        :length="usersList.length"
-        @toggleModal="toggleModal()"
-        @reloadList="fetchUsers()"
-      />
+      <UsersHeader :length="usersList.length" @toggleModal="toggleModal()" @reloadList="fetchUsers()" />
       <CreateUserPopUp :role="props.role" @updateData="fetchUsers()" />
-      <UsersTable
-        :role="role"
-        v-if="!asyncState.loadingStatus.value"
-      >
+      <UsersTable :role="role" v-if="!asyncState.loadingStatus.value">
         <template #actions="{ data }">
-            <EditUserPopUp :id="data._id" :data="data" @updateData="() => emit('forceReload')" />
-            <DeleteUserPopUp :id="data._id" @updateData="fetchUsers()" />
+          <EditUserPopUp :id="data._id" :data="data" @updateData="() => emit('forceReload')" />
+          <DeleteUserPopUp :id="data._id" @updateData="fetchUsers()" />
         </template>
       </UsersTable>
       <Skeleton v-else width="100%" height="60vh" />

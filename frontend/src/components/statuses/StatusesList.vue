@@ -11,7 +11,7 @@
   import EditItemPopUp from '@/components/popup/EditItem.vue';
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import StatusesTable from '@/components/statuses/StatusesTable.vue';
-  import StatusesHeader from '@/components/statuses/StatusesHeader.vue'
+  import StatusesHeader from '@/components/statuses/StatusesHeader.vue';
 
   // state
   const editData = ref<IStatus | null>(null);
@@ -111,20 +111,12 @@
         @deleteItem="deleteItem"
       />
       <Toast />
-      <StatusesHeader
-        @updateData="getList()"
-      />
+      <StatusesHeader @updateData="getList()" />
       <div v-if="!asyncState.loadingStatus.value">
         <StatusesTable>
           <template #actions="{ data }">
             <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="toggleEditModal(data)" />
-            <Button
-              icon="pi pi-trash"
-              outlined
-              rounded
-              severity="danger"
-              @click="toggleDeleteModal(data._id)"
-            />
+            <Button icon="pi pi-trash" outlined rounded severity="danger" @click="toggleDeleteModal(data._id)" />
           </template>
         </StatusesTable>
       </div>

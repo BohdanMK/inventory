@@ -17,7 +17,6 @@
   import Select from 'primevue/select';
   import { useI18n } from 'vue-i18n';
 
-
   //local types
 
   //props+ emits
@@ -56,7 +55,7 @@
       z.object({
         name: z
           .string()
-          .min(1, {message: t('validations.name_required') })
+          .min(1, { message: t('validations.name_required') })
           .max(50, { message: t('validations.nameMaxLength', { max: 50 }) }),
         category: z.string().min(1, { message: t('validations.category_is_required') }),
         status: z.string().min(1, { message: t('validations.status_is_required') }),
@@ -140,31 +139,15 @@
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="modelValue"
-    :style="{ width: '550px' }"
-    :header="t('user.Create_user')"
-    modal
-  >
+  <Dialog v-model:visible="modelValue" :style="{ width: '550px' }" :header="t('user.Create_user')" modal>
     <Toast />
-    <Form
-      v-slot="$form"
-      :initialValues
-      :resolver
-      class="grid w-full gap-4 lg:grid-cols-1"
-      @submit="onFormSubmit"
-    >
+    <Form v-slot="$form" :initialValues :resolver class="grid w-full gap-4 lg:grid-cols-1" @submit="onFormSubmit">
       <div class="flex items-center justify-center gap-4">
         <div>
           <FilesUploadItem :saveBtn="false" @updateData="updateProductImg" />
           <input type="hidden" name="image" :value="initialValues.image ?? ''" />
           <input type="hidden" name="imagePath" :value="initialValues.imagePath ?? ''" />
-          <Message
-            v-if="$form.image?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
+          <Message v-if="$form.image?.invalid" severity="error" size="small" variant="simple">
             {{ $form.image.error?.message }}
           </Message>
         </div>
@@ -172,12 +155,7 @@
         <div class="flex flex-col items-center justify-center gap-0">
           <!-- Name -->
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText
-              name="name"
-              type="text"
-              :placeholder="`*${t('fields.name')}`"
-              class="w-full sm:w-56"
-            />
+            <InputText name="name" type="text" :placeholder="`*${t('fields.name')}`" class="w-full sm:w-56" />
             <Message
               v-if="$form.name?.invalid"
               severity="error"
@@ -244,6 +222,5 @@
     </Form>
   </Dialog>
 </template>
-
 
 <style scoped></style>

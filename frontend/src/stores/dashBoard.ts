@@ -5,21 +5,19 @@ import type { ApiResponse, ApiResponsePaginated } from '@/types/axiosResponce';
 import { staticEndpoints } from '@/api/endpoints';
 import type { UsersQuery } from '@/types';
 
-
 export const useDashBoardStore = defineStore('dashBoardStore', () => {
-    interface ProductsInfo {
-        totalProducts: number,
-        totalPrice: number
-    }
+  interface ProductsInfo {
+    totalProducts: number;
+    totalPrice: number;
+  }
 
-    interface IStockActionsSummary {
-      type: number,
-      count: number
-    }
+  interface IStockActionsSummary {
+    type: number;
+    count: number;
+  }
 
   const productsInfo = ref<ProductsInfo | null>(null);
-  const stockActionsSummary = ref<IStockActionsSummary[] | null>(null)
-
+  const stockActionsSummary = ref<IStockActionsSummary[] | null>(null);
 
   const getStatusList = async (params?: UsersQuery): Promise<ApiResponse<ProductsInfo>> => {
     const url = staticEndpoints.dashBoard.getProductsInfo;
@@ -27,7 +25,7 @@ export const useDashBoardStore = defineStore('dashBoardStore', () => {
       const response: ApiResponse<ProductsInfo> = await axiosInstance.get(url, {
         params,
       });
-      
+
       if (response.success === false) {
         return {
           success: false,
@@ -83,7 +81,6 @@ export const useDashBoardStore = defineStore('dashBoardStore', () => {
     getStatusList,
     productsInfo,
     getStockActionsSummary,
-    stockActionsSummary
-  }
-
- });
+    stockActionsSummary,
+  };
+});

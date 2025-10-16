@@ -20,7 +20,7 @@
 
 <template>
   <div>
-    <BreadcrumbItem/>
+    <BreadcrumbItem />
     <Tabs v-model:value="tabListKey">
       <TabList>
         <Tab value="0">

@@ -44,10 +44,8 @@
   const isActiveRoute = (path: string) => route.path === path;
 
   const logOutUser = (): void => {
-
     userProfile.logOutUser();
     toastNotification.showSuccess(t('sidebar.userSuccessfullyLogout') || '');
-
 
     setTimeout(() => {
       userProfile.loadingProfile = true;
@@ -61,12 +59,11 @@
   // getters
 
   const getAvatar = computed(() => {
-    if(!userProfile.userProfile?.avatarFullPath) return false
+    if (!userProfile.userProfile?.avatarFullPath) return false;
     return userProfile.userProfile.avatarFullPath
       ? `${import.meta.env.VITE_API_URL}${userProfile.userProfile.avatarFullPath}`
       : 'https://fakeimg.pl/300x300';
   });
-
 </script>
 
 <template>
@@ -75,15 +72,10 @@
   >
     <Toast />
 
-    <div class="relative mt-[50px] w-[150px] flex justify-center">
-      <ImgItem
-        v-if="getAvatar"
-        :src="getAvatar"
-        alt="User Avatar"
-        class="rounded-[50%] object-cover"
-        />
-      <div v-else class="flex items-center h-[80px] w-[80px] rounded-full bg-white">
-          <i  class=" pi pi-user-minus mx-auto text-5xl"></i>
+    <div class="relative mt-[50px] flex w-[150px] justify-center">
+      <ImgItem v-if="getAvatar" :src="getAvatar" alt="User Avatar" class="rounded-[50%] object-cover" />
+      <div v-else class="flex h-[80px] w-[80px] items-center rounded-full bg-white">
+        <i class="pi pi-user-minus mx-auto text-5xl"></i>
       </div>
 
       <FileUpload
@@ -102,9 +94,7 @@
       </FileUpload>
     </div>
 
-    <TheSideBarMenu
-      @logOut="logOutUser()"
-    />
+    <TheSideBarMenu @logOut="logOutUser()" />
 
     <div class="mt-auto w-full p-4">
       <div class="flex items-center justify-between">

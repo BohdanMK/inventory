@@ -176,7 +176,13 @@
           <Transition name="slide-fade">
             <div v-if="setNewPassword" class="flex w-full flex-col gap-4">
               <div class="flex flex-col gap-1">
-                <Password name="newPassword" :placeholder="t('settings.new_password')" :feedback="false" fluid toggleMask />
+                <Password
+                  name="newPassword"
+                  :placeholder="t('settings.new_password')"
+                  :feedback="false"
+                  fluid
+                  toggleMask
+                />
                 <template v-if="$form.newPassword?.invalid">
                   <Message
                     v-for="(error, index) of $form.newPassword.errors"
@@ -189,7 +195,13 @@
                 </template>
               </div>
               <div class="flex flex-col gap-1">
-                <Password name="confirmPassword" :placeholder="t('settings.confirm_password')" :feedback="false" fluid toggleMask />
+                <Password
+                  name="confirmPassword"
+                  :placeholder="t('settings.confirm_password')"
+                  :feedback="false"
+                  fluid
+                  toggleMask
+                />
                 <template v-if="$form.confirmPassword?.invalid">
                   <Message
                     v-for="(error, index) of $form.confirmPassword.errors"

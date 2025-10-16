@@ -28,7 +28,6 @@
   };
 
   // watch + hooks
-
 </script>
 
 <template>

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { computed } from 'vue';
 
-interface Props {
-  title?: string;
-  total: string | number;
-}
+  interface Props {
+    title?: string;
+    total: string | number;
+  }
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const props = defineProps<Props>();
+  const props = defineProps<Props>();
 
-const titleText = computed(() => props.title ?? t('default.Results'));
+  const titleText = computed(() => props.title ?? t('default.Results'));
 </script>
 
 <template>
@@ -20,4 +20,3 @@ const titleText = computed(() => props.title ?? t('default.Results'));
     <p>{{ total }}</p>
   </div>
 </template>
-

@@ -102,14 +102,9 @@
         @updateProducts="getProductList()"
       />
       <div class="card">
-        <ProductsHeader
-          @updateData="getProductList()"
-          @openCreate="toggleAddModalStatus()"
-        />
+        <ProductsHeader @updateData="getProductList()" @openCreate="toggleAddModalStatus()" />
         <div v-if="!asyncState.loadingStatus.value">
-          <ProductsTable
-            @updateData="getProductList()"
-          >
+          <ProductsTable @updateData="getProductList()">
             <template #actions="{ data }">
               <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="toggleEditModal(data)" />
               <Button icon="pi pi-trash" outlined rounded severity="danger" @click="toggleDeleteModal(data._id)" />
@@ -118,7 +113,6 @@
         </div>
         <Skeleton v-else height="20rem" />
       </div>
-
     </div>
   </div>
 </template>

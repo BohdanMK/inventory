@@ -13,18 +13,15 @@
 
   const props = defineProps<Props>();
 
-
   // state
   const profileStore = useProfileStore();
   const asyncState = useAsyncState();
 
   // actions
 
-
   /// getters
 
   const usersList = computed(() => (props.role === 'user' ? profileStore.userList : profileStore.superAdminList));
-
 </script>
 
 <template>

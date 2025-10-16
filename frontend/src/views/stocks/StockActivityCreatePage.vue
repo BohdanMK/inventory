@@ -9,7 +9,7 @@
   import { useWarehouseStore } from '@/stores/warehouseStore';
   import Select from 'primevue/select';
   import Toolbar from 'primevue/toolbar';
-  import StockActivityCreatePageForm from '@/components/stock/StockActivityCreatePageForm.vue'
+  import StockActivityCreatePageForm from '@/components/stock/StockActivityCreatePageForm.vue';
   import ProductList from '@/components/stock/ProductList.vue';
   import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vue';
   import { useI18n } from 'vue-i18n';
@@ -24,7 +24,6 @@
   const { t } = useI18n();
 
   // actions
-
 
   const getWarehouseList = async (): Promise<void> => {
     try {
@@ -89,7 +88,7 @@
           </template>
           <template #end> </template>
         </Toolbar>
-            <StockActivityCreatePageForm ref="formRef"  :localWarehouse="localWarehouse" @success="moveBack()" />
+        <StockActivityCreatePageForm ref="formRef" :localWarehouse="localWarehouse" @success="moveBack()" />
         <ProductList v-if="localWarehouse" />
       </div>
       <Skeleton v-else width="100%" height="60vh" />

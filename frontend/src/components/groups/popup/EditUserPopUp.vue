@@ -48,7 +48,10 @@
   const resolver = ref(
     zodResolver(
       z.object({
-        email: z.string().min(1, { message:  t('validations.Email_is_required') }).email({ message: t('validations.Invalid_email_address') }),
+        email: z
+          .string()
+          .min(1, { message: t('validations.Email_is_required') })
+          .email({ message: t('validations.Invalid_email_address') }),
         username: z.string().min(1, { message: t('validations.Username_is_required') }),
         role: z.object({
           name: z.string(),
@@ -134,10 +137,21 @@
         </div>
 
         <div class="flex flex-col gap-1">
-          <Select name="role" :options="roles" optionLabel="name" :placeholder="$t('fields.Select_role')" class="w-full" />
+          <Select
+            name="role"
+            :options="roles"
+            optionLabel="name"
+            :placeholder="$t('fields.Select_role')"
+            class="w-full"
+          />
         </div>
 
-        <Button type="submit" severity="secondary" :label="$t('button.submit')" :loading="profileStore.loadingCreating" />
+        <Button
+          type="submit"
+          severity="secondary"
+          :label="$t('button.submit')"
+          :loading="profileStore.loadingCreating"
+        />
       </Form>
     </Dialog>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BreadcrumbItem/>
+    <BreadcrumbItem />
     <ProductsList />
   </div>
 </template>

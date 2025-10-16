@@ -5,7 +5,6 @@
   import Toast from 'primevue/toast';
   import Dialog from 'primevue/dialog';
 
-
   interface Props {
     id: string;
   }

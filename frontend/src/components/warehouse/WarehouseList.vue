@@ -2,7 +2,7 @@
   import { ref, onMounted } from 'vue';
   import { useWarehouseStore } from '@/stores/warehouseStore';
   import { useToast } from 'primevue/usetoast';
-    import { useI18n } from 'vue-i18n';
+  import { useI18n } from 'vue-i18n';
   import Toast from 'primevue/toast';
   import type { IWarehouse } from '@/types/warehouse/warehouse';
   import { useAsyncState } from '@/composables/useAsyncState';
@@ -16,7 +16,7 @@
 
   //emits + props
 
-    const { t } = useI18n();
+  const { t } = useI18n();
 
   // state
   const editData = ref<IWarehouse | null>(null);
@@ -27,7 +27,6 @@
 
   const deletePopUpVisible = ref<boolean>(false);
   const editPopUpVisible = ref<boolean>(false);
-
 
   // action
 
@@ -82,7 +81,6 @@
     }
   };
 
-
   /// hooks
 
   onMounted(() => {
@@ -106,23 +104,27 @@
         @deleteItem="deleteItem"
       />
       <Toast />
-        <WarehouseHeader @updateData="getList()"/>
+      <WarehouseHeader @updateData="getList()" />
       <div v-if="!asyncState.loadingStatus.value">
         <WarehouseTable>
-            <template #actions="{ data }">
-                <Button icon="pi pi-pencil"
-                outlined rounded class="mr-2"
-                v-tooltip.top="$t('button.edit')"
-                @click="toggleEditModal(data)" />
-                <Button
-                    icon="pi pi-trash"
-                    outlined
-                    rounded
-                    severity="danger"
-                    v-tooltip.top="$t('button.delete')"
-                    @click="toggleDeleteModal(data._id)"
-                />
-            </template>
+          <template #actions="{ data }">
+            <Button
+              icon="pi pi-pencil"
+              outlined
+              rounded
+              class="mr-2"
+              v-tooltip.top="$t('button.edit')"
+              @click="toggleEditModal(data)"
+            />
+            <Button
+              icon="pi pi-trash"
+              outlined
+              rounded
+              severity="danger"
+              v-tooltip.top="$t('button.delete')"
+              @click="toggleDeleteModal(data._id)"
+            />
+          </template>
         </WarehouseTable>
       </div>
       <Skeleton v-else width="100%" height="60vh" />

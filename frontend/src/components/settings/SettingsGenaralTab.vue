@@ -44,25 +44,30 @@
   const profileResolver = zodResolver(
     z.object({
       username: z.string().min(1, { message: t('validations.Username_is_required') }),
-      email: z.string().min(1, { message: t('validations.Email_is_required') }).email({ message: t('validations.Invalid_email_address') }),
+      email: z
+        .string()
+        .min(1, { message: t('validations.Email_is_required') })
+        .email({ message: t('validations.Invalid_email_address') }),
       role: z.any().optional(),
     })
   );
 
   const passwordResolver = zodResolver(
-    z.object({
-      newPassword: z
-        .string()
-        .min(3, { message: t('validations.Minimum_3_characters') })
-        .max(8, { message: t('validations.Maximum_8_characters') })
-        .refine(value => /\d/.test(value), {
-          message: t('validations.Must_have_a_number'),
-        }),
-      confirmPassword: z.string(),
-    }).refine(data => data.newPassword === data.confirmPassword, {
-      message: t('validations.Passwords_do_not_match') || 'Passwords do not match.',
-      path: ['confirmPassword'],
-    })
+    z
+      .object({
+        newPassword: z
+          .string()
+          .min(3, { message: t('validations.Minimum_3_characters') })
+          .max(8, { message: t('validations.Maximum_8_characters') })
+          .refine(value => /\d/.test(value), {
+            message: t('validations.Must_have_a_number'),
+          }),
+        confirmPassword: z.string(),
+      })
+      .refine(data => data.newPassword === data.confirmPassword, {
+        message: t('validations.Passwords_do_not_match') || 'Passwords do not match.',
+        path: ['confirmPassword'],
+      })
   );
 
   const onProfileSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
@@ -184,7 +189,13 @@
             </Message>
           </div>
           <div class="flex flex-col gap-1">
-            <Select name="role" :options="roles" optionLabel="name" :placeholder="t('fields.Select_role')" class="w-full" />
+            <Select
+              name="role"
+              :options="roles"
+              optionLabel="name"
+              :placeholder="t('fields.Select_role')"
+              class="w-full"
+            />
           </div>
           <Button type="submit" severity="secondary" :label="t('button.Save')" />
         </Form>
@@ -221,7 +232,13 @@
                 </template>
               </div>
               <div class="flex flex-col gap-1">
-                <Password name="confirmPassword" :placeholder="t('fields.Password')" :feedback="false" fluid toggleMask />
+                <Password
+                  name="confirmPassword"
+                  :placeholder="t('fields.Password')"
+                  :feedback="false"
+                  fluid
+                  toggleMask
+                />
                 <template v-if="$formPassword.confirmPassword?.invalid">
                   <Message
                     v-for="(error, index) of $formPassword.confirmPassword.errors"
@@ -242,7 +259,6 @@
     </div>
   </div>
 </template>
-
 
 <style scoped>
   .slide-fade-enter-active {

@@ -1,15 +1,15 @@
 // stores/chatStore.ts
-import { SOCKET_EVENTS } from "@/constants/socketEvents";
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { socketService } from "@/socket/socketService";
-import type { IMessageChat } from "@/types/chat/chat";
+import { SOCKET_EVENTS } from '@/constants/socketEvents';
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { socketService } from '@/socket/socketService';
+import type { IMessageChat } from '@/types/chat/chat';
 import { useToastNotification } from '@/composables/useToastNotification';
 import { useProfileStore } from '@/stores/userProfileStore';
-import { useUnreadMessages } from "@/composables/useUnreadMessages";
-import { useLoadersStore } from "@/stores/loadersStore";
+import { useUnreadMessages } from '@/composables/useUnreadMessages';
+import { useLoadersStore } from '@/stores/loadersStore';
 
-export const useChatStore = defineStore("chat", () => {
+export const useChatStore = defineStore('chat', () => {
   const messagesList = ref<IMessageChat[]>([]);
   const toastNotification = useToastNotification();
   const userProfile = useProfileStore();
@@ -63,7 +63,7 @@ export const useChatStore = defineStore("chat", () => {
     loadersStore.loadMoreStatus = true;
     socketService.emit(SOCKET_EVENTS.LOAD_MORE_MESSAGES, {
       before: oldestMessage.timestamp,
-      limit: 20
+      limit: 20,
     });
   };
 
@@ -115,6 +115,6 @@ export const useChatStore = defineStore("chat", () => {
     handleSendReactedMessage,
     handleRemoveReaction,
     loadMoreMessages,
-    isLoadingMore
+    isLoadingMore,
   };
 });

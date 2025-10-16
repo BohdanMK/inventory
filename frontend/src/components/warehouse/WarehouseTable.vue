@@ -1,27 +1,27 @@
 <script setup lang="ts">
-    import { useWarehouseStore } from '@/stores/warehouseStore';
-    import { formatDataWithTime } from '@/composables/formatDate.ts';
-    import DataTable from 'primevue/datatable';
-    import Column from 'primevue/column';
-    import { useI18n } from 'vue-i18n';
+  import { useWarehouseStore } from '@/stores/warehouseStore';
+  import { formatDataWithTime } from '@/composables/formatDate.ts';
+  import DataTable from 'primevue/datatable';
+  import Column from 'primevue/column';
+  import { useI18n } from 'vue-i18n';
 
-    // i18n
-    const { t } = useI18n();
+  // i18n
+  const { t } = useI18n();
 
-    // emits + props
-    const emit = defineEmits<{
-        (e: 'updateData'): void;
-    }>();
+  // emits + props
+  const emit = defineEmits<{
+    (e: 'updateData'): void;
+  }>();
 
-    // state
-    const warehouseStore = useWarehouseStore();
+  // state
+  const warehouseStore = useWarehouseStore();
 
-    // actions
-    const onPageChange = (event: any) => {
-      warehouseStore.currentPageWarehouses = event.page + 1;
-      warehouseStore.perPageWarehouses = event.rows;
-      emit('updateData');
-    };
+  // actions
+  const onPageChange = (event: any) => {
+    warehouseStore.currentPageWarehouses = event.page + 1;
+    warehouseStore.perPageWarehouses = event.rows;
+    emit('updateData');
+  };
 </script>
 
 <template>

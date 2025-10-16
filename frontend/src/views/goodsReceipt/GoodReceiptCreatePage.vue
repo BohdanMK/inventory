@@ -48,14 +48,14 @@
   const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     if (!valid) return;
 
-    if(!goodsReceiptStore.productList || goodsReceiptStore.productList.length === 0) {
+    if (!goodsReceiptStore.productList || goodsReceiptStore.productList.length === 0) {
       toastNotification.showError(t('goodsReceipt.add_product_in_list'));
-      return
+      return;
     }
 
-    if(goodsReceiptStore.checkOnEmptyValueInProducts()) {
+    if (goodsReceiptStore.checkOnEmptyValueInProducts()) {
       toastNotification.showError(t('goodsReceipt.set_count_and_price'));
-      return
+      return;
     }
 
     const payload = {
@@ -136,7 +136,7 @@
 <template>
   <div>
     <Toast />
-    <BreadcrumbItem/>
+    <BreadcrumbItem />
     <div class="card">
       <Form
         v-slot="$form"
@@ -147,7 +147,7 @@
       >
         <Toolbar class="mb-6">
           <template #start>
-            <h3 class="text-xl font-medium"> {{ $t('goodsReceipt.Create_goods_receipt') }}</h3>
+            <h3 class="text-xl font-medium">{{ $t('goodsReceipt.Create_goods_receipt') }}</h3>
           </template>
           <template #end>
             <Button :label="$t('button.back')" outlined icon="pi pi-arrow-left" class="mr-2" @click="moveBack()" />
@@ -188,7 +188,13 @@
           </template>
         </Toolbar>
         <div class="mb-0 border-0 px-0">
-          <Textarea name="comment" :placeholder="$t('goodsReceipt.goods_receipt_info')" class="w-full max-w-[400px]" rows="3" cols="30" />
+          <Textarea
+            name="comment"
+            :placeholder="$t('goodsReceipt.goods_receipt_info')"
+            class="w-full max-w-[400px]"
+            rows="3"
+            cols="30"
+          />
         </div>
       </Form>
       <ProductList />

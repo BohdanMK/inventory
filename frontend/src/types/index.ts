@@ -1,5 +1,5 @@
 import type { StoсksActionsType } from '@/constants/constants';
-import type { IProductInStock } from '@/types/product/product'
+import type { IProductInStock } from '@/types/product/product';
 
 export interface UsersQuery {
   [key: string]: string | number | boolean | null;
@@ -40,12 +40,11 @@ export interface IFilters {
   status: string | null;
 }
 
-
 export interface BreadcrumbItem {
-  label: string
-  icon?: string
-  route?: string
-  to?: string
-  url?: string
-  target?: string
+  label: string;
+  icon?: string;
+  route?: string;
+  to?: string;
+  url?: string;
+  target?: string;
 }

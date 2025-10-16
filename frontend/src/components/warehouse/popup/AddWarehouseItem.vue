@@ -79,7 +79,7 @@
         emit('update:dialogVisible', false);
         toastNotification.showSuccess(message || '');
       } else {
-       toastNotification.showError(message || '');
+        toastNotification.showError(message || '');
       }
     } catch (error) {
       console.log(error);
@@ -113,16 +113,18 @@
             >
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="address" type="text"
-              :placeholder="$t('fields.address')" class="w-full sm:w-56" />
+            <InputText name="address" type="text" :placeholder="$t('fields.address')" class="w-full sm:w-56" />
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="contact_person" type="text"
-              :placeholder="$t('fields.contact_person')" class="w-full sm:w-56" />
+            <InputText
+              name="contact_person"
+              type="text"
+              :placeholder="$t('fields.contact_person')"
+              class="w-full sm:w-56"
+            />
           </div>
           <div class="form-group relative pb-[20px] text-[14px]">
-            <InputText name="contact" type="text"
-              :placeholder="$t('fields.contact')" class="w-full sm:w-56" />
+            <InputText name="contact" type="text" :placeholder="$t('fields.contact')" class="w-full sm:w-56" />
           </div>
           <Button
             :loading="localLoadingCreate"

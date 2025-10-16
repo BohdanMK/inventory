@@ -6,7 +6,7 @@ import PrimeVue from 'primevue/config';
 import Tooltip from 'primevue/tooltip';
 import Aura from '@primeuix/themes/aura';
 import ToastService from 'primevue/toastservice';
-import { i18nInstance } from '@/i18n/index.ts'
+import { i18nInstance } from '@/i18n/index.ts';
 import './style.css';
 import 'primeicons/primeicons.css';
 import { registerPermissionDirective } from '@/utils/permission';

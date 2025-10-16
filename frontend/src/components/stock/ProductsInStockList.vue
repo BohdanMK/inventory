@@ -115,63 +115,59 @@
         :dataItem="productData"
         @updateData="getProductList()"
       />
-      <ProductsInStockHeader
-        @updateData="getProductList()"
-      />
+      <ProductsInStockHeader @updateData="getProductList()" />
       <div v-if="!asyncState.loadingStatus.value">
-        <ProductsInStockTable
-          @updateData="getProductList()"
-        >
+        <ProductsInStockTable @updateData="getProductList()">
           <template #actions="{ data }">
-                <div class="flex">
-                  <Button
-                    icon="pi pi-arrow-up"
-                    v-tooltip.top="'Single-item Shipment'"
-                    outlined
-                    rounded
-                    severity="info"
-                    class="mr-2"
-                    @click="toggleActionModalStatus(data, 'SHIPMENT')"
-                  />
-                  <Button
-                    icon="pi pi-arrow-right-arrow-left"
-                    v-tooltip.top="'Replace'"
-                    outlined
-                    rounded
-                    severity="warn"
-                    class="mr-2"
-                    @click="toggleReplaceModalStatus(data)"
-                  />
-                  <Button
-                    v-tooltip.top="'Write off goods'"
-                    icon="pi pi-delete-left"
-                    outlined
-                    rounded
-                    class="mr-2"
-                    @click="toggleActionModalStatus(data, 'WRITEOFF')"
-                  />
-                  <Button
-                    icon="pi pi-trash"
-                    v-tooltip.top="'Return goods'"
-                    outlined
-                    rounded
-                    class="mr-2"
-                    severity="secondary"
-                    @click="toggleActionModalStatus(data, 'RETURN')"
-                  >
-                    <font-awesome-icon icon="arrow-rotate-left" />
-                  </Button>
-                  <Button
-                    v-tooltip.top="'Cancel'"
-                    icon="pi pi-trash"
-                    outlined
-                    rounded
-                    severity="danger"
-                    @click="toggleCancelModalStatus(data, 'CANCEL')"
-                  >
-                    <font-awesome-icon icon="fa-solid fa-xmark" />
-                  </Button>
-                </div>
+            <div class="flex">
+              <Button
+                icon="pi pi-arrow-up"
+                v-tooltip.top="'Single-item Shipment'"
+                outlined
+                rounded
+                severity="info"
+                class="mr-2"
+                @click="toggleActionModalStatus(data, 'SHIPMENT')"
+              />
+              <Button
+                icon="pi pi-arrow-right-arrow-left"
+                v-tooltip.top="'Replace'"
+                outlined
+                rounded
+                severity="warn"
+                class="mr-2"
+                @click="toggleReplaceModalStatus(data)"
+              />
+              <Button
+                v-tooltip.top="'Write off goods'"
+                icon="pi pi-delete-left"
+                outlined
+                rounded
+                class="mr-2"
+                @click="toggleActionModalStatus(data, 'WRITEOFF')"
+              />
+              <Button
+                icon="pi pi-trash"
+                v-tooltip.top="'Return goods'"
+                outlined
+                rounded
+                class="mr-2"
+                severity="secondary"
+                @click="toggleActionModalStatus(data, 'RETURN')"
+              >
+                <font-awesome-icon icon="arrow-rotate-left" />
+              </Button>
+              <Button
+                v-tooltip.top="'Cancel'"
+                icon="pi pi-trash"
+                outlined
+                rounded
+                severity="danger"
+                @click="toggleCancelModalStatus(data, 'CANCEL')"
+              >
+                <font-awesome-icon icon="fa-solid fa-xmark" />
+              </Button>
+            </div>
           </template>
         </ProductsInStockTable>
       </div>

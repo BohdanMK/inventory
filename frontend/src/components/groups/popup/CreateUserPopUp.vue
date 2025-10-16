@@ -44,7 +44,10 @@
           .refine(value => /d/.test(value), {
             message: t('validations.Must_have_a_number'),
           }),
-        email: z.string().min(1, { message: t('validations.Email_is_required') }).email({ message: t('validations.Invalid_email_address') }),
+        email: z
+          .string()
+          .min(1, { message: t('validations.Email_is_required') })
+          .email({ message: t('validations.Invalid_email_address') }),
       })
     )
   );

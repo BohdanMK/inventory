@@ -11,7 +11,7 @@ export function useFileUpload() {
   async function uploadFiles(files: File[]): Promise<DataFile[]> {
     if (!files.length) return [];
 
-    const uploadPromises = files.map(async (file) => {
+    const uploadPromises = files.map(async file => {
       const formData = new FormData();
       formData.append('file', file);
 
@@ -21,11 +21,9 @@ export function useFileUpload() {
       };
 
       try {
-        const response: ApiResponse<DataFile> = await axiosInstance.post(
-          staticEndpoints.uploads.file,
-          formData,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
+        const response: ApiResponse<DataFile> = await axiosInstance.post(staticEndpoints.uploads.file, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         if (response.success === false) {
           toastNotification.showError(response.message || '');
         } else {
@@ -34,10 +32,9 @@ export function useFileUpload() {
           data.fileName = response.data?.fileName;
         }
       } catch (error) {
-
         console.error(error);
       }
-      console.log(data)
+      console.log(data);
       return data;
     });
 

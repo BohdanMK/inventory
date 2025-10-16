@@ -9,7 +9,7 @@
   import EditItemPopUp from '@/components/popup/EditItem.vue';
   import DeleteItemPopUp from '@/components/popup/DeleteItem.vue';
   import CategoriesTable from '@/components/categories/CategoriesTable.vue';
-  import CategoriesHeader from '@/components/categories/CategoriesHeader.vue'
+  import CategoriesHeader from '@/components/categories/CategoriesHeader.vue';
   import { useI18n } from 'vue-i18n';
 
   // state
@@ -112,30 +112,28 @@
         @deleteItem="deleteItem"
       />
       <Toast />
-      <CategoriesHeader
-        @updateData="getList()"
-      />
+      <CategoriesHeader @updateData="getList()" />
       <div v-if="!asyncState.loadingStatus.value">
         <CategoriesTable>
-            <template #actions="{ data }">
-              <Button
-                icon="pi pi-pencil"
-                outlined
-                rounded
-                class="mr-2"
-                v-tooltip.top="$t('button.edit')"
-                @click="toggleEditModal(data)"
-              />
-              <Button
-                icon="pi pi-trash"
-                outlined
-                rounded
-                severity="danger"
-                v-tooltip.top="$t('button.delete')"
-                @click="toggleDeleteModal(data._id)"
-              />
-            </template>
-          </CategoriesTable>
+          <template #actions="{ data }">
+            <Button
+              icon="pi pi-pencil"
+              outlined
+              rounded
+              class="mr-2"
+              v-tooltip.top="$t('button.edit')"
+              @click="toggleEditModal(data)"
+            />
+            <Button
+              icon="pi pi-trash"
+              outlined
+              rounded
+              severity="danger"
+              v-tooltip.top="$t('button.delete')"
+              @click="toggleDeleteModal(data._id)"
+            />
+          </template>
+        </CategoriesTable>
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>

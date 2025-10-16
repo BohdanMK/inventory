@@ -58,9 +58,7 @@
         </template>
       </Toolbar>
       <div v-if="!asyncState.loadingStatus.value">
-        <StockActionTable
-          @updateData="getStoksActionList()"
-        />
+        <StockActionTable @updateData="getStoksActionList()" />
       </div>
       <Skeleton v-else width="100%" height="60vh" />
     </div>

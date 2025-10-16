@@ -27,9 +27,9 @@
       if (success) {
         // categoryStore.categoryList = data;
         asyncStateProducts.successLoading();
-        console.log('success', data)
+        console.log('success', data);
         // categoryStore.setCategoriesPagination(data);
-        dashBoardStore.productsInfo = data
+        dashBoardStore.productsInfo = data;
       } else {
         asyncStateProducts.failedLoading(message || t('default.error_loading'));
       }
@@ -38,17 +38,16 @@
     }
   };
 
-   const getStockActionsSummaryInfo = async (): Promise<void> => {
+  const getStockActionsSummaryInfo = async (): Promise<void> => {
     try {
       asyncStateStocksActions.startLoading();
       const { success, message, data } = await dashBoardStore.getStockActionsSummary();
 
       if (success) {
-
         asyncStateStocksActions.successLoading();
-        console.log('success', data)
+        console.log('success', data);
 
-        dashBoardStore.stockActionsSummary = data
+        dashBoardStore.stockActionsSummary = data;
       } else {
         asyncStateStocksActions.failedLoading(message || t('default.error_loading'));
       }
@@ -69,14 +68,15 @@
     getProductsInfo();
     getStockActionsSummaryInfo();
     pagesStore.initTabs();
-  })
-
+  });
 </script>
 
 <template>
   <div class="grid grid-cols-12 gap-1 xl:gap-[15px]">
     <!--dashboard cards-->
-    <div class="col-span-12 lg:col-span-6 m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div
+      class="col-span-12 m-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:col-span-6 dark:border-gray-700 dark:bg-gray-800"
+    >
       <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         Active page tabs: {{ pagesStore.countActivePages }}
       </h2>
@@ -94,19 +94,13 @@
       </ul>
     </div>
     <div class="col-span-12 lg:col-span-6">
-      <ProductsInfoCard
-        :loading="asyncStateProducts.loadingStatus.value"
-        @updateData="getProductsInfo()"
-      />
+      <ProductsInfoCard :loading="asyncStateProducts.loadingStatus.value" @updateData="getProductsInfo()" />
     </div>
     <div class="col-span-12 lg:col-span-9">
-      <StockActionsPieChart
-        :loading="asyncStateProducts.loadingStatus.value"
-        @updateData="getProductsInfo()"
-      />
+      <StockActionsPieChart :loading="asyncStateProducts.loadingStatus.value" @updateData="getProductsInfo()" />
     </div>
     <div class="col-span-12 md:col-span-3">
-      <ListActiveUser/>
+      <ListActiveUser />
     </div>
   </div>
 </template>

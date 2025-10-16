@@ -62,5 +62,5 @@ export interface IEndpoint {
   dashBoard: {
     getProductsInfo: string;
     getStockActionsSummary: string;
-  }
+  };
 }
