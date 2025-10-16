@@ -96,8 +96,8 @@
   };
 
   const updateProductImg = async (data: DataFile) => {
-    initialValues.value.image = data.fileName;
-    initialValues.value.imagePath = data.filePath;
+    initialValues.value.image = data.fileName as string;
+    initialValues.value.imagePath = data.filePath as string;
   };
 
   const createProductTemplate = async (productData: IProductTemplate) => {
@@ -143,7 +143,7 @@
   <Dialog
     v-model:visible="modelValue"
     :style="{ width: '550px' }"
-    :header="t('user.Create_user')" 
+    :header="t('user.Create_user')"
     modal
   >
     <Toast />

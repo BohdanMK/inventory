@@ -17,6 +17,7 @@ import { useUnreadMessages } from "@/composables/useUnreadMessages";
 import { useFileUpload } from "@/composables/uploadFiles.ts";
 import MessageFileViewer from '@/components/chat/MessageFileViewer.vue';
 import EmojiList  from '@/components/chat/EmojiList.vue';
+import ImgItem from '@/components/ui/ImgItem.vue';
 import { useI18n } from 'vue-i18n';
 
 /// state
@@ -347,12 +348,12 @@ const handleFileChange = (event: Event) => {
                   <div class="w-full px-3 py-3">
                     <div class="flex gap-3 items-center">
                       <div class="flex-shrink-0 flex flex-col">
-                        <img
+                        <ImgItem
                           v-if="message.avatar"
                           :src="setFullImgPath(message.avatar)"
                           :alt="message.username"
                           class="w-8 h-8 rounded-full object-cover"
-                        />
+                          />
                         <i v-else class="pi pi-user-minus mx-auto text-2xl"></i>
                       </div>
                       <div class="flex flex-col flex-auto">

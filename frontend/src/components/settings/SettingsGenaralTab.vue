@@ -153,14 +153,14 @@
     <div class="flex items-start gap-[50px]">
       <div>
         <FilesUploadItem :saveBtn="true" :file="getAvatar" @updateData="updateUserProfileAvatar" />
-        <Button
+        <!-- <Button
           v-if="userProfile.userProfile.avatarFullPath"
           class="mx-auto mt-2 block"
           type="button"
           severity="secondary"
           :label="t('button.Remove')"
           @click="removeAvatar(emptyAvatar)"
-        />
+        /> -->
       </div>
       <div>
         <!-- Main form -->

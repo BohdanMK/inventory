@@ -6,6 +6,7 @@
   import { staticEndpoints } from '@/api/endpoints';
   import { useToastNotification } from '@/composables/useToastNotification';
   import FileUpload from 'primevue/fileupload';
+  import ImgItem from '@/components/ui/ImgItem.vue';
   import { useI18n } from 'vue-i18n';
 
   interface Props {
@@ -114,13 +115,14 @@
     />
     <div v-if="src || file" class="flex w-full flex-col items-center gap-2">
       <template v-if="!justFile">
-        <img
+        <ImgItem :src="src || file" alt="Uploaded Image" class="w-full rounded-xl shadow-md sm:w-64" style="filter: grayscale(100%)"/>
+        <!-- <img
           v-if="src"
           :src="src"
           alt="Image"
           class="w-full rounded-xl shadow-md sm:w-64"
           style="filter: grayscale(100%)"
-        />
+        /> -->
       </template>
       <span v-else>
         {{ fileName }}
@@ -129,10 +131,11 @@
         <Button :label="$t('button.Remove')" severity="danger" @click="remove" />
         <Button :label="$t('button.Save')" severity="primary" @click="onUpload" />
       </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-  /* Приховати дефолтну кнопку FileUpload */
+
 </style>

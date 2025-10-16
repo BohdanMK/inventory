@@ -1,5 +1,5 @@
 import axiosInstance from '@/api/axiosInstance';
-import { ref, computed, reactive } from 'vue';
+import { ref, computed } from 'vue';
 import { defineStore } from 'pinia'
 import type {  IUserProfile } from '@/interfaces';
 import type { ApiResponse , ApiResponsePaginated } from '@/types/axiosResponce';
@@ -66,7 +66,7 @@ export const useProfileStore = defineStore('profileStore', () => {
         const url = staticEndpoints.user.getUsers;
 
         try {
-            const response: ApiResponsePaginated<IUserProfile[]> = await axiosInstance.get(url, { params }); // передаєш params сюди
+            const response: ApiResponsePaginated<IUserProfile[]> = await axiosInstance.get(url, { params });
             if (response.success === false) {
                 return { success: false, message: response.message, data: response.data };
             }
@@ -90,8 +90,8 @@ export const useProfileStore = defineStore('profileStore', () => {
                 return { success: true, message: response.message, data: response.data };
             }
 
-        } finally {
-
+        }  catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 
@@ -108,8 +108,9 @@ export const useProfileStore = defineStore('profileStore', () => {
                 return { success: true, message: response.message, data: response.data };
             }
 
-        } finally {
-
+        }
+        catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 
@@ -126,8 +127,9 @@ export const useProfileStore = defineStore('profileStore', () => {
             else {
                 return { success: true, message: response.message, data: response.data };
             }
-        } finally {
-
+        }
+        catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 
@@ -145,8 +147,9 @@ export const useProfileStore = defineStore('profileStore', () => {
                 return { success: true, message: response.message, data: response.data };
             }
 
-        } finally {
-
+        }
+        catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 
@@ -164,8 +167,9 @@ export const useProfileStore = defineStore('profileStore', () => {
                 return { success: true, message: response.message, data: response.data };
             }
 
-        } finally {
-
+        }
+        catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 
@@ -182,8 +186,9 @@ export const useProfileStore = defineStore('profileStore', () => {
                 return { success: true, message: response.message, data: response.data };
             }
 
-        } finally {
-
+        }
+        catch (error) {
+            return { success: false, message: (error as any)?.message ?? 'Request failed', data: undefined as any };
         }
     }
 

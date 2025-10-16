@@ -10,10 +10,8 @@
   import FileUpload from 'primevue/fileupload';
   import { staticEndpoints } from '@/api/endpoints';
   import { useI18n } from 'vue-i18n';
-  // import { useSocket } from '@/composables/useSocket';
-  // import { socketAPI, disconnectSocket } from '@/socket/socketManager';
   import TheSideBarMenu from '@/components/TheSideBarMenu.vue';
-
+  import ImgItem from '@/components/ui/ImgItem.vue';
   // state
 
   const toastNotification = useToastNotification();
@@ -68,6 +66,7 @@
       ? `${import.meta.env.VITE_API_URL}${userProfile.userProfile.avatarFullPath}`
       : 'https://fakeimg.pl/300x300';
   });
+
 </script>
 
 <template>
@@ -77,7 +76,12 @@
     <Toast />
 
     <div class="relative mt-[50px] w-[150px] flex justify-center">
-      <img v-if="getAvatar" class="rounded-[50%] object-cover" :src="getAvatar" alt="" />
+      <ImgItem
+        v-if="getAvatar"
+        :src="getAvatar"
+        alt="User Avatar"
+        class="rounded-[50%] object-cover"
+        />
       <div v-else class="flex items-center h-[80px] w-[80px] rounded-full bg-white">
           <i  class=" pi pi-user-minus mx-auto text-5xl"></i>
       </div>

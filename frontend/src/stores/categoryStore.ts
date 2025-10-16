@@ -89,7 +89,6 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         message: (err as Error).message,
         data: {} as ICategory,
       };
-    } finally {
     }
   };
 
@@ -120,7 +119,6 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         message: (err as Error).message,
         data: {} as ICategory,
       };
-    } finally {
     }
   };
 
@@ -140,7 +138,6 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         message: (err as Error).message,
         data: null,
       };
-    } finally {
     }
   };
 

@@ -1,0 +1,1 @@
+export const fallbackImage = new URL('@/assets/placeholder.png', import.meta.url).href;

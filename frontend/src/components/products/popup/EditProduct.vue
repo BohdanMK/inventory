@@ -99,8 +99,8 @@
 
   const updateProductImg = async (data: DataFile) => {
     console.log(data);
-    initialValues.value.image = data.fileName;
-    initialValues.value.imagePath = data.filePath;
+    initialValues.value.image = data.fileName as string;
+    initialValues.value.imagePath = data.filePath as string;
   };
 
   const updateProductTemplate = async (productData: IProductTemplate) => {

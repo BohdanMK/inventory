@@ -39,4 +39,12 @@
   message {
      color: red!important;
   }
+
+   :deep(.p-fileupload .p-button.p-button-danger) {
+    display: none !important;
+  }
+
+  :deep(.p-fileupload .p-fileupload-buttonbar .p-button[icon="pi pi-times"]) {
+  display: none !important;
+}
 </style>
