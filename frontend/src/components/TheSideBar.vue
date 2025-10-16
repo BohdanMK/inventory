@@ -41,8 +41,6 @@
     }
   };
 
-  const isActiveRoute = (path: string) => route.path === path;
-
   const logOutUser = (): void => {
     userProfile.logOutUser();
     toastNotification.showSuccess(t('sidebar.userSuccessfullyLogout') || '');

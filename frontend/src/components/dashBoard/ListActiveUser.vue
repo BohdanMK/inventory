@@ -1,11 +1,10 @@
 <script setup lang="ts">
   import { useUsersStore } from '@/stores/usersStore';
   import setFullImgPath from '@/helpers/fullPathImg.ts';
+  import ImgItem from '@/components/ui/ImgItem.vue';
 
   // state
   const usersStore = useUsersStore();
-
-  // lifecycle hooks
 </script>
 
 <template>
@@ -14,7 +13,7 @@
   >
     <ul class="divide-y divide-gray-200">
       <li v-for="user in usersStore.onlineUsers" :key="user.id" class="flex items-center gap-3 p-2">
-        <img v-if="user.avatar" :src="setFullImgPath(user.avatar)" alt="avatar" class="h-12 w-12 rounded-full" />
+        <ImgItem v-if="user.avatar" :src="setFullImgPath(user.avatar)" alt="avatar" class="h-12 w-12 rounded-full"/>
         <div v-else class="flex h-12 w-12 items-center rounded-full">
           <i class="pi pi-user-minus mx-auto text-2xl"></i>
         </div>

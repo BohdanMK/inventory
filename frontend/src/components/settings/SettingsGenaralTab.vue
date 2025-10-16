@@ -4,7 +4,6 @@
   import type { IUserProfile } from '@/interfaces';
   import { useProfileStore } from '@/stores/userProfileStore';
   import { zodResolver } from '@primevue/forms/resolvers/zod';
-  import { useToast } from 'primevue/usetoast';
   import { useToastNotification } from '@/composables/useToastNotification';
   import Toast from 'primevue/toast';
   import { z } from 'zod';
@@ -20,7 +19,6 @@
   const { t } = useI18n();
 
   const setNewPassword = ref(false);
-  const toast = useToast();
   const loadingAvatar = ref<boolean>(false);
   const userProfile = useProfileStore();
   const toastNotification = useToastNotification();
@@ -29,11 +27,6 @@
     { name: 'Super Admin', code: 'super_admin' },
     { name: 'User', code: 'user' },
   ]);
-
-  const emptyAvatar = ref<DataFile>({
-    fileName: '',
-    filePath: '',
-  });
 
   const initialValues = ref({
     username: '',
@@ -117,10 +110,6 @@
     }
 
     loadingAvatar.value = false;
-  };
-
-  const removeAvatar = (data: DataFile) => {
-    updateUserProfileAvatar(data);
   };
 
   const getProfile = async (): Promise<void> => {
