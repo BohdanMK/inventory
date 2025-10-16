@@ -30,7 +30,6 @@
     email: '',
   });
 
-
   const makeResolver = () =>
     zodResolver(
       z.object({
@@ -38,7 +37,7 @@
           .string()
           .min(3, { message: t('validations.Minimum_3_characters') })
           .max(8, { message: t('validations.Maximum_8_characters') })
-          .refine((value) => /\d/.test(value), {
+          .refine(value => /\d/.test(value), {
             message: t('validations.Must_have_a_number'),
           }),
         email: z
@@ -49,8 +48,8 @@
     );
 
   const resolver = ref(makeResolver());
-      watch(locale, () => {
-        resolver.value = makeResolver();
+  watch(locale, () => {
+    resolver.value = makeResolver();
   });
 
   const onFormSubmit = async ({ valid, values }: FormSubmitEvent<Record<string, any>>) => {
@@ -58,11 +57,7 @@
 
     loadingStatus.value = true;
     try {
-      const { success, message, data } = await authStore.login(
-        values.email,
-        values.password,
-        superAdminLogin.value
-      );
+      const { success, message, data } = await authStore.login(values.email, values.password, superAdminLogin.value);
 
       if (success) {
         toastNotification.showSuccess(message || t('notification.success'));
@@ -77,7 +72,6 @@
       loadingStatus.value = false;
     }
   };
-
 
   const titleByRole = computed((): string => {
     return superAdminLogin.value ? t('settings.Super_Admin') : t('settings.User');

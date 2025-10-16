@@ -72,7 +72,7 @@
     <div v-else class="card">
       <UsersHeader :length="usersList.length" @toggleModal="toggleModal()" @reloadList="fetchUsers()" />
       <CreateUserPopUp :role="props.role" @updateData="fetchUsers()" />
-      <UsersTable :role="role" v-if="!asyncState.loadingStatus.value">
+      <UsersTable v-if="!asyncState.loadingStatus.value" :role="role">
         <template #actions="{ data }">
           <EditUserPopUp :id="data._id" :data="data" @updateData="() => emit('forceReload')" />
           <DeleteUserPopUp :id="data._id" @updateData="fetchUsers()" />

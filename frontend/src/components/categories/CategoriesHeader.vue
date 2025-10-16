@@ -65,13 +65,13 @@
         @createData="createCategory"
       />
       <Button
+        v-tooltip.top="$t('popup.create_category')"
         :label="$t('button.new')"
         icon="pi pi-plus"
         class="mr-2"
-        v-tooltip.top="$t('popup.create_category')"
         @click="togglePopUpVisible"
       />
-      <Button icon="pi pi-refresh" v-tooltip.top="$t('button.refresh')" rounded raised @click="updateData()" />
+      <Button v-tooltip.top="$t('button.refresh')" icon="pi pi-refresh" rounded raised @click="updateData()" />
     </template>
   </Toolbar>
 </template>

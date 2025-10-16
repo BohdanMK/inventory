@@ -121,8 +121,8 @@
           <template #actions="{ data }">
             <div class="flex">
               <Button
-                icon="pi pi-arrow-up"
                 v-tooltip.top="'Single-item Shipment'"
+                icon="pi pi-arrow-up"
                 outlined
                 rounded
                 severity="info"
@@ -130,8 +130,8 @@
                 @click="toggleActionModalStatus(data, 'SHIPMENT')"
               />
               <Button
-                icon="pi pi-arrow-right-arrow-left"
                 v-tooltip.top="'Replace'"
+                icon="pi pi-arrow-right-arrow-left"
                 outlined
                 rounded
                 severity="warn"
@@ -147,8 +147,8 @@
                 @click="toggleActionModalStatus(data, 'WRITEOFF')"
               />
               <Button
-                icon="pi pi-trash"
                 v-tooltip.top="'Return goods'"
+                icon="pi pi-trash"
                 outlined
                 rounded
                 class="mr-2"

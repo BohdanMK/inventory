@@ -137,11 +137,11 @@
           </div>
 
           <Button
+            v-tooltip.top="$t('button.submit')"
             :loading="localLoadingCreate"
             type="submit"
             severity="secondary"
             :label="$t('button.submit')"
-            v-tooltip.top="$t('button.submit')"
             class="w-full sm:w-56"
           />
         </div>

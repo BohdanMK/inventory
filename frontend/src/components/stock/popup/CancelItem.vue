@@ -10,7 +10,6 @@
   import type { IActionData } from '@/types/index';
   import Dialog from 'primevue/dialog';
   import Textarea from 'primevue/textarea';
-  import InputNumber from 'primevue/inputnumber';
   import Button from 'primevue/button';
   import FilesUploadItem from '@/components/files/FilesUploadItem.vue';
 
@@ -71,12 +70,13 @@
   const onSubmit = async ({ valid, values }: { valid: boolean; values: any }) => {
     if (!valid) return;
     console.log(values);
-    let product = {
-      product: props.dataItem._id ?? '',
+    const product: IProductInStock = {
+      ...props.dataItem,
       count: props.dataItem.count,
       price: props.dataItem.price,
     };
-    let payloadData: IActionData = {
+
+    const payloadData: IActionData = {
       typeAction: props.typeAction,
       warehouse: props.dataItem.warehouse?._id ?? '',
       products: [product],
@@ -108,6 +108,7 @@
 </script>
 
 <template>
+
   <Dialog v-model:visible="modelValue" :style="{ width: '450px' }" :header="`${title} ${typeAction} `" modal>
     <div class="relative">
       <div v-if="localLoading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/60">

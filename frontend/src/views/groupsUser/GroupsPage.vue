@@ -27,7 +27,7 @@
           <i class="pi pi-user"></i>
           Users
         </Tab>
-        <Tab value="1" v-permission="'super_admin'">
+        <Tab v-permission="'super_admin'" value="1">
           <i class="pi pi-crown"></i>
           Admins
         </Tab>
@@ -45,7 +45,7 @@
             </template>
           </Suspense>
         </TabPanel>
-        <TabPanel value="1" v-permission="'super_admin'">
+        <TabPanel v-permission="'super_admin'" value="1">
           <Suspense>
             <template #default>
               <UserList

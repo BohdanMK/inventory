@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import axios from '@/api/axiosInstance';
   import { computed } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import { useToastNotification } from '@/composables/useToastNotification';
   import Toast from 'primevue/toast';
   import ToggleSwitch from 'primevue/toggleswitch';
@@ -16,7 +16,6 @@
 
   const toastNotification = useToastNotification();
   const userProfile = useProfileStore();
-  const route = useRoute();
   const router = useRouter();
   const { isDark } = useThemeSwitch();
   const { t } = useI18n();

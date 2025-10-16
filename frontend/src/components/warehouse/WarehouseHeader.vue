@@ -39,13 +39,13 @@
     </template>
     <template #end>
       <Button
+        v-tooltip.top="$t('popup.create_warehouse')"
         :label="$t('button.new')"
         icon="pi pi-plus"
         class="mr-2"
-        v-tooltip.top="$t('popup.create_warehouse')"
         @click="togglePopUpVisible"
       />
-      <Button icon="pi pi-refresh" rounded raised v-tooltip.top="$t('button.refresh')" @click="updateData()" />
+      <Button v-tooltip.top="$t('button.refresh')" icon="pi pi-refresh" rounded raised @click="updateData()" />
     </template>
   </Toolbar>
 </template>

@@ -31,9 +31,9 @@
     </div>
     <div class="mt-3 flex flex-col gap-2">
       <Button
+        v-tooltip.top="$t('button.filter')"
         :label="$t('button.filter')"
         :loading="localLoading"
-        v-tooltip.top="$t('button.filter')"
         @click="updatateData()"
       />
     </div>

@@ -9,8 +9,8 @@
 
 <template>
   <div
-    class="relative z-1 cursor-pointer"
     v-if="valueUnreadCount && valueUnreadCount > 0"
+    class="relative z-1 cursor-pointer"
     @click="() => actionsStore.toggleChatActionsStatus()"
   >
     <i class="pi pi-envelope" color="text-rose-200" style="font-size: 1.4rem"></i>

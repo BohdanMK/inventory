@@ -269,30 +269,30 @@
             {{ t('chat.messages') }}
           </h3>
           <Button
+            v-tooltip.top="$t('button.load_more')"
             icon="pi pi-sync"
             severity="info"
             variant="text"
-            v-tooltip.top="$t('button.load_more')"
             :loading="loadersStore.loadMoreStatus"
             @click="loadMoreMessages()"
           />
           <Button
+            v-tooltip.top="$t('button.scroll_top')"
             icon="pi pi-arrow-up"
             severity="Warn"
             variant="text"
-            v-tooltip.top="$t('button.scroll_top')"
             @click="scrollTop()"
           />
           <Button
+            v-tooltip.top="$t('button.scroll_bottom')"
             icon="pi pi-arrow-down"
             severity="info"
             variant="text"
-            v-tooltip.top="$t('button.scroll_bottom')"
             @click="scrollBottom()"
           />
         </div>
       </template>
-      <div class="flex h-[90vh] flex-col justify-between gap-0" ref="messageEmojiPicker">
+      <div ref="messageEmojiPicker" class="flex h-[90vh] flex-col justify-between gap-0">
         <EmojiPicker v-if="showMessageEmoji" class="absolute top-0 left-0 z-50" @select="addEmojiToMessage" />
 
         <!-- messages -->
@@ -300,8 +300,8 @@
           <template v-for="message in chatStore.messagesList" :key="message._id">
             <div
               v-if="!message.deleted"
-              :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`"
               :id="`message-${message._id}`"
+              :class="`${baseClasses} ${otherClasses(message.userId === userProfile.userProfile?._id)}`"
             >
               <Button
                 v-tooltip.top="$t('button.reaction')"
@@ -313,8 +313,8 @@
                 <i class="pi pi-face-smile" style="color: slateblue"></i>
               </Button>
               <div
-                class="flex w-full gap-2 rounded-t-xl bg-sky-100 p-3"
                 v-if="message.files && message.files.length > 0"
+                class="flex w-full gap-2 rounded-t-xl bg-sky-100 p-3"
               >
                 <MessageFileViewer v-for="file in message.files" :key="file.fileName" :file="file" />
               </div>
@@ -353,7 +353,7 @@
                       {{ message.message }}
                     </div>
                   </div>
-                  <div class="flex gap-0.5" v-if="!message.deleted">
+                  <div v-if="!message.deleted" class="flex gap-0.5">
                     <template v-if="isMine(message.userId)">
                       <Button
                         v-tooltip.top="$t('button.edit')"
@@ -393,7 +393,7 @@
         </div>
 
         <!-- input + emoji -->
-        <div class="flex rounded-t-xl bg-lime-100 p-2 px-3 text-start text-sm text-gray-500" v-if="replyMesssage">
+        <div v-if="replyMesssage" class="flex rounded-t-xl bg-lime-100 p-2 px-3 text-start text-sm text-gray-500">
           <div class="flex-auto">
             <div>
               <span class="font-medium">
@@ -437,9 +437,9 @@
           </template>
           <!--new message fields-->
           <template v-else>
-            <Button icon="pi pi-face-smile" @click="showEmojiPicker = !showEmojiPicker" outlined />
+            <Button icon="pi pi-face-smile" outlined @click="showEmojiPicker = !showEmojiPicker" />
             <div class="relative">
-              <EmojiPicker v-if="showEmojiPicker" @select="addEmoji" class="absolute bottom-12 left-0 z-50" />
+              <EmojiPicker v-if="showEmojiPicker" class="absolute bottom-12 left-0 z-50" @select="addEmoji" />
             </div>
             <div class="flex flex-auto items-center">
               <Textarea v-model="newMessage" rows="1" autoResize class="w-full" />

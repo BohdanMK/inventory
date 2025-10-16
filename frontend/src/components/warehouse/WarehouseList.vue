@@ -109,19 +109,19 @@
         <WarehouseTable>
           <template #actions="{ data }">
             <Button
+              v-tooltip.top="$t('button.edit')"
               icon="pi pi-pencil"
               outlined
               rounded
               class="mr-2"
-              v-tooltip.top="$t('button.edit')"
               @click="toggleEditModal(data)"
             />
             <Button
+              v-tooltip.top="$t('button.delete')"
               icon="pi pi-trash"
               outlined
               rounded
               severity="danger"
-              v-tooltip.top="$t('button.delete')"
               @click="toggleDeleteModal(data._id)"
             />
           </template>
